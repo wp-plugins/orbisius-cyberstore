@@ -777,6 +777,9 @@ SHORT_CODE_EOF;
 
     /**
      * This is called by WP after the user hits the submit button.
+     * The variables are trimmed first and then passed to the who ever wantsto filter them.
+     * @param array the entered data from the settings page.
+     * @return array the modified input array
      */
     function settings_validate($input) { // whitelist options
         $input = array_map('trim', $input);

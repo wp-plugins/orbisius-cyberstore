@@ -44,21 +44,28 @@ $opts = $orbisius_digishop_obj->get_options();
                     </tr>
                     <tr valign="top">
                         <th scope="row">Content (download email)</th>
-                        <td><textarea name="<?php echo $settings_key; ?>[purchase_content]"><?php echo $opts['purchase_content']; ?></textarea>
+                        <td>
+                            <?php if (has_action('orb_cyber_store_render_textarea2richtext')) : ?>
+                                <?php do_action('orb_cyber_store_render_textarea2richtext', $opts, $settings_key, 'purchase_content'); ?>
+                            <?php else : ?>
+                               <textarea name="<?php echo $settings_key; ?>[purchase_content]"><?php echo $opts['purchase_content']; ?></textarea>
+                            <?php endif; ?>
 
-                            <div style="float:right">
-                                <strong>Supported Variables <a href="javascript:void(0);" onclick="jQuery('.suppored_vars').toggle('slow');return false;">(show/hide)</a></strong>
-                                <ul class="suppored_vars app_hide">
-                                    <li>%%SITE%%</li>
-                                    <li>%%FIRST_NAME%% - Payer's first name</li>
-                                    <li>%%LAST_NAME%% - Payer's last name</li>
-                                    <li>%%EMAIL%% - Payer's email</li>
-                                    <li>%%TXN_ID%% - Transaction ID (PayPal)</li>
-                                    <li>%%PRODUCT_NAME%% - Product name</li>
-                                    <li>%%PRODUCT_PRICE%% - Product price</li>
-                                    <li>%%DOWNLOAD_LINK%% - Download link</li>
-                                </ul>
-                            </div>
+                            <p>
+                                <div style="float:right">
+                                    <strong>Supported Variables <a href="javascript:void(0);" onclick="jQuery('.suppored_vars').toggle('slow');return false;">(show/hide)</a></strong>
+                                    <ul class="suppored_vars app_hide">
+                                        <li>%%SITE%%</li>
+                                        <li>%%FIRST_NAME%% - Payer's first name</li>
+                                        <li>%%LAST_NAME%% - Payer's last name</li>
+                                        <li>%%EMAIL%% - Payer's email</li>
+                                        <li>%%TXN_ID%% - Transaction ID (PayPal)</li>
+                                        <li>%%PRODUCT_NAME%% - Product name</li>
+                                        <li>%%PRODUCT_PRICE%% - Product price</li>
+                                        <li>%%DOWNLOAD_LINK%% - Download link</li>
+                                    </ul>
+                                </div>
+                            </p>
                         </td>
                     </tr>
                     <tr valign="top">
