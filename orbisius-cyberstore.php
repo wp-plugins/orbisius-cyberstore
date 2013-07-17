@@ -75,7 +75,7 @@ class Orbisius_CyberStore {
         'status' => 0,
         'test_mode' => 0,
         'logging_enabled' => 0,
-        'parse_old_shortcode' => 1,
+        'parse_old_shortcode' => '',
         'secure_hop_url' => '',
         'sandbox_business_email' => '',
         'sandbox_only_ip' => '',
