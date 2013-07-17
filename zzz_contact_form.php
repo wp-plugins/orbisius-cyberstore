@@ -1,10 +1,10 @@
 <h2>Contact Us</h2>
 
 <div class="updated">
-    <strong>
+    <p>
     ** NOTE: ** Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
     <br/>Please do NOT use the WordPress forums or other places to seek support.
-    </strong>
+    </p>
 </div>
 
 <?php return ; ?>
