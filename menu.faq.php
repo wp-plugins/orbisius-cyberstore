@@ -14,5 +14,12 @@
 
             <br /> and copy the contents of <strong><?php echo $orbisius_digishop_obj->get('plugin_uploads_dir'); ?></strong>
         </p>
+        <p>
+            <h3>Where can I find support?</h3>
+        <div class="updated"><p>
+            ** NOTE: ** Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>.
+            Please do NOT use the WordPress forums or other places to seek support.
+        </p></div>
+        </p>
     </div>
 </div>
