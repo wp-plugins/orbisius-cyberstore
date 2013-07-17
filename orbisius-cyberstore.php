@@ -75,6 +75,7 @@ class Orbisius_CyberStore {
         'status' => 0,
         'test_mode' => 0,
         'logging_enabled' => 0,
+        'parse_old_shortcode' => 1,
         'secure_hop_url' => '',
         'sandbox_business_email' => '',
         'sandbox_only_ip' => '',
@@ -213,13 +214,20 @@ class Orbisius_CyberStore {
             wp_enqueue_style($this->plugin_dir_name);
         } else {
             if (!is_feed()) {
+                $opts = $this->get_options();
+                
                 add_action('wp_head', array($this, 'add_plugin_credits'), 1); // be the first in the header
                 add_action('wp_footer', array($this, 'add_plugin_credits'), 1000); // be the last in the footer
                 wp_enqueue_script('jquery');
 
-                // The short code is has a closing *tag* e.g. [tag]...[/tag] so normal tag partse won't work
+                // The short code is has a closing *tag* e.g. [tag]...[/tag] so normal tag parts won't work
                 add_shortcode($this->plugin_id_str, array($this, 'parse_short_code'));
-                add_shortcode('orb_cyber_store', array($this, 'parse_short_code'));
+
+                // Do the person want us to parse the old: digishop shortcode?
+                if (!empty($opts['parse_old_shortcode'])) {
+                    add_shortcode('digishop', array($this, 'parse_short_code'));
+                }
+
                 //add_filter('the_content', array($this, 'parse_short_code'), 10000); // run last to check fb container and other stuff are added
 
                 add_filter('parse_request', array($this, 'parse_request'));
@@ -642,7 +650,7 @@ SHORT_CODE_EOF;
      */
     public function administration_menu() {
         // Settings > Orbisius_CyberStore
-        add_options_page(__($this->plugin_name, "ORBISIUS_DIGISHOP"), __($this->plugin_name, "ORBISIUS_DIGISHOP"), 'manage_options', $this->plugin_dir_name . '/menu.settings.php');
+        //add_options_page(__($this->plugin_name, "ORBISIUS_DIGISHOP"), __($this->plugin_name, "ORBISIUS_DIGISHOP"), 'manage_options', $this->plugin_dir_name . '/menu.settings.php');
 
         add_menu_page(__($this->plugin_name, $this->plugin_dir_name), __($this->plugin_name, $this->plugin_dir_name), 'manage_options', $this->plugin_dir_name . '/menu.dashboard.php', null, $this->plugin_url . '/images/icon.png');
 
@@ -653,6 +661,7 @@ SHORT_CODE_EOF;
         add_submenu_page($this->plugin_dir_name . '/' . $this->plugin_landing_tab, __('FAQ', $this->plugin_dir_name), __('FAQ', $this->plugin_dir_name), 'manage_options', $this->plugin_dir_name . '/menu.faq.php');
         add_submenu_page($this->plugin_dir_name . '/' . $this->plugin_landing_tab, __('Help', $this->plugin_dir_name), __('Help', $this->plugin_dir_name), 'manage_options', $this->plugin_dir_name . '/menu.support.php');
 
+        add_submenu_page($this->plugin_dir_name . '/' . $this->plugin_landing_tab, __('Extensions', $this->plugin_dir_name), __('Extensions', $this->plugin_dir_name), 'manage_options', $this->plugin_dir_name . '/menu.extensions.php');
         add_submenu_page($this->plugin_dir_name . '/' . $this->plugin_landing_tab, __('Contact', $this->plugin_dir_name), __('Contact', $this->plugin_dir_name), 'manage_options', $this->plugin_dir_name . '/menu.contact.php');
 
         add_submenu_page($this->plugin_dir_name . '/' . $this->plugin_landing_tab, __('About', $this->plugin_dir_name), __('About', $this->plugin_dir_name), 'manage_options', $this->plugin_dir_name . '/menu.about.php');
@@ -763,7 +772,22 @@ SHORT_CODE_EOF;
      * Sets the setting variables
      */
     function register_settings() { // whitelist options
-        register_setting($this->plugin_dir_name, $this->plugin_settings_key);
+        register_setting($this->plugin_dir_name, $this->plugin_settings_key, array($this, 'settings_validate'));
+    }
+
+    /**
+     * This is called by WP after the user hits the submit button.
+     */
+    function settings_validate($input) { // whitelist options
+        $input = array_map('trim', $input);
+
+        // let extensions do their thing
+        $input_filtered = apply_filters('orb_cyber_store_ext_filter_settings', $input);
+
+        // did the extension break stuff?
+        $input = is_array($input_filtered) ? $input_filtered : $input;
+
+        return $input;
     }
 
     // Add the ? settings link in Plugins page very good
@@ -901,6 +925,7 @@ SHORT_CODE_EOF;
                 'business' => $email,
                 'no_shipping' => $no_shipping,
                 'no_note' => 1,
+                //'lc' => 'DE', language
                 'amount' => $price,
                 'item_name' => $item_name,
                 'item_number' => $item_number,
@@ -912,6 +937,8 @@ SHORT_CODE_EOF;
                 'cancel_return' => $cancel_return,
             );
 
+			$paypal_params = apply_filters('orb_cyber_store_paypal_params', $paypal_params);
+			
             $location = $paypal_url . '?' . http_build_query($paypal_params);
 
             $this->log('paypal_checkout URL: ' . $location);
@@ -966,7 +993,11 @@ SHORT_CODE_EOF;
 
             }
 
-            $headers = "From: {$_SERVER['HTTP_HOST']} Wordpress <wordpress@{$_SERVER['HTTP_HOST']}>\r\n";
+			$order_from_host = apply_filters('orb_cyber_store_order_from_host', "[{$_SERVER['HTTP_HOST']}]");
+			$order_from_name = apply_filters('orb_cyber_store_order_from_name', 'WordPress');
+			$order_from_email = apply_filters('orb_cyber_store_order_from_email', 'wordpress@' . $_SERVER['HTTP_HOST']);
+			
+            $headers = "From: $order_from_host $order_from_name <$order_from_email>\r\n";
 
             if (!empty($data['custom'])) {
                 $custom = $data['custom'];

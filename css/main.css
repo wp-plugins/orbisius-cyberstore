@@ -19,6 +19,10 @@
 	padding:10px;
 }
 
+.ext_row {
+    border:1px solid #ccc;
+}
+
 .webweb_wp_plugin .input_field, .webweb_wp_digishop .input_field {
 	min-width:220px;
     width:550px;

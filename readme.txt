@@ -2,8 +2,8 @@
 Contributors: lordspace
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7APYDVPBCSY9A
 Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore
-Requires at least: 2.0.2
-Tested up to: 3.5.1
+Requires at least: 2.6.2
+Tested up to: 3.5.2
 Stable tag: 1.1.4
 License: GPLv2 or later
 
@@ -150,6 +150,9 @@ n/a
 * rearranged settings menu screen
 * showing the max upload size (hosting dependant)
 * fixes and tweaks
+
+= 1.0.4 =
+* n/a
 
 = 1.0.3 =
 * Added some fixes with the downloads.

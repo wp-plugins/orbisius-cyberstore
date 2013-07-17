@@ -35,7 +35,7 @@ $opts = $orbisius_digishop_obj->get_options();
                     <tr valign="top">
                         <th scope="row">Order Notification Email</th>
                         <td><input type="text" name="<?php echo $settings_key; ?>[notification_email]" value="<?php echo $opts['notification_email']; ?>" class="input_field" />
-                            This email will CC or BCC'ed with the email sent to the customer.
+                            The plugin will send order info to that email (usually same as customer's)
                         </td>
                     </tr>
                     <tr valign="top">
@@ -92,7 +92,35 @@ $opts = $orbisius_digishop_obj->get_options();
                                     <input type="checkbox" id="digishop_require_shipping" name="<?php echo $settings_key; ?>[require_shipping]" value="1"
                                         <?php echo empty($opts['require_shipping']) ? '' : 'checked="checked"'; ?> /> Enable</label>
                         </td>
+                    </tr>                    
+					<tr valign="top">
+                        <th scope="row">Parse the old [digishop] shortcode</th>
+                        <td>
+                            <label for="digishop_require_parse_old_shortcode">
+                                    <input type="checkbox" id="digishop_require_parse_old_shortcode"
+                                           name="<?php echo $settings_key; ?>[parse_old_shortcode]" value="1"
+                                        <?php echo empty($opts['parse_old_shortcode']) ? '' : 'checked="checked"'; ?> /> Enable</label>
+							<p>Check the box if you are running OrbisiusCyberstore and the DigiShop</p>
+                        </td>
                     </tr>
+
+                    <?php if (has_action('orb_cyber_store_render_extension_settings')) : ?>
+                        <tr valign="top">
+                            <th scope="row"><strong>Extensions</strong></th>
+                            <td colspan="1">
+                                
+                            </td>
+                        </tr>
+                        <?php do_action('orb_cyber_store_render_extension_settings', $opts, $settings_key); ?>
+                    <?php else : ?>
+                        <tr valign="top">
+                            <!--<th scope="row">Extension Name</th>-->
+                            <td colspan="2">
+                                No extensions found.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+
                     <tr valign="top">
                         <th scope="row" colspan="2"><h2>Advanced (<a href="javascript:void(0);" onclick="jQuery('.digishop_advanced_options').toggle('slow');return false;">show/hide</a>)
                         </h2>
