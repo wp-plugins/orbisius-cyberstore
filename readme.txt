@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore
 Requires at least: 2.6.2
 Tested up to: 3.5.2
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 License: GPLv2 or later
 
 Orbisius CyberStore plugin allows you to start selling your digital products such as e-books, reports in minutes.
@@ -19,6 +19,10 @@ Orbisius CyberStore plugin allows you to start selling your digital products suc
 
 Orbisius CyberStore (formerly known as DigiShop within the WordPress Plugin Directory) is a WordPress plugin which allows you to setup your e-store and start selling your digital products such as e-books, reports in minutes.
 It adds a simple buy now button which sends your customer to PayPal to complete the payment and after that he/she is returned to your site.
+
+> Users of the former Orbisius DigiShop plugin:
+> Please backup your database and uploads from /wp-content/uploads/digishop before updating to the new version. Just in case.
+> You may have to re-add the products and re-insert the shortcode because this release introduces lots of changes.
 
 = Demo =
 http://www.youtube.com/watch?v=6EKNMYjzwlM
@@ -89,6 +93,12 @@ If you have run into issues or have questions/suggestions please register on our
 n/a
 
 == Changelog ==
+
+= 1.1.5 =
+* Tested with wp 3.5.2
+* Added extensions support
+* Added option to optionally parse old digishop shortcode - this doesn't load the products from old db though.
+* Removed the settings option. Just top level menu is OK.
 
 = 1.1.4 =
 = Fixed when updating a product the status message was showing as error that happened only when replacing the filename
