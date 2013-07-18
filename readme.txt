@@ -107,6 +107,7 @@ n/a
 * Added the return code (200 -> OK) in case PayPal calls the site again ... wp_die returns status 500 which makes paypal to call the site many times -> which leads to people being self spammed
 * Orbisius CyberStores > Settings : checking if a value exists and explicitely set it to 0 if not
 * Made possibly transactions logs to be listed within the settings ONLY if logging is enabled AND files are less than 500KB.
+* Made some fixes ... WP was emitting some warnings when DEBUG is on
 
 = 1.1.5 =
 * Tested with wp 3.5.2

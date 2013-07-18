@@ -42,7 +42,7 @@ if (empty($_ENV['ORBISIUS_DIGISHOP_TEST'])) {
 
     register_activation_hook(__FILE__, array($orbisius_digishop_obj, 'on_activate'));
     register_deactivation_hook(__FILE__, array($orbisius_digishop_obj, 'on_deactivate'));
-    register_uninstall_hook(__FILE__, array($orbisius_digishop_obj, 'on_uninstall'));
+    //register_uninstall_hook(__FILE__, array($orbisius_digishop_obj, 'on_uninstall'));
 }
 
 class Orbisius_CyberStore {
@@ -116,7 +116,7 @@ class Orbisius_CyberStore {
 			$cls = __CLASS__;
 			$inst = new $cls;
 
-			$site_url = get_settings('siteurl');
+			$site_url = site_url();
 			$site_url = rtrim($site_url, '/') . '/'; // e.g. http://domain.com/blog/
 
 			$inst->site_url = $site_url;
@@ -195,15 +195,13 @@ class Orbisius_CyberStore {
             add_action('admin_menu', array($this, 'administration_menu'));
             add_action('admin_init', array($this, 'add_buttons'));
             add_action('admin_init', array($this, 'register_settings'));
+            add_action('admin_init', array($this, 'load_assets'));
             add_action('admin_notices', array($this, 'notices'));
 
             // http://codex.wordpress.org/Creating_Tables_with_Plugins
             // since 3.1 the register_activation_hook is not called when a plugin is updated, so to run the above
             // code on automatic upgrade you need to check the plugin db version on another hook. like this:
             add_action('plugins_loaded', array($this, 'install_db_tables'));
-
-            wp_register_style($this->plugin_dir_name, $this->plugin_url . 'css/main.css', false, 0.31);
-            wp_enqueue_style($this->plugin_dir_name);
         } else {
             if (!is_feed()) {
                 $opts = $this->get_options();
@@ -223,6 +221,14 @@ class Orbisius_CyberStore {
                 add_action('get_footer', array($this, 'public_notices')); // status after TXN
             }
         }
+    }
+
+    /**
+     * Loads CSS. Called by admin_init -> this means that they are not loaded on the public side.
+     */
+    public function load_assets() {
+        wp_register_style($this->plugin_dir_name, $this->plugin_url . 'css/main.css', false, 0.31);
+        wp_enqueue_style($this->plugin_dir_name);
     }
 
     /**
