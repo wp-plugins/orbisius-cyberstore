@@ -81,7 +81,7 @@ $opts = $orbisius_digishop_obj->get_options();
                     <tr valign="top">
                         <th scope="row">Currency</th>
                         <td><input type="text" name="<?php echo $settings_key; ?>[currency]" value="<?php echo $opts['currency']; ?>" /> Example: USD, CAD, EUR
-                            <a href="https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_currency_codes" target="_blank">See full list</a>
+                            <a href="https://developer.paypal.com/webapps/developer/docs/classic/api/currency_codes/" target="_blank">See full list</a>
                         </td>
                     </tr>
                     <tr valign="top">
