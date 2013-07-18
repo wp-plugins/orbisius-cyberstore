@@ -4,7 +4,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://orbisius.com/site/products/digishop/
   Description: Orbisius CyberStore (former DigShop) plugin allows you to start selling your digital products such as e-books, reports in minutes.
-  Version: 1.1.5
+  Version: 1.1.6
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
