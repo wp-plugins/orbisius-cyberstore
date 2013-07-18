@@ -52,7 +52,7 @@ $opts = $orbisius_digishop_obj->get_options();
                             <?php endif; ?>
 
                             <p>
-                                <div style="float:right">
+                                <div>
                                     <strong>Supported Variables <a href="javascript:void(0);" onclick="jQuery('.suppored_vars').toggle('slow');return false;">(show/hide)</a></strong>
                                     <ul class="suppored_vars app_hide">
                                         <li>%%SITE%%</li>
