@@ -195,7 +195,7 @@ class Orbisius_CyberStore {
             add_action('admin_menu', array($this, 'administration_menu'));
             add_action('admin_init', array($this, 'add_buttons'));
             add_action('admin_init', array($this, 'register_settings'));
-            add_action('admin_init', array($this, 'load_assets'));
+            add_action('admin_init', array($this, 'load_admin_assets'));
             add_action('admin_notices', array($this, 'notices'));
 
             // http://codex.wordpress.org/Creating_Tables_with_Plugins
@@ -203,23 +203,20 @@ class Orbisius_CyberStore {
             // code on automatic upgrade you need to check the plugin db version on another hook. like this:
             add_action('plugins_loaded', array($this, 'install_db_tables'));
         } else {
-            if (!is_feed()) {
-                $opts = $this->get_options();
-                
-                add_action('wp_head', array($this, 'add_plugin_credits'), 1); // be the first in the header
-                add_action('wp_footer', array($this, 'add_plugin_credits'), 1000); // be the last in the footer
-                wp_enqueue_script('jquery');
+            $opts = $this->get_options();
 
-                // The short code is has a closing *tag* e.g. [tag]...[/tag] so normal tag parts won't work
-                add_shortcode($this->plugin_id_str, array($this, 'parse_short_code'));
+            add_action('wp_head', array($this, 'add_plugin_credits'), 1); // be the first in the header
+            add_action('wp_footer', array($this, 'add_plugin_credits'), 1000); // be the last in the footer
 
-                // Do the person want us to parse the old: digishop shortcode?
-                if (!empty($opts['parse_old_shortcode'])) {
-                    add_shortcode('digishop', array($this, 'parse_short_code'));
-                }
+            // The short code is has a closing *tag* e.g. [tag]...[/tag] so normal tag parts won't work
+            add_shortcode($this->plugin_id_str, array($this, 'parse_short_code'));
 
-                add_action('get_footer', array($this, 'public_notices')); // status after TXN
+            // Do the person want us to parse the old: digishop shortcode?
+            if (!empty($opts['parse_old_shortcode'])) {
+                add_shortcode('digishop', array($this, 'parse_short_code'));
             }
+
+            add_action('get_footer', array($this, 'public_notices')); // status after TXN
         }
     }
 
@@ -227,6 +224,13 @@ class Orbisius_CyberStore {
      * Loads CSS. Called by admin_init -> this means that they are not loaded on the public side.
      */
     public function load_assets() {
+        wp_enqueue_script('jquery');
+    }
+
+    /**
+     * Loads CSS. Called by admin_init -> this means that they are not loaded on the public side.
+     */
+    public function load_admin_assets() {
         wp_register_style($this->plugin_dir_name, $this->plugin_url . 'css/main.css', false, 0.31);
         wp_enqueue_style($this->plugin_dir_name);
     }
@@ -254,6 +258,8 @@ class Orbisius_CyberStore {
                 //wp_die($this->plugin_name . ': Invalid value.');
             }
         }
+
+        $this->load_assets();
     }
 
     /**
