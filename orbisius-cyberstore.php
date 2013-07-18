@@ -38,6 +38,7 @@ if (empty($_ENV['ORBISIUS_DIGISHOP_TEST'])) {
 	$orbisius_digishop_obj = Orbisius_CyberStore::get_instance();
 
     add_action('init', array($orbisius_digishop_obj, 'init'));
+    add_action('init', array($orbisius_digishop_obj, 'parse_request'), 50);
 
     register_activation_hook(__FILE__, array($orbisius_digishop_obj, 'on_activate'));
     register_deactivation_hook(__FILE__, array($orbisius_digishop_obj, 'on_deactivate'));
@@ -138,16 +139,6 @@ class Orbisius_CyberStore {
             // will be retrieved later by ->get method calls
             $inst->plugin_db_prefix = $wpdb->prefix . $inst->plugin_id_str . '_';
             $inst->web_trigger_key = $inst->plugin_id_str . '_cmd';
-
-            // 2012:01:04: let's keep using the old links.
-//            $inst->permalinks = get_option('permalink_structure') != '';
-
-            if ($inst->permalinks) { // WP/digishop_cmd/paypal
-                $inst->payment_notify_url = $site_url . $inst->web_trigger_key . '=paypal_ipn';
-            } else { // old way
-                $inst->payment_notify_url = Orbisius_CyberStoreUtil::add_url_params($site_url, array($inst->web_trigger_key => 'paypal_ipn'));
-            }
-
             $inst->download_key = $inst->plugin_id_str . '_dl';
 
             $opts = $inst->get_options();
@@ -228,23 +219,10 @@ class Orbisius_CyberStore {
                     add_shortcode('digishop', array($this, 'parse_short_code'));
                 }
 
-                //add_filter('the_content', array($this, 'parse_short_code'), 10000); // run last to check fb container and other stuff are added
-
-                add_filter('parse_request', array($this, 'parse_request'));
-                add_filter('query_vars', array($this, 'add_query_vars'));
-
-                // If permalinks are enabled
-                if ($this->permalinks) {
-                    add_filter('rewrite_rules_array', array($this, 'add_rewrite_rules'));
-                    add_action('wp_loaded', array($this, 'flush_rewrite_rules'));
-                }
-
                 add_action('get_footer', array($this, 'public_notices')); // status after TXN
             }
         }
     }
-
-    private $query_vars;
 
     /**
      * Parse requests containing "my_plugin=paypal"
@@ -252,78 +230,22 @@ class Orbisius_CyberStore {
      * @see http://codex.wordpress.org/Rewrite_API/add_rewrite_rule
      * @see http://www.james-vandyne.com/process-paypal-ipn-requests-through-wordpress/
      */
-    function parse_request($wp) {
-        $this->query_vars = $wp->query_vars;
+    public function parse_request() {
+        $params = $_REQUEST;
 
-        if (array_key_exists($this->web_trigger_key, $wp->query_vars)
-                || array_key_exists($this->download_key, $wp->query_vars)) {
-            if ($wp->query_vars[$this->web_trigger_key] == 'paypal_ipn'
-                    || $wp->query_vars[$this->web_trigger_key] == 'paypal_checkout') {
-                $this->handle_non_ui($wp->query_vars);
-            } elseif (!empty($wp->query_vars[$this->download_key])) {
-                $this->handle_non_ui($wp->query_vars);
-            } elseif ($wp->query_vars[$this->web_trigger_key] == 'smtest') {
+        if (array_key_exists($this->web_trigger_key, $params)
+                || array_key_exists($this->download_key, $params)) {
+            if ($params[$this->web_trigger_key] == 'paypal_ipn'
+                    || $params[$this->web_trigger_key] == 'paypal_checkout') {
+                $this->handle_non_ui($params);
+            } elseif (!empty($params[$this->download_key])) {
+                $this->handle_non_ui($params);
+            } elseif ($params[$this->web_trigger_key] == 'smtest') {
                 wp_die($this->plugin_name . ': OK :)');
             } else {
                 // if it's txdigishop_cmd=txn_okn_ok it'll be handled by the page which renders the form.
                 //wp_die($this->plugin_name . ': Invalid value.');
             }
-        }
-    }
-
-    /**
-     *
-     * Whitelabels the variable 'digishop'... so WP allows it
-     *
-     * @param type $vars
-     * @return type
-     * @see http://codex.wordpress.org/Rewrite_API/add_rewrite_rule
-     * @see http://www.james-vandyne.com/process-paypal-ipn-requests-through-wordpress/
-     */
-    function add_query_vars($vars) {
-        // add my_plugin to the valid list of variables
-        $new_vars = array($this->web_trigger_key, $this->download_key);
-        $vars = $new_vars + $vars;
-
-        add_rewrite_tag('%' . $this->web_trigger_key . '%','([^&]+)');
-        add_rewrite_tag('%' . $this->download_key . '%','([^&]+)');
-
-        return $vars;
-    }
-
-    /**
-     *
-     * Adds rewrite rules. If you change them or add new update them in flush_rewrite_rules
-     *
-     * @global WP_Rewrite $wp_rewrite
-     * @param array $wp_rewrite
-     * @see http://codex.wordpress.org/Class_Reference/WP_Rewrite
-     * @see http://codex.wordpress.org/Rewrite_API/add_rewrite_rule
-     * @see http://www.james-vandyne.com/process-paypal-ipn-requests-through-wordpress/
-     */
-    function add_rewrite_rules($rules) {
-        $new_rules = array(
-            // handles SITE_URL/digishop_cmd/SOMETHING
-            $this->web_trigger_key . '/([\w-]+)/?' => 'index.php?' . $this->web_trigger_key . '=$matches[1]',
-
-            // Handles: http://localhost/wordpress313/orb_cyber_store_dl/f524efe208d0397d0ac0593ef81a15df79efbf3f
-            $this->download_key . '/([\w-]+)/?' => 'index.php?' . $this->download_key . '=$matches[1]',
-        );
-
-        return $new_rules + $rules;
-    }
-
-    /**
-     *
-     * @global WP_Rewrite $wp_rewrite
-     */
-    function flush_rewrite_rules() {
-        $rules = get_option('rewrite_rules');
-
-        if (!isset($rules[$this->web_trigger_key . '/([\w-]+)/?'])
-                    || !isset($rules[$this->download_key . '/([\w-]+)/?'])) {
-            global $wp_rewrite;
-            $wp_rewrite->flush_rules();
         }
     }
 
@@ -883,7 +805,7 @@ SHORT_CODE_EOF;
             Orbisius_CyberStoreUtil::download_file($file);
         }
         // get product info and prepare PayPal form and redirect.
-        elseif (!empty($this->query_vars[$this->web_trigger_key]) && $this->query_vars[$this->web_trigger_key] == 'paypal_checkout') {
+        elseif (!empty($data[$this->web_trigger_key]) && $data[$this->web_trigger_key] == 'paypal_checkout') {
             $id = empty($data[$this->plugin_id_str . '_product_id']) ? 0 : $data[$this->plugin_id_str . '_product_id'];
             $post_id = empty($data[$this->plugin_id_str . '_post_id']) ? 0 : $data[$this->plugin_id_str . '_post_id'];
             $no_shipping = isset($data[$this->plugin_id_str . '_no_shipping']) ? $data[$this->plugin_id_str . '_no_shipping'] : 1; // can be 0/1
@@ -952,7 +874,7 @@ SHORT_CODE_EOF;
         }
         // IPN called by PayPal: some people reported that they or their clients got lots of emails.
         // we'll create a hash file based on the TXN and not notify if we're called more than once by paypal
-        elseif (!empty($this->query_vars[$this->web_trigger_key]) && $this->query_vars[$this->web_trigger_key] == 'paypal_ipn') {
+        elseif (!empty($data[$this->web_trigger_key]) && $data[$this->web_trigger_key] == 'paypal_ipn') {
             // checking if this TXN has been processed. Paypal should always provide a unique TXN ID
 			$data = $_POST;
 
@@ -1222,11 +1144,12 @@ SHORT_CODE_EOF;
      */
     function public_notices() {
         $opts = $this->get_options();
+        $data = $_REQUEST;
 
-        if (!empty($this->query_vars[$this->web_trigger_key])) {
-            if ($this->query_vars[$this->web_trigger_key] == 'txn_ok') {
+        if (!empty($data[$this->web_trigger_key])) {
+            if ($data[$this->web_trigger_key] == 'txn_ok') {
                 $extra_msg = $this->msg("<br/>" . $opts['purchase_thanks'], 1, 1);
-            } elseif ($this->query_vars[$this->web_trigger_key] == 'txn_error') {
+            } elseif ($data[$this->web_trigger_key] == 'txn_error') {
                 $extra_msg = $this->msg("<br/>" . $opts['purchase_error'], 0, 1);
             }
 

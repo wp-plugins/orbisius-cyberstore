@@ -24,7 +24,8 @@
 		</div>
 
         <p>
-			<iframe style="width:100%;min-height:300px;height: auto;" width="640" height="480" src="http://club.orbisius.com/wpu/content/wp/cyberstore/" frameborder="0" allowfullscreen></iframe>
+			<iframe style="width:100%;min-height:300px;height: auto;" width="640"
+                    height="480" src="http://club.orbisius.com/wpu/content/wp/orbisius-cyberstore/" frameborder="0" allowfullscreen></iframe>
 		</p>
     </div>
 </div>
