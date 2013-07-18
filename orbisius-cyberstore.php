@@ -1291,14 +1291,17 @@ MSG_EOF;
     }
 
     /**
-     * Adds or updates a product
+     * Adds or updates a product. Returns the ID of the inserted or updated product.
+     * Uses $wpdb to make requests to the db.
      *
      * @param array $data
-     * @return bool 1 ok add; 0 error (permissions?)
+     * @return int for ok add (ID of the product); false error (permissions?)
      */
     function admin_product($data = array(), $id = null) {
         global $wpdb;
+        
         $st = 0;
+        
         $prev_rec = array();
 
         $id = Orbisius_CyberStoreUtil::stop_bad_input($id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
@@ -1374,7 +1377,7 @@ MSG_EOF;
             } else {
                 $st = $wpdb->update($this->plugin_db_prefix . 'products', $product_data, array('id' => $id));
                 // if it's error the status will be false, otherwise it's affected rows which could be 0 if we are just updating the file name.
-                $st = $st === false ? false : true;
+                $st = $st === false ? false : $id;
             }
 
             if (!empty($wpdb->last_error)) {

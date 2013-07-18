@@ -7,12 +7,15 @@ $msg = '';
 
 if (!empty($_POST)) {
     $data = $_REQUEST[$settings_key];
-    
-    if (!$orbisius_digishop_obj->admin_product($data, $id)) {
+
+    $ret_id = $orbisius_digishop_obj->admin_product($data, $id);
+
+    if (empty($ret_id)) {
         $msg = $orbisius_digishop_obj->message('Cannot add/update record. <br/>Errors: <br/>' . $orbisius_digishop_obj->get_errors_str());
         $err = 1;
     } else {
-        $msg = $orbisius_digishop_obj->message('Successfully added/updated record.', 1);
+        $shortcode = '[' . $orbisius_digishop_obj->get('plugin_id_str') . ' id=' . $ret_id . ']';
+        $msg = $orbisius_digishop_obj->message("Successfully added/updated record. Shortcode: $shortcode", 1);
     }
 
     // preserve data only when updating or error adding
