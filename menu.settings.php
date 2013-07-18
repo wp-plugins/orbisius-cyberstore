@@ -191,8 +191,41 @@ EOF;
                                 <?php echo is_writable($orbisius_digishop_obj->get('plugin_data_dir'))
                                             ? '<br/>'
                                             : $orbisius_digishop_obj->msg('Folder not writable!'); ?>
-                                For security reasons files are not available for direct download. Please use an FTP client for that purpose.
-                                <br/>All the transaction info will be recorded including customer info.
+                                All the transaction info will be recorded including customer info sent from PayPal.
+                                We recommend that you connect using FTP client (e.g. FileZilla) and delete the log files.
+                                <br/>Note: To see logged transactions enable logging and come back to advanced options.
+                                The logs will be listed here.
+
+                                <?php
+                                // Let's load the log files ONLY when the logging is enabled.
+                                if (!empty($opts['logging_enabled'])) {
+                                    $files = glob($orbisius_digishop_obj->get('plugin_data_dir') . '/log.*');
+
+                                    if (!empty($files)) {
+                                        echo "<div><br/>File(s): " . count($files);
+                                        echo "<ul>";
+
+                                        foreach ($files as $full_file) {
+                                            $file = basename($full_file);
+                                            $size = filesize($full_file);
+                                            $size_fmt = Orbisius_CyberStoreUtil::format_file_size($size);
+
+                                            if ($size > 500 * 1024) {
+                                                $buff = $orbisius_digishop_obj->msg("The log file is larger than 500KB. Please use FTP client to download its contents.");
+                                            } else {
+                                                $buff = file_get_contents($full_file);
+                                                $buff = "<br/><textarea class='widefat' readonly='readonly' rows='3'>" . $buff . '</textarea>';
+                                            }
+
+                                            echo "\t<li>$file, $size_fmt $buff</li>\n";
+                                        }
+
+                                        echo "</ul>";
+                                        echo "</div>";
+                                    }
+                                }
+                                
+                                ?>
                         </td>
                     </tr>
                     <tr valign="top">

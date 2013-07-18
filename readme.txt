@@ -103,6 +103,10 @@ n/a
 * Removed parse old code option because this plugin has to read another db table and do lots of work.
 * Fix: update/add was failing if no attachment was provided.
 * Made active checkbox to be checked when adding a new product by default ... saving one click
+* Changed some error messages (download link expired etc).
+* Added the return code (200 -> OK) in case PayPal calls the site again ... wp_die returns status 500 which makes paypal to call the site many times -> which leads to people being self spammed
+* Orbisius CyberStores > Settings : checking if a value exists and explicitely set it to 0 if not
+* Made possibly transactions logs to be listed within the settings ONLY if logging is enabled AND files are less than 500KB.
 
 = 1.1.5 =
 * Tested with wp 3.5.2

@@ -699,6 +699,17 @@ SHORT_CODE_EOF;
     }
 
     /**
+     * Some variables e.g. logging is a value passed by a checkbox field.
+     * When that checkbox is unchecked its value is not sent so the default one is used.
+     * The problem is when the default value is enabled (1) and the user tries to
+     * disable it. Since the value is not passed, only the enabled value stays.
+     * Therefore the user cannot disable a value if its default value is 1.
+     *
+     * @var array
+     */
+    private $explicty_var_bool_check_arr = array('logging_enabled');
+
+    /**
      * This is called by WP after the user hits the submit button.
      * The variables are trimmed first and then passed to the who ever wantsto filter them.
      * @param array the entered data from the settings page.
@@ -712,6 +723,12 @@ SHORT_CODE_EOF;
 
         // did the extension break stuff?
         $input = is_array($input_filtered) ? $input_filtered : $input;
+
+        // checking if a value exists and explicitely set it to 0 if not
+        // see the array's notes for more info.
+        foreach ($this->explicty_var_bool_check_arr as $field_name) {
+            $input[$field_name] = empty($input[$field_name]) ? 0 : 1;
+        }
 
         return $input;
     }
