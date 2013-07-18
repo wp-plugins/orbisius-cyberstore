@@ -95,11 +95,12 @@ n/a
 == Changelog ==
 
 = 1.1.6 =
-* fix: Orbisius CyberStore wasn't working well with older versions of itself (former DigiShop)
+* Fixed: Orbisius CyberStore wasn't working well with older versions of itself (former DigiShop)
 * Added functionality (through extension) to make the order email text field into rich text editor
 * Tweaked the donation box in the dashboard. Looks better centered.
 * Made some text boxes larger (in settings)
 * Fixed paypal link to currency codes
+* Removed parse old code option because this plugin has to read another db table and do lots of work.
 
 = 1.1.5 =
 * Tested with wp 3.5.2

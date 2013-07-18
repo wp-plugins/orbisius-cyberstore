@@ -1172,7 +1172,7 @@ CODE_EOF;
      */
     function message($msg, $status = 0) {
         $id = $this->plugin_id_str;
-        $cls = empty($status) ? 'error fade' : 'success update'; // update is the WP class for success ?!?
+        $cls = empty($status) ? 'error fade' : 'success updated'; // update is the WP class for success ?!?
 
         $str = <<<MSG_EOF
 <div id='$id-notice' class='$cls'><p><strong>$msg</strong></p></div>
