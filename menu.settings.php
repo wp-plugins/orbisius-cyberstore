@@ -3,7 +3,7 @@ $settings_key = $orbisius_digishop_obj->get('plugin_settings_key');
 $opts = $orbisius_digishop_obj->get_options();
 
 ?>
-<div class="webweb_wp_digishop">
+<div class="orbisius_cyberstore">
     <div class="wrap">
         <div class="main_content">
             <h2>Settings</h2>

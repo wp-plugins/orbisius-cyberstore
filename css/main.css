@@ -1,51 +1,51 @@
 
-.app_table { 
+.orbisius_cyberstore .app_table { 
 	width: 30%;
 }
 
-.app_table_half {
+.orbisius_cyberstore .app_table_half {
 	width:50%;
 }
 
-.app_table_medium {
+.orbisius_cyberstore .app_table_medium {
 	width:75%;
 }
 
-.app_table_full{
+.orbisius_cyberstore .app_table_full {
 	width:100%;
 }
 
-.app_table td {
+.orbisius_cyberstore .app_table td {
 	padding:10px;
 }
 
-.ext_row {
+.orbisius_cyberstore .ext_row {
     border:1px solid #ccc;
 }
 
-.webweb_wp_plugin .input_field, .webweb_wp_digishop .input_field {
+.webweb_wp_plugin .input_field, .orbisius_cyberstore .input_field {
 	min-width:220px;
     width:550px;
 }
 
-.form-table textarea {
+.orbisius_cyberstore .form-table textarea {
 	width:550px;
     height: 150px;
 }
 
-.success, .app_success {
+.orbisius_cyberstore .success, .orbisius_cyberstore .app_success {
     color: green;
 }
 
-.app_error, .app_delete_button {
+.orbisius_cyberstore .app_error, .orbisius_cyberstore .app_delete_button {
     color: red;
 }
 
-.app_hide {
+.orbisius_cyberstore .app_hide {
     display: none;
 }
 
-.app_message_box {
+.orbisius_cyberstore .app_message_box {
     _margin: 5px 5px 15px;
     margin: 0;
     padding:5px;
@@ -57,7 +57,7 @@
     color: red;
 }
 
-.webweb_wp_digishop .main_content {
+.orbisius_cyberstore .main_content {
 	float: left;
     margin: 0;
     padding: 0;
@@ -65,7 +65,7 @@
     vertical-align: top;
 }
 
-.webweb_wp_digishop .zzz_app_admin_sidebar {
+.orbisius_cyberstore .zzz_app_admin_sidebar {
 	float: right;
     margin: 0;
     padding: 0;
@@ -79,6 +79,7 @@
     width: 20%;
 }
 
-.webweb_wp_digishop_donation {
+.orbisius_cyberstore_donation {
     margin-left: 10px;
 }
+
