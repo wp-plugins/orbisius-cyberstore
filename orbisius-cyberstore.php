@@ -760,7 +760,7 @@ SHORT_CODE_EOF;
                 $dl_cnt_file = $this->plugin_uploads_dir . '___sys_txn_dl_' . $hash . '_cnt.txt';
 
                 if (!file_exists($file)) {
-                    wp_die($this->m($this->plugin_id_str . ': Invalid download hash (1).', 0, 1)
+                    wp_die($this->m($this->plugin_name . ': Invalid download hash (1).', 0, 1)
                         . $this->add_plugin_credits());
                 }
 
@@ -769,14 +769,14 @@ SHORT_CODE_EOF;
                 $dl_cnt = empty($dl_cnt) ? 1 : intval($dl_cnt);
 
                 if (time() - filemtime($file) > 48 * 3600) { // dl expire after 48h
-                    wp_die($this->m($this->plugin_id_str . ': The download has expired.', 0, 1)
+                    wp_die($this->m($this->plugin_name . ': The download link has expired.', 0, 1)
                             . $this->add_plugin_credits());
                 }
 
                 // was it downloaded more than 3 times?
                 if ($dl_cnt > 3) {
-                    wp_die($this->m($this->plugin_id_str . ': The download limit has been reached.', 0, 1)
-                            . $this->add_plugin_credits());
+                    wp_die($this->m($this->plugin_name . ': The download limit has been reached.', 0, 1)
+                            . $this->add_plugin_credits(), 'Download Limit Reached');
                 }
 
                 $dl_cnt++;
@@ -788,7 +788,7 @@ SHORT_CODE_EOF;
             $product_rec = $this->get_product($hash);
 
             if (empty($product_rec) || empty($product_rec['active'])) {
-                wp_die($this->m($this->plugin_id_str . ': Invalid download hash (2).', 0, 1)
+                wp_die($this->m($this->plugin_name . ': Invalid download hash (2).', 0, 1)
                         . $this->add_plugin_credits());
             }
 
@@ -820,7 +820,7 @@ SHORT_CODE_EOF;
 
             if (empty($product_rec) || empty($product_rec['active'])) {
                 $this->log('paypal_checkout (1): Invalid Product ID: ' . $id);
-                wp_die('Invalid Product ID: ' . $id);
+                wp_die($this->plugin_name . ': Invalid Product ID: ' . $id);
             }
 
             $paypal_url = $this->paypal_url;
@@ -901,9 +901,10 @@ SHORT_CODE_EOF;
                 }
 
                 if ($do_stop) {
-                    wp_die($this->m($this->get('plugin_id_str')
+                    // wp_die defaults to: 500 error code and this may/will cause paypal to call the site again
+                    wp_die($this->m($this->get('plugin_name')
                         . ': this transaction seem to have been processed already. Stopping.', 0, 1)
-                        . $this->add_plugin_credits());
+                        . $this->add_plugin_credits(), 'Process same TXN gain?', array( 'response' => 200) );
                 }
             }
 
@@ -911,9 +912,7 @@ SHORT_CODE_EOF;
 
             if (!empty($opts['notification_email'])) {
                 $admin_email = $opts['notification_email'];
-            }
-            // ?? send to business email ???
-            else {
+            } else { // ?? send to business email ???
 
             }
 
