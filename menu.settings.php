@@ -40,7 +40,7 @@ $opts = $orbisius_digishop_obj->get_options();
                     </tr>
                     <tr valign="top">
                         <th scope="row">Subject (download email)</th>
-                        <td><input type="text" name="<?php echo $settings_key; ?>[purchase_subject]" value="<?php echo $opts['purchase_subject']; ?>" class="input_field"/></td>
+                        <td><input type="text" name="<?php echo $settings_key; ?>[purchase_subject]" value="<?php echo $opts['purchase_subject']; ?>" class="input_field widefat"/></td>
                     </tr>
                     <tr valign="top">
                         <th scope="row">Content (download email)</th>
