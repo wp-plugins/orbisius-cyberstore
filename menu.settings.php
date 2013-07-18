@@ -99,7 +99,8 @@ $opts = $orbisius_digishop_obj->get_options();
                                     <input type="checkbox" id="digishop_require_shipping" name="<?php echo $settings_key; ?>[require_shipping]" value="1"
                                         <?php echo empty($opts['require_shipping']) ? '' : 'checked="checked"'; ?> /> Enable</label>
                         </td>
-                    </tr>                    
+                    </tr>
+                    <?php if (0) : /* No need to parse old code because this plugin has to read another db table and match ids. */ ?>
 					<tr valign="top">
                         <th scope="row">Parse the old [digishop] shortcode</th>
                         <td>
@@ -110,6 +111,7 @@ $opts = $orbisius_digishop_obj->get_options();
 							<p>Check the box if you are running OrbisiusCyberstore and the DigiShop</p>
                         </td>
                     </tr>
+                    <?php endif; ?>
 
                     <?php if (has_action('orb_cyber_store_render_extension_settings')) : ?>
                         <tr valign="top">
