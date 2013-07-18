@@ -101,6 +101,8 @@ n/a
 * Made some text boxes larger (in settings)
 * Fixed paypal link to currency codes
 * Removed parse old code option because this plugin has to read another db table and do lots of work.
+* Fix: update/add was failing if no attachment was provided.
+* Made active checkbox to be checked when adding a new product by default ... saving one click
 
 = 1.1.5 =
 * Tested with wp 3.5.2

@@ -140,6 +140,7 @@ class Orbisius_CyberStore {
             $inst->plugin_db_prefix = $wpdb->prefix . $inst->plugin_id_str . '_';
             $inst->web_trigger_key = $inst->plugin_id_str . '_cmd';
             $inst->download_key = $inst->plugin_id_str . '_dl';
+            $inst->payment_notify_url = Orbisius_CyberStoreUtil::add_url_params($site_url, array($inst->web_trigger_key => 'paypal_ipn'));
 
             $opts = $inst->get_options();
 
@@ -850,13 +851,11 @@ SHORT_CODE_EOF;
                 'business' => $email,
                 'no_shipping' => $no_shipping,
                 'no_note' => 1,
-                //'lc' => 'DE', language
                 'amount' => $price,
                 'item_name' => $item_name,
                 'item_number' => $item_number,
                 'currency_code' => $opts['currency'],
                 'custom' => http_build_query(array('id' => $item_number, 'site' => $this->site_url)),
-
                 'notify_url' => $this->payment_notify_url,
                 'return' => $return_page,
                 'cancel_return' => $cancel_return,
