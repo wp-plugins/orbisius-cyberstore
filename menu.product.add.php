@@ -87,7 +87,7 @@ if (!empty($id)) {
                 <tr valign="top">
                     <th scope="row">Active</th>
                     <td><input type="checkbox" name="<?php echo $settings_key; ?>[active]" value="1"
-                                <?php echo empty($opts['active']) ? '' : 'checked="checked"'; ?> /></td>
+                                <?php echo empty($opts) || !empty($opts['active']) ? 'checked="checked"' : ''; ?> /></td>
                 </tr>
             </table>
                         <p>

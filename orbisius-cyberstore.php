@@ -1301,6 +1301,7 @@ MSG_EOF;
             }
 
             // TODO Sanitize vars
+            $product_data['hash'] = '';
             $product_data['label'] = $data['label'];
             $product_data['price'] = trim($data['price'], ' $');
             $product_data['active'] = empty($data['active']) ? 0 : 1;
@@ -1342,9 +1343,7 @@ MSG_EOF;
 
                 // add file name and not the full because people can switch hostings
                 $product_data['file'] = $target_file;
-            }
-            // external SRC
-            elseif (!empty($ext_link) && Orbisius_CyberStoreUtil::validate_url($ext_link)) {
+            } elseif (!empty($ext_link) && Orbisius_CyberStoreUtil::validate_url($ext_link)) { // external SRC
                 $product_data['hash'] = Orbisius_CyberStoreUtil::generate_hash($ext_link);
                 $product_data['file'] = $ext_link;
             }
