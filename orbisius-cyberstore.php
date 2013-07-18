@@ -273,22 +273,22 @@ class Orbisius_CyberStore {
         $id = empty($attr['id']) ? 0 : Orbisius_CyberStoreUtil::stop_bad_input($attr['id'], Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
 
         if (empty($id)) {
-            return $this->m($this->plugin_id_str . ': empty product ID. Possibly incorrect use of the short code.', 0, 1);
+            return $this->m($this->plugin_name . ': empty product ID. Possibly incorrect use of the short code.', 0, 1);
         }
 
         if (empty($opts['status'])) {
-            return "<!-- {$this->plugin_id_str} is Disabled | Plugin URL: {$this->plugin_home_page} -->";
+            return "<!-- {$this->plugin_name} is Disabled | Plugin URL: {$this->plugin_home_page} -->";
         }
 
         $prev_rec = $this->get_product($id);
 
         // these errors should be seen by the admin
         if (empty($prev_rec)) {
-            return $this->m($this->plugin_id_str . ": Product [$id] was not found.", 0, 1);
+            return $this->m($this->plugin_name . ": Product [$id] was not found.", 0, 1);
         } elseif (empty($prev_rec['file'])) {
-            return $this->m($this->plugin_id_str . ": Product [$id] does not have a file associated with it.", 0, 1);
+            return $this->m($this->plugin_name . ": Product [$id] does not have a file associated with it.", 0, 1);
         } elseif (empty($prev_rec['active'])) {
-            return "<!-- {$this->plugin_id_str} Product id=$id is inactive | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url -->";
+            return "<!-- {$this->plugin_name} Product id=$id is inactive | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url -->";
         }
 
         $paypal_url = 'https://www.paypal.com/cgi-bin/webscr';

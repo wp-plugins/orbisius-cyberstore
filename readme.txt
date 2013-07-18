@@ -94,6 +94,9 @@ n/a
 
 == Changelog ==
 
+= 1.1.7 (future release) =
+* fix: using plugin name instead of it's internal slug
+
 = 1.1.6 =
 * Fixed: Orbisius CyberStore wasn't working well with older versions of itself (former DigiShop)
 * Added functionality (through extension) to make the order email text field into rich text editor
