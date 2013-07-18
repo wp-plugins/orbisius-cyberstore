@@ -23,7 +23,7 @@
     border:1px solid #ccc;
 }
 
-.webweb_wp_plugin .input_field, .orbisius_cyberstore .input_field {
+.orbisius_cyberstore .input_field, .orbisius_cyberstore .input_field {
 	min-width:220px;
     width:550px;
 }
@@ -72,7 +72,7 @@
     width: 20%;
 }
 
-.webweb_wp_plugin .op_cmd_right {
+.orbisius_cyberstore .op_cmd_right {
 	float: right;
     margin: 0;
     padding: 0;
@@ -83,4 +83,3 @@
     margin-left: 10px;
 	text-align:center;
 }
-

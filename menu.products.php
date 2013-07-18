@@ -1,8 +1,13 @@
 <?php
 
-$del_status = 0;
+if (!current_user_can('manage_options') ) {
+    wp_die('What?', 'Hi');
+}
 
-if ($_REQUEST['do'] == 'delete' && is_admin()) {
+$del_status = 0;
+$cmd = empty($_REQUEST['do']) ? '' : $_REQUEST['do'];
+
+if ($cmd == 'delete' && is_admin()) {
     $del_status = $orbisius_digishop_obj->delete_product($_REQUEST['id']);
 }
 
@@ -19,7 +24,7 @@ $inactive_product = " <img src='$adm_prefix/images/product_inactive.png' title='
 $active_product = " <img src='$adm_prefix/images/product_active.png' title='' alt='' /> " . $orbisius_digishop_obj->m('Active', 1);
 ?>
 
-<div class="webweb_wp_plugin">
+<div class="orbisius_cyberstore">
     <div class="wrap">
         <h2>Products
         <span class="op_cmd_right"><a href="<?php echo $orbisius_digishop_obj->get('plugin_admin_url_prefix') . '/menu.product.add.php';?>">Add Product</a></span>

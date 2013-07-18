@@ -1,4 +1,4 @@
-<div class="webweb_wp_plugin">
+<div class="orbisius_cyberstore">
     <div class="wrap">
         <h2>Help</h2>
 		

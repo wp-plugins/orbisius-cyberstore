@@ -27,7 +27,7 @@ if (!empty($id)) {
 
 ?>
 
-<div class="webweb_wp_plugin">
+<div class="orbisius_cyberstore">
     <div class="wrap">
         <h2>Add/Edit Product</h2>
         <?php echo $msg; ?>

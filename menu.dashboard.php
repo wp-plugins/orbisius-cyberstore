@@ -2,7 +2,7 @@
 $opts = $orbisius_digishop_obj->get_options();
 ?>
 
-<div class="webweb_wp_plugin">
+<div class="orbisius_cyberstore">
     <div class="wrap">
         <h2><?php echo __('Dashboard', 'webweb_member_status') ?></h2>
 
