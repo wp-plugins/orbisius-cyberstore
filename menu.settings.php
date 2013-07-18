@@ -206,7 +206,7 @@ EOF;
                                     style="border:2px dashed red;width: 50%;" src="<?php echo $orbisius_digishop_obj->get('plugin_url');?>/images/example_paypal_non_ssl_site_warning.png" alt="example_paypal_non_ssl_site_warning" /></a>
 
                             <div><strong>Sample redirect script</strong>. Right click and copy it and install it on your secure area.</div>
-                            <textarea class="input_field" rows="6" readonly="readonly" onclick="this.select();">&lt;?php
+                            <textarea class="input_field widefat" rows="6" readonly="readonly" onclick="this.select();">&lt;?php
 // WordPress Orbisius_CyberStore
 if (empty($_REQUEST['r'])) {
     die('It Works!');
