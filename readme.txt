@@ -94,10 +94,14 @@ n/a
 
 == Changelog ==
 
-= 1.1.7 (future release) =
+= 1.1.8 =
+* Removed some methods that were causing lots of debug messages. e.g. is_feed
+* Shortcode attribute to render price
+* Fixed: when adding a product it did't return the correct ID but just 1 for all new products.
+
+= 1.1.7 =
 * fix: using plugin name instead of it's internal slug
 * Made the insert/update to return the ID of the product so I can create the shortcode.
-* Removed some methods that were causing lots of debug messages. e.g. is_feed
 
 = 1.1.6 =
 * Fixed: Orbisius CyberStore wasn't working well with older versions of itself (former DigiShop)

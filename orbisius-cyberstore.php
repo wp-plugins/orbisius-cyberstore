@@ -271,11 +271,11 @@ class Orbisius_CyberStore {
      */
     function parse_short_code($attr = array()) {
         global $post;
+		$buffer = '';
         $post_url = get_permalink($post->ID);
 
         $opts = $this->get_options();
 
-        $id = empty($attr['id']) ? 0 : Orbisius_CyberStoreUtil::stop_bad_input($attr['id'], Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
         $id = empty($attr['id']) ? 0 : Orbisius_CyberStoreUtil::stop_bad_input($attr['id'], Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
 
         if (empty($id)) {
@@ -345,7 +345,7 @@ class Orbisius_CyberStore {
         $post_url_esc = esc_attr($post_url);
 
         if (!empty($opts['render_old_paypal_form'])) {
-            $buffer = <<<SHORT_CODE_EOF
+            $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 <form action="$paypal_url" method="post" target="_blank" >
             <input type='hidden' name="business" value="$email" />
@@ -365,8 +365,21 @@ class Orbisius_CyberStore {
 <!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 SHORT_CODE_EOF;
         } else {
+			if (!empty($attr['render_price'])) {
+				// of dollars in Canada, US & Australia we'll prefix the money with $ sign
+				$default_currency_prefix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? '$' : '';
+			
+				$label = empty($attr['price_label']) ? 'Price' : $attr['price_label'];
+				$currency_prefix = empty($attr['currency_prefix']) ? $default_currency_prefix : $attr['currency_prefix']; // e.g. $
+				$currency_suffix = empty($attr['currency_suffix']) ? $currency : $attr['currency_suffix']; // USD defaults to currency
+				$price_suffix = empty($attr['price_suffix_label']) ? '' : $attr['price_suffix_label']; // e.g. (one time)
 
-            $buffer = <<<SHORT_CODE_EOF
+                $buffer .= "\n<div class='{$this->plugin_id_str}_product_price'>
+					$label: {$currency_prefix}$price {$currency_suffix} {$price_suffix}
+					</div>\n";
+			}
+		
+            $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 <form id="{$this->plugin_id_str}_form_$id" class="{$this->plugin_id_str}_form" action="$post_url_esc" method="post" $form_new_window onsubmit="jQuery('.{$this->plugin_id_str}_loader').show();">
     <input type='hidden' name="$aaa_cmd_key" value="paypal_checkout" />
@@ -1380,6 +1393,7 @@ MSG_EOF;
 
             if (empty($id)) {
                 $st = $wpdb->insert($this->plugin_db_prefix . 'products', $product_data);
+				$st = $st === false ? false : $wpdb->insert_id;
             } else {
                 $st = $wpdb->update($this->plugin_db_prefix . 'products', $product_data, array('id' => $id));
                 // if it's error the status will be false, otherwise it's affected rows which could be 0 if we are just updating the file name.

@@ -14,7 +14,7 @@ if (!empty($_POST)) {
         $msg = $orbisius_digishop_obj->message('Cannot add/update record. <br/>Errors: <br/>' . $orbisius_digishop_obj->get_errors_str());
         $err = 1;
     } else {
-        $shortcode = '[' . $orbisius_digishop_obj->get('plugin_id_str') . ' id=' . $ret_id . ']';
+        $shortcode = '[' . $orbisius_digishop_obj->get('plugin_id_str') . ' id="' . $ret_id . '"]';
         $msg = $orbisius_digishop_obj->message("Successfully added/updated record. Shortcode: $shortcode", 1);
     }
 
