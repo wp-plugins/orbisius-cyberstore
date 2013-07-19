@@ -1,9 +1,12 @@
 <?php
 
+$msg = '';
+
 $id = !isset($_REQUEST['id']) ? null : $_REQUEST['id'];
 $settings_key = $orbisius_digishop_obj->get('plugin_settings_key');
 $db_prefix = $orbisius_digishop_obj->get('plugin_db_prefix');
-$msg = '';
+
+$product_rec = $orbisius_digishop_obj->get_product_defaults();
 
 if (!empty($_POST)) {
     $data = $_REQUEST[$settings_key];
@@ -20,12 +23,12 @@ if (!empty($_POST)) {
 
     // preserve data only when updating or error adding
     if (!empty($err) || !empty($id)) {
-        $opts = $_REQUEST[$settings_key];
+        $product_rec = $_REQUEST[$settings_key];
     }
 }
 
 if (!empty($id)) {
-    $opts = $orbisius_digishop_obj->get_product($id);
+    $product_rec = $orbisius_digishop_obj->get_product($id);
 }
 
 ?>
@@ -41,26 +44,29 @@ if (!empty($id)) {
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row">Name</th>
-                    <td><input type="text" name="<?php echo $settings_key; ?>[label]" value="<?php echo $opts['label']; ?>" class="input_field" /></td>
+                    <td><input type="text" name="<?php echo $settings_key; ?>[label]" value="<?php echo $product_rec['label']; ?>" class="input_field" /></td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row">Price (e.g. 29.95, 10)</th>
-                    <td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo $opts['price']; ?>" autocomplete="off" /></td>
+                    <th scope="row">Price</th>
+                    <td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo $product_rec['price']; ?>" autocomplete="off" />
+                    Example: 29.95 or 10
+                    </td>
                 </tr>
                 <tr valign="top">
                     <th scope="row">File</th>
                     <td>
-                        <input type="file" name="file" value="" /> Max Upload Size: <?php echo Orbisius_CyberStoreUtil::get_max_upload_size(); ?> MB
-
-                        <?php if (!empty($opts['file'])) : ?>
+                        <input type="file" name="file" value="" /> Max file upload size:
+                            <?php echo Orbisius_CyberStoreUtil::get_max_upload_size(); ?> MB *
+                        
+                        <?php if (!empty($product_rec['file'])) : ?>
                             <br/>
                             <?php
-                                if (!Orbisius_CyberStoreUtil::validate_url($opts['file'])) {
-                                    if (file_exists($orbisius_digishop_obj->get('plugin_uploads_dir') . $opts['file'])) {
-                                        echo $opts['file'] . ' (' . Orbisius_CyberStoreUtil::format_file_size(
-                                            @filesize($orbisius_digishop_obj->get('plugin_uploads_dir') . $opts['file'])) . ')';
+                                if (!Orbisius_CyberStoreUtil::validate_url($product_rec['file'])) {
+                                    if (file_exists($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) {
+                                        echo $product_rec['file'] . ' (' . Orbisius_CyberStoreUtil::format_file_size(
+                                            @filesize($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) . ')';
                                     } else {
-                                        echo "<span class='app_error'>The uploaded file [{$opts['file']}] cannot be found.</span>";
+                                        echo "<span class='app_error'>The uploaded file [{$product_rec['file']}] cannot be found.</span>";
                                     }
                                 }
                             ?>
@@ -74,10 +80,10 @@ if (!empty($id)) {
                     <td><input type="text" name="<?php echo $settings_key; ?>[ext_link]" value="<?php
                         $ext_link = '';
 
-                        if (!empty($opts['ext_link'])) {
-                            $ext_link = $opts['ext_link'];
-                        } elseif (Orbisius_CyberStoreUtil::validate_url($opts['file'])) {
-                            $ext_link = $opts['file'];
+                        if (!empty($product_rec['ext_link'])) {
+                            $ext_link = $product_rec['ext_link'];
+                        } elseif (Orbisius_CyberStoreUtil::validate_url($product_rec['file'])) {
+                            $ext_link = $product_rec['file'];
                         }
 
                         echo esc_attr($ext_link); ?>" class="input_field" />
@@ -90,15 +96,15 @@ if (!empty($id)) {
                 <tr valign="top">
                     <th scope="row">Active</th>
                     <td><input type="checkbox" name="<?php echo $settings_key; ?>[active]" value="1"
-                                <?php echo empty($opts) || !empty($opts['active']) ? 'checked="checked"' : ''; ?> /></td>
+                                <?php echo empty($product_rec) || !empty($product_rec['active']) ? 'checked="checked"' : ''; ?> /></td>
                 </tr>
             </table>
-                        <p>
-                            <br/>Notes:<br/> One file per product. If you need more please add them to a ZIP file.
-                            <br/>Update: 2012-07-09: Uploading a new file will NOT override a file with the same name that belongs to another product.
-                            <br/>If a file exists the plugin will append some random text + number e.g. "-sss0123456789" which will <strong>NOT</strong>
-                            appear in the filename when the product is downloaded.
-                        </p>
+            <p>
+                <br/>Notes:
+                <br/> One file per product. If you need more please add them into a ZIP archive file.
+                <br/> * The maximum file upload size is determined by your hosting company.
+                If it is too low (e.g. less than 2 MB) contact your hosting to increase it.
+            </p>
             <p class="submit">
                 <input type="submit" class="button-primary" value="<?php _e('Save') ?>" />
             </p>

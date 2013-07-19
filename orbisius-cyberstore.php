@@ -1310,13 +1310,28 @@ MSG_EOF;
     }
 
     /**
+     * Returns an array with product fields with default values.
+     */
+    public function get_product_defaults() {
+        $default_fields = array(
+            'file' => '',
+            'label' => '',
+            'price' => '',
+            'ext_link' => '',
+            'active' => 1,
+        );
+
+        return $default_fields;
+    }
+
+    /**
      * Adds or updates a product. Returns the ID of the inserted or updated product.
      * Uses $wpdb to make requests to the db.
      *
      * @param array $data
      * @return int for ok add (ID of the product); false error (permissions?)
      */
-    function admin_product($data = array(), $id = null) {
+    public function admin_product($data = array(), $id = null) {
         global $wpdb;
         
         $st = 0;

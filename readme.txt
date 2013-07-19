@@ -98,6 +98,7 @@ n/a
 * Removed some methods that were causing lots of debug messages. e.g. is_feed
 * Shortcode attribute to render price
 * Fixed: when adding a product it did't return the correct ID but just 1 for all new products.
+* Added some product field defaults -> add product was outputting some notices
 
 = 1.1.7 =
 * fix: using plugin name instead of it's internal slug
