@@ -344,6 +344,10 @@ class Orbisius_CyberStore {
 
         $post_url_esc = esc_attr($post_url);
 
+        // if the user wants to add some call to action BEFORE the buy now button
+        $pre_buy_now = apply_filters('orb_cyber_store_ext_filter_before_buy_now', '');
+        $buffer .= $pre_buy_now;
+
         if (!empty($opts['render_old_paypal_form'])) {
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
@@ -365,18 +369,33 @@ class Orbisius_CyberStore {
 <!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 SHORT_CODE_EOF;
         } else {
-			if (!empty($attr['render_price'])) {
+            // either the attribute is set to render price OR a plugin wants that
+            $render_price = !empty($attr['render_price']) || apply_filters('orb_cyber_store_ext_filter_render_price', false);
+            
+			if ($render_price) {
 				// of dollars in Canada, US & Australia we'll prefix the money with $ sign
 				$default_currency_prefix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? '$' : '';
+				$default_currency_suffix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? $currency : '';
 			
 				$label = empty($attr['price_label']) ? 'Price' : $attr['price_label'];
 				$currency_prefix = empty($attr['currency_prefix']) ? $default_currency_prefix : $attr['currency_prefix']; // e.g. $
-				$currency_suffix = empty($attr['currency_suffix']) ? $currency : $attr['currency_suffix']; // USD defaults to currency
-				$price_suffix = empty($attr['price_suffix_label']) ? '' : $attr['price_suffix_label']; // e.g. (one time)
+				$currency_suffix = empty($attr['currency_suffix']) ? $default_currency_suffix : $attr['currency_suffix']; // USD defaults to currency
+				$price_suffix = empty($attr['price_suffix']) ? '' : $attr['price_suffix']; // e.g. (one time purchase)
 
-                $buffer .= "\n<div class='{$this->plugin_id_str}_product_price'>
+                $label = apply_filters('orb_cyber_store_ext_filter_price_label', $label);
+                $currency_prefix = apply_filters('orb_cyber_store_ext_filter_currency_prefix', $currency_prefix);
+                $currency_suffix = apply_filters('orb_cyber_store_ext_filter_currency_suffix', $currency_suffix);
+                $price_suffix = apply_filters('orb_cyber_store_ext_filter_price_suffix', $price_suffix);
+
+                $cls = "{$this->plugin_id_str}_product_price ";
+                $cls = apply_filters('orb_cyber_store_ext_filter_price_container_css', $cls); // in case somebody wants to add more CSS
+
+                $buffer .= "\n<div class='$cls'>
 					$label: {$currency_prefix}$price {$currency_suffix} {$price_suffix}
 					</div>\n";
+
+                // this is the whole buffer
+                $buffer = apply_filters('orb_cyber_store_ext_filter_price_container', $buffer);
 			}
 		
             $buffer .= <<<SHORT_CODE_EOF
@@ -398,10 +417,12 @@ SHORT_CODE_EOF;
 
         }
 
+        $txn_status = 0;
         $extra_msg = '';
 
         if (!empty($_REQUEST[$this->web_trigger_key])) {
             if ($_REQUEST[$this->web_trigger_key] == 'txn_ok') {
+                $txn_status = 1;
                 $extra_msg = $this->m("<br/>" . $opts['purchase_thanks'], 1, 1);
             } elseif ($_REQUEST[$this->web_trigger_key] == 'txn_error') {
                 $extra_msg = $this->m("<br/>" . $opts['purchase_error'], 0, 1);
@@ -409,10 +430,15 @@ SHORT_CODE_EOF;
         }
 
         if (!empty($extra_msg)) {
+            $extra_msg = apply_filters('orb_cyber_store_ext_filter_post_buy_now_txn_message', $extra_msg, $txn_status);
             $extra_msg = "<p>$extra_msg</p>";
         }
 
         $buffer .= $extra_msg;
+
+        // if the user wants to add some call to action AFTER the buy now button
+        $post_buy_now = apply_filters('orb_cyber_store_ext_filter_after_buy_now', '');
+        $buffer .= $post_buy_now;
 
 		return $buffer;
     }

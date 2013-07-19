@@ -27,6 +27,7 @@ It adds a simple buy now button which sends your customer to PayPal to complete 
 = Demo =
 http://www.youtube.com/watch?v=6EKNMYjzwlM
 
+
 = Benefits / Features =
 
 * Easy to use
@@ -48,6 +49,29 @@ makes the user experience less optimal. Orbisius CyberStore includes a sample re
 
 <a href="http://orbisius.com/go/intro2site?digishop"
     target="_blank">Free e-book: How to Build a Website Using WordPress: Beginners Guide</a>
+
+
+New attributes
+
+render_price="1"
+When this attribute is set in the shortcode will make the plugin show the price above the buy now button.
+Why this is important? Because if you enter the price on a page and later go and modify the product price of the product
+you may forgot to update the page. That's not good to for the users.
+
+currency_prefix="$" : currency sign shown before the price, it defaults to $ for CAD, USD, AUD
+currency_suffix="USD" : text shown after the price
+price_label="Price" : text shown before the price
+price_suffix="(one time)" text appended after the currency suffix
+
+Example:
+[orb_cyber_store id="123" render_price="1" price_suffix_label="(one time)"]
+
+This example this will display
+Price: $249.95 USD (one time)
+
+If you want the price to be shown for all products insert this in your functions.php of the current theme
+add_filter('orb_cyber_store_ext_filter_render_price', '__return_true', 10);
+
 
 = Author =
 
@@ -74,7 +98,6 @@ If you have run into issues or have questions/suggestions please register on our
 
 > Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
 > Please do NOT use the WordPress forums or other places to seek support.
-
 
 == Screenshots ==
 1. Plugin icon when editing post/page
