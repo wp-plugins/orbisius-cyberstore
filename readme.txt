@@ -1,9 +1,9 @@
 === Orbisius CyberStore ===
-Contributors: lordspace
+Contributors: lordspace,orbisius
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7APYDVPBCSY9A
-Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore
-Requires at least: 2.6.2
-Tested up to: 3.5.2
+Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore,woocommerce,paypal, e-commerce, e-shop, e-store,  payment, paypal, Paypal shopping cart, sell digital products, shop, shopping cart, wordperss ecommerce, WordPress shopping cart, wp, wp store,edl,Easy Digital Downloads
+Requires at least: 2.8
+Tested up to: 3.6
 Stable tag: 1.1.7
 License: GPLv2 or later
 
@@ -122,6 +122,7 @@ n/a
 * Shortcode attribute to render price
 * Fixed: when adding a product it did't return the correct ID but just 1 for all new products.
 * Added some product field defaults -> add product was outputting some notices
+* Added a filter before serving the file for download that way the file can be changed by a filter
 
 = 1.1.7 =
 * fix: using plugin name instead of it's internal slug

@@ -243,6 +243,11 @@ class Orbisius_CyberStore {
      */
     public function parse_request() {
         $params = $_REQUEST;
+        $allow_local_dl = 0; // used for testing.
+
+        // if 2 servers are used e.g. nginx (port 80) and apache (port 8080) the remote addr may be shown as 127.0.0.1
+        $local_ip = empty($_SERVER['REMOTE_ADDR']) // cli
+                        || preg_match('#^(127\.0\.0\.1|192\.168\.\d\.|10\.0\.0\.)#', $_SERVER['REMOTE_ADDR']) ? 1 : 0;
 
         if (array_key_exists($this->web_trigger_key, $params)
                 || array_key_exists($this->download_key, $params)) {
@@ -252,7 +257,22 @@ class Orbisius_CyberStore {
             } elseif (!empty($params[$this->download_key])) {
                 $this->handle_non_ui($params);
             } elseif ($params[$this->web_trigger_key] == 'smtest') {
+
+                $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
+                Orbisius_CyberStoreUtil::download_file($file);
+
                 wp_die($this->plugin_name . ': OK :)');
+            } elseif ($params[$this->web_trigger_key] == 'test_download' && $local_ip && $allow_local_dl) {
+                $id = empty($params['id']) ? 0 : $params['id'];
+                $product_rec = $this->get_product($id);
+
+                if (empty($product_rec)) {
+                    wp_die($this->plugin_name . ': Product not found.');
+                }
+
+                $file = $this->plugin_uploads_dir . $product_rec['file'];
+                $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
+                Orbisius_CyberStoreUtil::download_file($file);
             } else {
                 // if it's txdigishop_cmd=txn_okn_ok it'll be handled by the page which renders the form.
                 //wp_die($this->plugin_name . ': Invalid value.');
@@ -871,6 +891,29 @@ SHORT_CODE_EOF;
             $file = $this->plugin_uploads_dir . $product_rec['file'];
 
             $this->log("Going to serve product ID: {$product_rec['id']}, file: $file");
+
+            /*
+             $file -> path/to/uploads/orb...store/amazon-wishlist-sss1369060104.zip
+             $product_rec = array(8) {
+                ["id"]=>
+                string(1) "1"
+                ["label"]=>
+                string(4) "test"
+                ["price"]=>
+                string(1) "1"
+                ["file"]=>
+                string(33) "amazon-wishlist-sss1369060104.zip"
+                ["hash"]=>
+                string(40) "e9d35cb8e012592c8f565f411348a41c4944b2f6"
+                ["added_on"]=>
+                string(19) "2013-05-20 14:28:18"
+                ["status"]=>
+                string(1) "1"
+                ["active"]=>
+                string(1) "1"
+             }*/
+
+            $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
             Orbisius_CyberStoreUtil::download_file($file);
         }
         // get product info and prepare PayPal form and redirect.
@@ -1296,9 +1339,9 @@ MSG_EOF;
         if (empty($id)) {
             // do nothing
         } elseif (is_numeric($id)) {
-            $prev_rec = $wpdb->get_row("SELECT * FROM {$this->plugin_db_prefix}products WHERE id = " . $wpdb->escape($id), ARRAY_A);
+            $prev_rec = $wpdb->get_row("SELECT * FROM {$this->plugin_db_prefix}products WHERE id = " . esc_sql($id), ARRAY_A);
         } else {
-            $prev_rec = $wpdb->get_row("SELECT * FROM {$this->plugin_db_prefix}products WHERE hash = '" . $wpdb->escape($id) . "'", ARRAY_A);
+            $prev_rec = $wpdb->get_row("SELECT * FROM {$this->plugin_db_prefix}products WHERE hash = '" . esc_sql($id) . "'", ARRAY_A);
         }
 
         return $prev_rec;
