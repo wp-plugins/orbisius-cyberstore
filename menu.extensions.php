@@ -15,9 +15,10 @@
                if (!has_action('orb_cyber_store_render_extension_list')) {
                    echo "No extensions have been installed.";
                } else {
-                   echo "The following extensions have been found.<br/><ul>";
+                   echo "The following extensions have been found.<br/>";
+                   echo "<ul>\n";
                    do_action('orb_cyber_store_render_extension_list');
-                   echo "</ul>";
+                   echo "</ul>\n";
                }
                ?>
             </p>

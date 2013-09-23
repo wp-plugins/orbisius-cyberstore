@@ -3,7 +3,7 @@ Contributors: lordspace,orbisius
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7APYDVPBCSY9A
 Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore,woocommerce,paypal, e-commerce, e-shop, e-store,  payment, paypal, Paypal shopping cart, sell digital products, shop, shopping cart, wordperss ecommerce, WordPress shopping cart, wp, wp store,edl,Easy Digital Downloads
 Requires at least: 2.8
-Tested up to: 3.6
+Tested up to: 3.6.1
 Stable tag: 1.1.8
 License: GPLv2 or later
 
@@ -44,14 +44,9 @@ http://www.youtube.com/watch?v=6EKNMYjzwlM
 * Allows functionality the form submission to go in a new window
 * Optional shipping address requirement (both available as a global setting and per individual product)
 * Supports a secure HOP URL. The main idea of the Secure HOP URL is to redirect to another URL. The script must redirect to an address passed by the "r" parameter.
-Having this kind of redirect is very useful because when your visitors are about to return to your site PayPal checks and if the returning URL is a non-ssl link then it puts a warning with
-makes the user experience less optimal. Orbisius CyberStore includes a sample redirect script that you can install on your secure site.
+Having this kind of redirect is very useful because when your visitors are about to return to your site PayPal checks and if the returning URL is a non-ssl link then it puts a warning with makes the user experience less than optimal. Orbisius CyberStore includes a sample redirect script that you can install on your secure site.
 
-<a href="http://orbisius.com/go/intro2site?digishop"
-    target="_blank">Free e-book: How to Build a Website Using WordPress: Beginners Guide</a>
-
-
-New attributes
+= New attributes =
 
 render_price="1"
 When this attribute is set in the shortcode will make the plugin show the price above the buy now button.
@@ -72,6 +67,13 @@ Price: $249.95 USD (one time)
 If you want the price to be shown for all products insert this in your functions.php of the current theme
 add_filter('orb_cyber_store_ext_filter_render_price', '__return_true', 10);
 
+= Extensions =
+
+The plugin has several cool <a href="http://orbisius.com" title="Orbisius CyberStore Extensions" target="_blank">Extensions</a>
+
+* PayPal Micropayments - allows you to switch to a PayPal Micropayments account and save a lot in transaction fees.
+* Change Language of PayPal Checkout Page
+* Change Email From
 
 = Author =
 
@@ -116,6 +118,11 @@ If you have run into issues or have questions/suggestions please register on our
 n/a
 
 == Changelog ==
+
+= 1.1.9 =
+* Tested with WP 3.6.1
+* Updated readme to include the available extensions
+* Fixes
 
 = 1.1.8 =
 * Removed some methods that were causing lots of debug messages. e.g. is_feed
