@@ -12,7 +12,7 @@
             <line>0</line>
         </file>
     </editor-bookmarks>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="5">
         <file>
             <url>menu.product.add.php</url>
             <bookmark id="0">
@@ -31,6 +31,11 @@
             <bookmark id="4">
                 <name/>
                 <line>916</line>
+                <key/>
+            </bookmark>
+            <bookmark id="5">
+                <name/>
+                <line>1145</line>
                 <key/>
             </bookmark>
         </file>
@@ -53,8 +58,4 @@
             </bookmark>
         </file>
     </editor-bookmarks>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/readme.txt</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/orbisius-cyberstore.php</file>
-    </open-files>
 </project-private>

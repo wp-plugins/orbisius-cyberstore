@@ -828,6 +828,7 @@ SHORT_CODE_EOF;
      */
     function handle_non_ui($params = null) {
         $dl_key = $this->download_key;
+        $headers = array();
 
         if (!is_null($params)) {
             $data = array_merge($_REQUEST, $params);
@@ -1030,7 +1031,7 @@ SHORT_CODE_EOF;
 			$order_from_name = apply_filters('orb_cyber_store_order_from_name', 'WordPress');
 			$order_from_email = apply_filters('orb_cyber_store_order_from_email', 'wordpress@' . $_SERVER['HTTP_HOST']);
 			
-            $headers = "From: $order_from_host $order_from_name <$order_from_email>\r\n";
+            $headers[] = "From: $order_from_host $order_from_name <$order_from_email>\r\n";
 
             if (!empty($data['custom'])) {
                 $custom = $data['custom'];
@@ -1043,7 +1044,13 @@ SHORT_CODE_EOF;
                 $admin_email_buffer .= "\nIP: " . $_SERVER['REMOTE_ADDR'] . "";
                 $admin_email_buffer .= "\nBrowser: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
 
-                wp_mail($admin_email, 'Invalid Transaction (missing custom field)', $admin_email_buffer, $headers);
+                $email_subject = 'Invalid Transaction (missing custom field)';
+                $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
+                $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer);
+
+                do_action('orb_cyber_store_ext_before_send_mail'); // html emails?
+                $mail_status = wp_mail($admin_email, $email_subject, $admin_email_buffer, $headers);
+                do_action('orb_cyber_store_ext_after_send_mail');
 
                 $this->log('paypal_ipn Invalid Transaction (missing custom field). Adm email.' . $admin_email_buffer);
 
@@ -1139,12 +1146,22 @@ SHORT_CODE_EOF;
 
                 $email_subject = str_ireplace(array_keys($vars), array_values($vars), $email_subject);
                 $email_buffer = str_ireplace(array_keys($vars), array_values($vars), $email_buffer);
-
+                
                 if (strpos($buffer, "VERIFIED") !== false) {
-                    $headers .= "BCC: $admin_email\r\n";
-                    $mail_status = wp_mail($data['payer_email'], $email_subject, $email_buffer, $headers);
+                    $headers[] = "BCC: $admin_email\r\n";
 
+                    $to = apply_filters('orb_cyber_store_ext_filter_email_to', $data['payer_email']);
+                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
+                    $email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $email_buffer);
+                    $email_buffer = do_shortcode($email_buffer);
+                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
+
+                    do_action('orb_cyber_store_ext_before_send_mail'); // html emails?
+                    $mail_status = wp_mail($to, $email_subject, $email_buffer, $headers);
+                    do_action('orb_cyber_store_ext_after_send_mail');
+                    
                     $data['digishop_paypal_status'] = 'VERIFIED';
+                    
                     $this->log("Email: (status: $mail_status) To: " . $data['payer_email'] . "\n" . $email_buffer);
                 } else {
                     $admin_email_buffer = "Dear Admin,\n\nThe following transaction didn't validate with PayPal\n\n";
@@ -1155,8 +1172,15 @@ SHORT_CODE_EOF;
                     $admin_email_buffer .= "\nSubmitted Data: \n\n" . var_export($vars, 1);
                     $admin_email_buffer .= "\nReceived Data: \n\n" .  var_export($data, 1);
 
-                    $mail_status = wp_mail($admin_email, 'Unsuccessful Transaction', $admin_email_buffer, $headers);
+                    $email_subject = 'Unsuccessful Transaction';
+                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
+                    $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer);
+                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
 
+                    do_action('orb_cyber_store_ext_before_send_mail');
+                    $mail_status = wp_mail($admin_email, $email_subject, $admin_email_buffer, $headers);
+                    do_action('orb_cyber_store_ext_after_send_mail');
+                    
                     if (strcmp($buffer, "INVALID") == 0) {
                         $data['digishop_paypal_status'] = 'INVALID';
                     } else {
@@ -1168,6 +1192,8 @@ SHORT_CODE_EOF;
 
                 $this->log('TXN Status: ' . $data['digishop_paypal_status']);
 
+                do_action('orb_cyber_store_ext_after_txn', $data);
+                
                 // Let's execute the callback
                 if (!empty($opts['callback_url'])) {
                     $data['digishop_callback_time'] = time();

@@ -119,10 +119,16 @@ n/a
 
 == Changelog ==
 
+= 1.2.0 =
+* Added support for shortcodes in the email message
+* Fixes and improvements.
+* Added filters: orb_cyber_store_ext_filter_email_to, orb_cyber_store_ext_filter_email_subject, orb_cyber_store_ext_filter_email_message, orb_cyber_store_ext_filter_email_headers
+* Added actions: orb_cyber_store_ext_before_send_mail, orb_cyber_store_ext_after_send_mail
+
 = 1.1.9 =
 * Tested with WP 3.6.1
 * Updated readme to include the available extensions
-* Fixes
+* Fixes and improvements
 
 = 1.1.8 =
 * Removed some methods that were causing lots of debug messages. e.g. is_feed
