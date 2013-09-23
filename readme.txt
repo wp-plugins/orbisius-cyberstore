@@ -69,7 +69,7 @@ add_filter('orb_cyber_store_ext_filter_render_price', '__return_true', 10);
 
 = Extensions =
 
-The plugin has several cool <a href="http://orbisius.com" title="Orbisius CyberStore Extensions" target="_blank">Extensions</a>
+The plugin has several cool <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/" title="Orbisius CyberStore Extensions" target="_blank">Extensions</a>
 
 * PayPal Micropayments - allows you to switch to a PayPal Micropayments account and save a lot in transaction fees.
 * Change Language of PayPal Checkout Page
