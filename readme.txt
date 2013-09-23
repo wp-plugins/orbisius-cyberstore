@@ -73,6 +73,7 @@ The plugin has several cool <a href="http://orbisius.com" title="Orbisius CyberS
 
 * PayPal Micropayments - allows you to switch to a PayPal Micropayments account and save a lot in transaction fees.
 * Change Language of PayPal Checkout Page
+* HTML Email + Richtext editor for order email
 * Change Email From
 
 = Author =
