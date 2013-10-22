@@ -248,6 +248,9 @@ class Orbisius_CyberStore {
         $local_ip = empty($_SERVER['REMOTE_ADDR']) // cli
                         || preg_match('#^(127\.0\.0\.1|192\.168\.\d\.|10\.0\.0\.)#', $_SERVER['REMOTE_ADDR']) ? 1 : 0;
 
+        $file = __FILE__;
+        $product_rec = array();
+
         if (array_key_exists($this->web_trigger_key, $params)
                 || array_key_exists($this->download_key, $params)) {
             if ($params[$this->web_trigger_key] == 'paypal_ipn'
@@ -256,9 +259,9 @@ class Orbisius_CyberStore {
             } elseif (!empty($params[$this->download_key])) {
                 $this->handle_non_ui($params);
             } elseif ($params[$this->web_trigger_key] == 'smtest') {
-
                 $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
                 Orbisius_CyberStoreUtil::download_file($file);
+                $file = apply_filters('orb_cyber_store_post_download_file', $file, $product_rec);
 
                 wp_die($this->plugin_name . ': OK :)');
             } elseif ($params[$this->web_trigger_key] == 'test_download' && $local_ip && $allow_local_dl) {
@@ -272,6 +275,7 @@ class Orbisius_CyberStore {
                 $file = $this->plugin_uploads_dir . $product_rec['file'];
                 $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
                 Orbisius_CyberStoreUtil::download_file($file);
+                $file = apply_filters('orb_cyber_store_post_download_file', $file, $product_rec);
             } else {
                 // if it's txdigishop_cmd=txn_okn_ok it'll be handled by the page which renders the form.
                 //wp_die($this->plugin_name . ': Invalid value.');
@@ -915,6 +919,7 @@ SHORT_CODE_EOF;
 
             $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
             Orbisius_CyberStoreUtil::download_file($file);
+            $file = apply_filters('orb_cyber_store_post_download_file', $file, $product_rec);
         }
         // get product info and prepare PayPal form and redirect.
         elseif (!empty($data[$this->web_trigger_key]) && $data[$this->web_trigger_key] == 'paypal_checkout') {
@@ -1843,7 +1848,7 @@ class Orbisius_CyberStoreUtil {
     }
 
     /**
-     * @desc write function using flock
+     * @desc write function using flock (writer's)
      *
      * @param string $vars
      * @param string $buffer
@@ -1863,20 +1868,21 @@ class Orbisius_CyberStoreUtil {
             $write_mod = 'ab';
         }
 
-        if (($handle = @fopen($file, $write_mod))
+        if (($handle = fopen($file, $write_mod))
                 && flock($handle, LOCK_EX)) {
             // lock obtained
-            if (fwrite($handle, $buffer) !== false) {
-                @fclose($handle);
-                return true;
-            }
+            $write_stat = fwrite($handle, $buffer);
+            flock($handle, LOCK_UN);
+            fclose($handle);
+
+            return $write_stat !== false;
         }
 
         return false;
     }
 
     /**
-     * @desc read function using flock
+     * @desc read function using flock (Reader's lock)
      *
      * @param string $vars
      * @param string $buffer
@@ -1888,10 +1894,11 @@ class Orbisius_CyberStoreUtil {
         $read_mod = "rb";
         $handle = false;
 
-        if (($handle = @fopen($file, $read_mod))
-                && (flock($handle, LOCK_EX))) { //  | LOCK_NB - let's block; we want everything saved
+        if (($handle = fopen($file, $read_mod))
+                && (flock($handle, LOCK_SH))) { //  | LOCK_NB - let's block; we want everything saved
             $buff = @fread($handle, filesize($file));
-            @fclose($handle);
+            flock($handle, LOCK_UN);
+            fclose($handle);
         }
 
         if ($option == self::UNSERIALIZE_DATA) {

@@ -120,6 +120,11 @@ n/a
 
 == Changelog ==
 
+= 1.2.1 =
+* Added explicit file unlocking due to php not unlocking the files anymore in close
+* added post_download filter.
+* Changed to reader's lock in ::read() method.
+
 = 1.2.0 =
 * Added support for shortcodes in the email message
 * Fixes and improvements.
