@@ -86,7 +86,7 @@ Svetoslav Marinov (Slavi) | <a href="http://orbisius.com" title="Custom Web Prog
 Please go to Wordpress Admin &gt; Plugins &gt; Add New Plugin &gt; Search for: Orbisius CyberStore and then press install
 
 = Manual Installation =
-1. Upload digishop.zip into to the `/wp-content/plugins/` directory
+1. Upload orbisius-cyberstore.zip into to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
@@ -96,7 +96,22 @@ Orbisius CyberStore WordPress plugin has nothing to do with the DigiSHOP from su
 
 Orbisius CyberStore WordPress plugin is free to use for personal or commercial one.
 
-= issues/questions/suggestions = 
+= Is Orbisius CyberStore compatible with the previous version called DigiShop? =
+No. You will have to manually add each of your old products.
+This version offers more features and is more stable.
+
+A little bit of history. We had a plugin called DigiShop in the WordPress plugin directory but it was removed and then we were notified about that.
+We didn't have chance to make the necessary changes.
+
+= No notification emails =
+If you or your users didn't the order notification email containing the download link, please check the following
+* Spam/junk email folders
+* Check if your PayPal account has IPN (Instant Payment Notification) turned on.
+
+This video shows how to enable IPN.
+http://www.youtube.com/watch?v=et8KFv0vYWM
+
+= Issues/questions/suggestions =
 If you have run into issues or have questions/suggestions please register on our support forum and post your suggestion or question there.
 
 > Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
@@ -121,9 +136,12 @@ n/a
 == Changelog ==
 
 = 1.2.1 =
+* Tested with WP 3.7
 * Added explicit file unlocking due to php not unlocking the files anymore in close
 * added post_download filter.
 * Changed to reader's lock in ::read() method.
+* Added some more cool filters that get called before the product data is retrieved.
+* Fix: show load only on the button that was clicked, not on all of the buttons (if there are more than one on a page).
 
 = 1.2.0 =
 * Added support for shortcodes in the email message
