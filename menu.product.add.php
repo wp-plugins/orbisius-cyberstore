@@ -28,7 +28,7 @@ if (!empty($_POST)) {
 }
 
 if (!empty($id)) {
-    $product_rec = $orbisius_digishop_obj->get_product($id);
+    $product_rec = $orbisius_digishop_obj->get_product($id, 'admin');
 }
 
 ?>

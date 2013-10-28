@@ -309,7 +309,7 @@ class Orbisius_CyberStore {
             return "<!-- {$this->plugin_name} is Disabled | Plugin URL: {$this->plugin_home_page} -->";
         }
 
-        $prev_rec = $this->get_product($id);
+        $prev_rec = $this->get_product($id, 'short_code');
 
         // these errors should be seen by the admin
         if (empty($prev_rec)) {
@@ -420,14 +420,27 @@ SHORT_CODE_EOF;
                 // this is the whole buffer
                 $buffer = apply_filters('orb_cyber_store_ext_filter_price_container', $buffer);
 			}
+
+            // Do we need to pass any extra data to the payment form?
+            $extra_params_buff = '';
+            $extra_params = array();
+            $extra_params = apply_filters('orb_cyber_store_ext_filter_extra_params', $extra_params);
+
+            foreach ($extra_params as $key => $val) {
+                $key = esc_attr($key);
+                $val = esc_attr($val);
+                $extra_params_buff .= "<input type='hidden' id='{$this->plugin_id_str}_extra_$key' name='{$this->plugin_id_str}extra[$key]' value='$val' />\n";
+            }
 		
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
-<form id="{$this->plugin_id_str}_form_$id" class="{$this->plugin_id_str}_form" action="$post_url_esc" method="post" $form_new_window onsubmit="jQuery('.{$this->plugin_id_str}_loader').show();">
+<form id="{$this->plugin_id_str}_form_$id" class="{$this->plugin_id_str}_form" action="$post_url_esc" method="post" $form_new_window onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show();">
     <input type='hidden' name="$aaa_cmd_key" value="paypal_checkout" />
     <input type='hidden' name="{$this->plugin_id_str}_product_id" value="$id" />
     <input type='hidden' name="{$this->plugin_id_str}_post_id" value="{$post->ID}" />
     <input type='hidden' name="{$this->plugin_id_str}_no_shipping" value="$no_shipping" />
+
+    $extra_params_buff
 
 	<span id="{$this->plugin_id_str}_form_submit_button_container_$id" class="{$this->plugin_id_str}_form_submit_button_container">
 		<input id="{$this->plugin_id_str}_form_submit_button_$id" type="image" class="{$this->plugin_id_str}_form_submit_button" src="$submit_button_img_src"
@@ -877,7 +890,7 @@ SHORT_CODE_EOF;
                 $hash = $data[$dl_key];
             }
 
-            $product_rec = $this->get_product($hash);
+            $product_rec = $this->get_product($hash, 'download');
 
             if (empty($product_rec) || empty($product_rec['active'])) {
                 wp_die($this->m($this->plugin_name . ': Invalid download hash (2).', 0, 1)
@@ -886,7 +899,7 @@ SHORT_CODE_EOF;
 
             // Ext URL
             if (Orbisius_CyberStoreUtil::validate_url($product_rec['file'])) {
-                $this->log("Going to serve product ID: {$product_rec['id']}, ext URL: " . $product_rec['file']);
+                $this->log("Going to serve external product with ID: {$product_rec['id']}, ext URL: " . $product_rec['file']);
 
                 wp_redirect($product_rec['file']);
                 exit;
@@ -932,7 +945,7 @@ SHORT_CODE_EOF;
             $id = Orbisius_CyberStoreUtil::stop_bad_input($id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
             $post_id = Orbisius_CyberStoreUtil::stop_bad_input($post_id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
 
-            $product_rec = $this->get_product($id);
+            $product_rec = $this->get_product($id, 'before_payment');
 
             if (empty($product_rec) || empty($product_rec['active'])) {
                 $this->log('paypal_checkout (1): Invalid Product ID: ' . $id);
@@ -962,6 +975,11 @@ SHORT_CODE_EOF;
                 $return_page = Orbisius_CyberStoreUtil::add_url_params($opts['secure_hop_url'], array('r' => $return_page));
             }
 
+            $custom_params = array('id' => $item_number, 'site' => $this->site_url);
+
+            // Does the user want to inject some more params?
+            $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params);
+
             $paypal_params = array(
                 'cmd' => '_xclick',
                 'business' => $email,
@@ -971,7 +989,7 @@ SHORT_CODE_EOF;
                 'item_name' => $item_name,
                 'item_number' => $item_number,
                 'currency_code' => $opts['currency'],
-                'custom' => http_build_query(array('id' => $item_number, 'site' => $this->site_url)),
+                'custom' => http_build_query($custom_params),
                 'notify_url' => $this->payment_notify_url,
                 'return' => $return_page,
                 'cancel_return' => $cancel_return,
@@ -1357,12 +1375,15 @@ MSG_EOF;
     }
 
     /**
-     * Loads a product by its ID or by hash
-     *
+     * Loads a product by its ID or by hash.
+     * Uses filter: orb_cyber_store_get_product before returning the product info.
+     * e.g if the filter is smart enough not to modify prices when in admin.
+     * 
      * @param int/string $id
+     * @param string $ctx context in which the product is loaded. admin, edit etc.
      * @return array
      */
-    function get_product($id = null) {
+    function get_product($id = null, $ctx = '') {
         global $wpdb;
         $prev_rec = array();
 
@@ -1373,6 +1394,8 @@ MSG_EOF;
         } else {
             $prev_rec = $wpdb->get_row("SELECT * FROM {$this->plugin_db_prefix}products WHERE hash = '" . esc_sql($id) . "'", ARRAY_A);
         }
+
+        $prev_rec = apply_filters( 'orb_cyber_store_get_product', $prev_rec, $ctx );
 
         return $prev_rec;
     }
@@ -1454,7 +1477,7 @@ MSG_EOF;
         if (!$this->has_errors()) {
             // add product
             if (!empty($id)) {
-                $prev_rec = $this->get_product($id);
+                $prev_rec = $this->get_product($id, 'admin');
             }
 
             // TODO Sanitize vars
@@ -1532,7 +1555,7 @@ MSG_EOF;
         global $wpdb;
 
         $id = Orbisius_CyberStoreUtil::stop_bad_input($id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
-        $prev_rec = $this->get_product($id);
+        $prev_rec = $this->get_product($id, 'delete');
 
         // if a new file is supplied the old gets deleted.
         if (!empty($prev_rec['file']) && file_exists($this->plugin_uploads_dir . $prev_rec['file'])) {
@@ -1554,6 +1577,7 @@ MSG_EOF;
         global $wpdb;
         $data = array();
         $data = $wpdb->get_results("SELECT * FROM {$this->plugin_db_prefix}products", ARRAY_A);
+        $data = apply_filters( 'orb_cyber_store_get_products', $data );
 
         return $data;
     }
