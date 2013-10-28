@@ -138,10 +138,18 @@ n/a
 = 1.2.1 =
 * Tested with WP 3.7
 * Added explicit file unlocking due to php not unlocking the files anymore in close
-* added post_download filter.
 * Changed to reader's lock in ::read() method.
-* Added some more cool filters that get called before the product data is retrieved.
 * Fix: show load only on the button that was clicked, not on all of the buttons (if there are more than one on a page).
+* Added some cool filters and action(s).
+* Added filters:
+    - orb_cyber_store_get_product 
+    - orb_cyber_store_get_products
+    - orb_cyber_store_paypal_url - can be used to change the paypal url
+    - orb_cyber_store_post_download_file
+    - orb_cyber_store_ext_filter_extra_params - hidden parameters added to the payment form
+    - orb_cyber_store_paypal_custom_params - params sent to paypal in the 'custom' field
+* Added action:
+    - orb_cyber_store_process_payment which will be called instead of paypal
 
 = 1.2.0 =
 * Added support for shortcodes in the email message

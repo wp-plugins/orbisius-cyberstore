@@ -995,6 +995,7 @@ SHORT_CODE_EOF;
                 'cancel_return' => $cancel_return,
             );
 
+			$paypal_url = apply_filters('orb_cyber_store_paypal_url', $paypal_url);
 			$paypal_params = apply_filters('orb_cyber_store_paypal_params', $paypal_params);
 			
             $location = $paypal_url . '?' . http_build_query($paypal_params);
@@ -1002,8 +1003,12 @@ SHORT_CODE_EOF;
             $this->log('paypal_checkout URL: ' . $location);
             $this->log('paypal_checkout Params: ' . var_export($paypal_params, 1));
 
-            wp_redirect($location);
-            exit;
+            if (has_action('orb_cyber_store_process_payment')) {
+                $payment_result = do_action('orb_cyber_store_process_payment', $paypal_url, $paypal_params);
+            } else {
+                wp_redirect($location);
+                exit;
+            }
         }
         // IPN called by PayPal: some people reported that they or their clients got lots of emails.
         // we'll create a hash file based on the TXN and not notify if we're called more than once by paypal
