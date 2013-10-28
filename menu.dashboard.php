@@ -15,6 +15,15 @@ $opts = $orbisius_digishop_obj->get_options();
             </tr>            
         </table>
 
+        <div class="updated">
+            <h2>Hire Us</h2>
+
+            If you want us to create a plugin or a web/mobile app for you contact us to discuss your needs.
+            <br/><a href="http://orbisius.com/page/free-quote/?utm_source=orbisius-cyberstore&utm_medium=plugin-dashboard&utm_campaign=plugin-update"
+               title="If you want a custom web/mobile app or a plugin developed contact us. This opens in a new window/tab"
+               class="button-primary" target="_blank">Get a Free Quote</a>
+        </div>
+
 		<?php
             echo $orbisius_digishop_obj->generate_newsletter_box(array('src2' => 'dashboard'));
         ?>
