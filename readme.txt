@@ -139,6 +139,7 @@ n/a
 = 1.2.3 =
 * Pro-active fix: if the currency is entered in lowercase paypal will return an error so the plugin will auto-uppercase it.
 * Added support for free products.
+* Added a success message when saving the Settings of the plugin
 * Tested in WordPress 3.8
 
 = 1.2.2 =

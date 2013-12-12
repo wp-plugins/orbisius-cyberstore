@@ -106,7 +106,7 @@ if (!empty($id)) {
                 If it is too low (e.g. less than 2 MB) contact your hosting to increase it.
             </p>
             <p class="submit">
-                <input type="submit" class="button-primary" value="<?php _e('Save') ?>" />
+                <input type="submit" class="button-primary" value="<?php _e('Add/Update Product') ?>" />
             </p>
         </form>
     </div>

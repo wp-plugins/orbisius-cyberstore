@@ -8,6 +8,13 @@ $opts = $orbisius_digishop_obj->get_options();
         <div class="main_content">
             <h2>Settings</h2>
 
+            <?php
+
+            if (!empty($_REQUEST['settings-updated'])) {
+                echo $orbisius_digishop_obj->message('Settings Saved.', 1);
+            }
+
+            ?>
             <form method="post" action="options.php">
                 <?php settings_fields($orbisius_digishop_obj->get('plugin_dir_name')); ?>
                 <table class="form-table">
