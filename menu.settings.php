@@ -268,7 +268,7 @@ die;
                 </table>
                 
                 <p class="submit">
-                    <input type="submit" class="button-primary" value="<?php _e('Save') ?>" />
+                    <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
                 </p>
             </form>
         </div> <!-- /main_content -->

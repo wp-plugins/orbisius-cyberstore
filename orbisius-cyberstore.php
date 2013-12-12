@@ -817,6 +817,12 @@ SHORT_CODE_EOF;
             $input[$field_name] = empty($input[$field_name]) ? 0 : 1;
         }
 
+        // if the currency is entered in lowercase paypal will return an error.
+        if (!empty($input['currency'])) {
+            $input['currency'] = preg_replace('#\s#si', '', $input['currency']);
+            $input['currency'] = strtoupper($input['currency']);
+        }
+
         return $input;
     }
 
@@ -975,7 +981,7 @@ SHORT_CODE_EOF;
                 $return_page = Orbisius_CyberStoreUtil::add_url_params($opts['secure_hop_url'], array('r' => $return_page));
             }
 
-            $custom_params = array('id' => $item_number, 'site' => $this->site_url);
+            $custom_params = array( 'id' => $item_number, 'item_name' => $item_name, 'site' => $this->site_url );
 
             // Does the user want to inject some more params?
             $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params);
@@ -1043,7 +1049,7 @@ SHORT_CODE_EOF;
                     // wp_die defaults to: 500 error code and this may/will cause paypal to call the site again
                     wp_die($this->m($this->get('plugin_name')
                         . ': this transaction seem to have been processed already. Stopping.', 0, 1)
-                        . $this->add_plugin_credits(), 'Process same TXN gain?', array( 'response' => 200) );
+                        . $this->add_plugin_credits(), 'Process same TXN again?', array( 'response' => 200 ) );
                 }
             }
 
