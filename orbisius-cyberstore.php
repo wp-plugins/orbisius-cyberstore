@@ -256,9 +256,30 @@ class Orbisius_CyberStore {
             if ($params[$this->web_trigger_key] == 'paypal_ipn'
                     || $params[$this->web_trigger_key] == 'paypal_checkout') {
                 $this->handle_non_ui($params);
-            } elseif (!empty($params[$this->download_key])) {
+            }
+
+            elseif (!empty($params[$this->download_key])) {
                 $this->handle_non_ui($params);
-            } elseif ($params[$this->web_trigger_key] == 'smtest') {
+            }
+
+            elseif ($params[$this->web_trigger_key] == 'free_download') {
+                $id = empty($params[$this->plugin_id_str . '_product_id']) ? 0 : $params[$this->plugin_id_str . '_product_id'];
+
+                $product_rec = $this->get_product($id);
+
+                if (empty($product_rec)) {
+                    wp_die( $this->plugin_name . ': Product not found.', array( 'response' => 404 ) );
+                } elseif (!empty($product_rec['price'])) {
+                    wp_die( $this->plugin_name . ': Download not allowed. The product is not free (anymore).', array( 'response' => 404 ) );
+                }
+
+                $file = $this->plugin_uploads_dir . $product_rec['file'];
+                $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
+                Orbisius_CyberStoreUtil::download_file($file);
+                $file = apply_filters('orb_cyber_store_post_download_file', $file, $product_rec);
+            }
+            
+            elseif ($params[$this->web_trigger_key] == 'smtest') {
                 $file = apply_filters('orb_cyber_store_pre_download_file', $file, $product_rec);
                 Orbisius_CyberStoreUtil::download_file($file);
                 $file = apply_filters('orb_cyber_store_post_download_file', $file, $product_rec);
@@ -328,7 +349,7 @@ class Orbisius_CyberStore {
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Free Product | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 <form id="{$this->plugin_id_str}_free_download_form_$id" class="{$this->plugin_id_str}_free_download_form"
-        action="$post_url_esc" method="post" onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show();">
+        action="$post_url_esc" method="post" onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show().delay(2000).hide();">
     <input type='hidden' name="$aaa_cmd_key" value="free_download" />
     <input type='hidden' name="{$this->plugin_id_str}_product_id" value="$id" />
     <input type='hidden' name="{$this->plugin_id_str}_post_id" value="{$post->ID}" />
