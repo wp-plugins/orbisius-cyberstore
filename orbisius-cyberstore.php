@@ -296,6 +296,7 @@ class Orbisius_CyberStore {
         global $post;
 		$buffer = '';
         $post_url = get_permalink($post->ID);
+        $post_url_esc = esc_attr($post_url);
 
         $opts = $this->get_options();
 
@@ -318,6 +319,31 @@ class Orbisius_CyberStore {
             return $this->m($this->plugin_name . ": Product [$id] does not have a file associated with it.", 0, 1);
         } elseif (empty($prev_rec['active'])) {
             return "<!-- {$this->plugin_name} Product id=$id is inactive | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url -->";
+        }
+
+        $aaa_cmd_key = $this->web_trigger_key;
+
+        // FREE products
+        if (empty($prev_rec['price'])) {
+            $buffer .= <<<SHORT_CODE_EOF
+<!-- $this->plugin_id_str | Free Product | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
+<form id="{$this->plugin_id_str}_free_download_form_$id" class="{$this->plugin_id_str}_free_download_form"
+        action="$post_url_esc" method="post" onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show();">
+    <input type='hidden' name="$aaa_cmd_key" value="free_download" />
+    <input type='hidden' name="{$this->plugin_id_str}_product_id" value="$id" />
+    <input type='hidden' name="{$this->plugin_id_str}_post_id" value="{$post->ID}" />
+
+	<span id="{$this->plugin_id_str}_form_submit_button_container_$id" 
+        class="{$this->plugin_id_str}_form_submit_button_container {$this->plugin_id_str}_free_download_btn">
+		<input id="{$this->plugin_id_str}_form_submit_button_$id" type="submit" class="{$this->plugin_id_str}_free_download_btn"
+            name="submit" value="Download" />
+        <span class="{$this->plugin_id_str}_loader app_hide" style="display:none;">Please wait...</span>
+	</span>
+</form>
+<!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
+SHORT_CODE_EOF;
+
+            return $buffer;
         }
 
         $paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
@@ -346,8 +372,6 @@ class Orbisius_CyberStore {
 
         $custom = http_build_query(array('id' => $item_number, 'site' => $this->site_url));
 
-        $aaa_cmd_key = $this->web_trigger_key;
-
         $submit_button_img_src = empty($opts['submit_button_img_src']) ? $this->paypal_submit_image_src : $opts['submit_button_img_src'];
         $form_new_window = empty($opts['form_new_window']) ? '' : ' target="_blank" ';
 
@@ -364,8 +388,6 @@ class Orbisius_CyberStore {
         } else {
             $no_shipping = empty($opts['require_shipping']) ? 1 : 2;
         }
-
-        $post_url_esc = esc_attr($post_url);
 
         // if the user wants to add some call to action BEFORE the buy now button
         $pre_buy_now = apply_filters('orb_cyber_store_ext_filter_before_buy_now', '');
@@ -1479,7 +1501,7 @@ MSG_EOF;
 
         $data['price'] = preg_replace('#[$\,\s]#', '', $data['price']);
 
-        if (empty($data['price'])) {
+        if (empty($data['price'])) { // allow free product
             //$this->add_error("Product price cannot be empty.");
         }
 

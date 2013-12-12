@@ -49,7 +49,7 @@ if (!empty($id)) {
                 <tr valign="top">
                     <th scope="row">Price</th>
                     <td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo $product_rec['price']; ?>" autocomplete="off" />
-                    Example: 29.95 or 10
+                    Example: 29.95 or 10, use 0 for a free product (download button will be shown instead of the buy now button)
                     </td>
                 </tr>
                 <tr valign="top">
