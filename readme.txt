@@ -3,7 +3,7 @@ Contributors: lordspace,orbisius
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7APYDVPBCSY9A
 Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore,woocommerce,paypal, e-commerce, e-shop, e-store,  payment, paypal, Paypal shopping cart, sell digital products, shop, shopping cart, wordperss ecommerce, WordPress shopping cart, wp, wp store,edl,Easy Digital Downloads
 Requires at least: 2.8
-Tested up to: 3.7
+Tested up to: 3.8
 Stable tag: 1.2.2
 License: GPLv2 or later
 
