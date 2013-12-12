@@ -11,7 +11,7 @@ $opts = $orbisius_digishop_obj->get_options();
             <?php
 
             if (!empty($_REQUEST['settings-updated'])) {
-                echo $orbisius_digishop_obj->message('Settings Saved.', 1);
+                echo $orbisius_digishop_obj->message('Settings were saved.', 1);
             }
 
             ?>
