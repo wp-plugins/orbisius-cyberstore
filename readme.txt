@@ -129,6 +129,7 @@ If you have run into issues or have questions/suggestions please register on our
 9. About
 10. Buy Now Button
 11. Buy Now Button after the transaction with the success message.
+12. Screenshot showing the download button for free products (since v.1.2.3)
 
 == Upgrade Notice ==
 n/a
@@ -138,6 +139,7 @@ n/a
 = 1.2.3 =
 * Pro-active fix: if the currency is entered in lowercase paypal will return an error so the plugin will auto-uppercase it.
 * Added support for free products.
+* Tested in WordPress 3.8
 
 = 1.2.2 =
 * Added links to support forum in the settings
