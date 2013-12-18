@@ -33,7 +33,7 @@ http://www.youtube.com/watch?v=6EKNMYjzwlM
 * Easy to use
 * Downloads links are served from the main domain e.g. yourdomain.com/?orb_cyber_store_dl=f47c137
 * When download link is clicked the download dialog is shown i.e. the file does not show within the browser (forced download)
-* Handles PayPal Live and Sanbox
+* Handles PayPal Live and Sandbox
 * Functionality to enable/disable products (when a product is disabled the buy now link will not be shown and the file can't be downloaded even with the download link)
 * Customize the text for the successful and unsuccessful transaction
 * In case of a failed transaction the email is sent to the admin so he can handle the failed transaction manually
@@ -45,6 +45,7 @@ http://www.youtube.com/watch?v=6EKNMYjzwlM
 * Optional shipping address requirement (both available as a global setting and per individual product)
 * Supports a secure HOP URL. The main idea of the Secure HOP URL is to redirect to another URL. The script must redirect to an address passed by the "r" parameter.
 Having this kind of redirect is very useful because when your visitors are about to return to your site PayPal checks and if the returning URL is a non-ssl link then it puts a warning with makes the user experience less than optimal. Orbisius CyberStore includes a sample redirect script that you can install on your secure site.
+* Supports free products (since v1.2.3) for download and adds a Download button instead of Buy Now button
 
 = New attributes =
 
