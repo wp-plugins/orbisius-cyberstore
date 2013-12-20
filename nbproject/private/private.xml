@@ -14,14 +14,6 @@
     </editor-bookmarks>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="7">
         <file>
-            <url>menu.product.add.php</url>
-            <bookmark id="0">
-                <name/>
-                <line>65</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>orbisius-cyberstore.php</url>
             <bookmark id="1">
                 <name/>
@@ -46,6 +38,14 @@
             <bookmark id="5">
                 <name/>
                 <line>1229</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>menu.product.add.php</url>
+            <bookmark id="0">
+                <name/>
+                <line>65</line>
                 <key/>
             </bookmark>
         </file>

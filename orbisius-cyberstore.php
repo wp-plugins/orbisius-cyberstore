@@ -1269,7 +1269,7 @@ SHORT_CODE_EOF;
 
                 $this->log('TXN Status: ' . $data['digishop_paypal_status']);
 
-                do_action('orb_cyber_store_ext_after_txn', $data);
+                do_action('orb_cyber_store_ext_after_txn', $data, $product_rec);
                 
                 // Let's execute the callback
                 if (!empty($opts['callback_url'])) {
@@ -1451,6 +1451,16 @@ MSG_EOF;
 
         $prev_rec = apply_filters( 'orb_cyber_store_get_product', $prev_rec, $ctx );
 
+        /*
+         `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        `label` VARCHAR( 255 ) NOT NULL DEFAULT '',
+        `price` DOUBLE NOT NULL DEFAULT '0.0',
+        `file` varchar(255) NOT NULL DEFAULT '' COMMENT 'digital product',
+        `hash` VARCHAR( 100 ) NOT NULL COMMENT 'used for downloads',
+        `added_on` DATETIME NOT NULL ,
+        `status` INT NOT NULL DEFAULT '1' COMMENT '1-Sale, 2-Pre-Order, 3 Subscription',
+        `active` INT NOT NULL DEFAULT '0',
+         */
         return $prev_rec;
     }
 

@@ -137,6 +137,9 @@ n/a
 
 == Changelog ==
 
+= 1.2.4 =
+* Passed product record after txn in 'orb_cyber_store_ext_after_txn' action
+
 = 1.2.3 =
 * Pro-active fix: if the currency is entered in lowercase paypal will return an error so the plugin will auto-uppercase it.
 * Added support for free products.
