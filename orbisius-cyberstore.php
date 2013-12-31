@@ -1026,6 +1026,13 @@ SHORT_CODE_EOF;
 
             $custom_params = array( 'id' => $item_number, 'item_name' => $item_name, 'site' => $this->site_url );
 
+            if ( function_exists('wp_get_current_user')
+                    && ( $current_user = wp_get_current_user() )
+                    && !empty($current_user->user_email) ) {
+                $custom_params['user_id'] = $current_user->ID;
+                $custom_params['email'] = $current_user->user_email;
+            }
+
             // Does the user want to inject some more params?
             $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params);
 
@@ -1144,7 +1151,7 @@ SHORT_CODE_EOF;
             }
 
             $id = Orbisius_CyberStoreUtil::stop_bad_input($id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
-            $product_rec = $this->get_product($id);
+            $product_rec = $this->get_product($id, 'ipn');
 
             if (empty($product_rec) || empty($product_rec['active'])) {
                 $this->log('paypal_ipn: Invalid/inactive Product ID: ' . $id);
@@ -1170,7 +1177,7 @@ SHORT_CODE_EOF;
             }
 
             //$paypal_url = Orbisius_CyberStoreUtil::add_url_params($paypal_url, $data);
-			$this->log("polgin $opts " . var_export($opts, 1));
+			$this->log("Plugin $opts " . var_export($opts, 1));
 			$this->log("{$opts['test_mode']} ?");
 			$this->log("{$opts['sandbox_only_ip']} ?");
 			$this->log("{$_SERVER['REMOTE_ADDR']} == {$opts['sandbox_only_ip']} ?");
