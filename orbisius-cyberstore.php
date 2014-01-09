@@ -1068,6 +1068,8 @@ SHORT_CODE_EOF;
         }
         // IPN called by PayPal: some people reported that they or their clients got lots of emails.
         // we'll create a hash file based on the TXN and not notify if we're called more than once by paypal
+        // see: https://www.paypal.com/ca/cgi-bin/webscr?cmd=p/acc/ipn-subscriptions-outside
+        // see: https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNandPDTVariables/
         elseif (!empty($data[$this->web_trigger_key])
                 && $data[$this->web_trigger_key] == 'paypal_ipn'
                 && $data['txn_type'] == 'web_accept' ) {
