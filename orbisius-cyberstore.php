@@ -1182,7 +1182,7 @@ SHORT_CODE_EOF;
 			$this->log("Plugin $opts " . var_export($opts, 1));
 			$this->log("Test Mode: {$opts['test_mode']} ?");
 			$this->log("Sandbox Only IP: {$opts['sandbox_only_ip']} ?");
-			$this->log("Remote Addr: {$_SERVER['REMOTE_ADDR']} == Sandbox IP {$opts['sandbox_only_ip']} ?");
+			$this->log("Remote Addr: {$_SERVER['REMOTE_ADDR']} == Sandbox only IP {$opts['sandbox_only_ip']} ?");
 
             $ua = new Orbisius_CyberStoreCrawler();
 

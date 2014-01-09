@@ -139,6 +139,7 @@ n/a
 
 = 1.2.5 =
 * Passing logged in user ID and email (if any) to the custom params
+* Fixed: download is sent only on payment and not on other IPN events e.g. refund, new_case (dispute) etc.
 
 = 1.2.4 =
 * Passed product record after txn in 'orb_cyber_store_ext_after_txn' action
