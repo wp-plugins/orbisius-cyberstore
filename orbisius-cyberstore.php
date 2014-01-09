@@ -1068,7 +1068,9 @@ SHORT_CODE_EOF;
         }
         // IPN called by PayPal: some people reported that they or their clients got lots of emails.
         // we'll create a hash file based on the TXN and not notify if we're called more than once by paypal
-        elseif (!empty($data[$this->web_trigger_key]) && $data[$this->web_trigger_key] == 'paypal_ipn') {
+        elseif (!empty($data[$this->web_trigger_key])
+                && $data[$this->web_trigger_key] == 'paypal_ipn'
+                && $data['txn_type'] == 'web_accept' ) {
             // checking if this TXN has been processed. Paypal should always provide a unique TXN ID
 			$data = $_POST;
 
@@ -1178,9 +1180,9 @@ SHORT_CODE_EOF;
 
             //$paypal_url = Orbisius_CyberStoreUtil::add_url_params($paypal_url, $data);
 			$this->log("Plugin $opts " . var_export($opts, 1));
-			$this->log("{$opts['test_mode']} ?");
-			$this->log("{$opts['sandbox_only_ip']} ?");
-			$this->log("{$_SERVER['REMOTE_ADDR']} == {$opts['sandbox_only_ip']} ?");
+			$this->log("Test Mode: {$opts['test_mode']} ?");
+			$this->log("Sandbox Only IP: {$opts['sandbox_only_ip']} ?");
+			$this->log("Remote Addr: {$_SERVER['REMOTE_ADDR']} == Sandbox IP {$opts['sandbox_only_ip']} ?");
 
             $ua = new Orbisius_CyberStoreCrawler();
 
@@ -1288,6 +1290,9 @@ SHORT_CODE_EOF;
                             . $ua->get_content() . "\n Data: " . var_export($data, 1));
                 }
             }
+        } else {
+            $this->log('TXN Error (unsupported txn):'. var_export($data, 1));
+            do_action('orb_cyber_store_ext_error_txn', $data);
         }
     }
 
@@ -2132,7 +2137,8 @@ class Orbisius_CyberStoreUtil {
 		$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 		$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 
-		$fp = fsockopen ("ssl://$host", 443, $errno, $errstr, 30);
+        $errno = $errstr = false;
+		$fp = fsockopen("ssl://$host", 443, $errno, $errstr, 30);
 
 		$obj->log(__METHOD__ . " : TXN (0): host: [$host]; header: [$header], req: [$req]");
 
