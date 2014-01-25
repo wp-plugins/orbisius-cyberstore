@@ -43,13 +43,13 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 <div class="wrap">
         <h2>Orbisius CyberStore &rarr; Add/Edit Product</h2>
 
-        <div class="updated"><p>
-            <?php if (!empty($msg)) : ?>
-               <?php echo $msg; ?>
-            <?php else : ?>
-               Orbisius CyberStore plugin allows you to start selling your digital products such as e-books, reports in minutes.
-            <?php endif; ?>
-        </p></div>
+        <?php if (!empty($msg)) : ?>
+           <?php echo $msg; ?>
+        <?php else : ?>
+           <div class="updated"><p>
+               Enter product details below.
+           </p></div>
+        <?php endif; ?>
 		
         <div id="poststuff">
 
@@ -67,12 +67,12 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 
 									<table class="form-table">
 										<tr valign="top">
-											<th scope="row">Name</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[label]" value="<?php echo $product_rec['label']; ?>" class="input_field" /></td>
+											<th scope="row">Product Name</th>
+											<td><input type="text" name="<?php echo $settings_key; ?>[label]" value="<?php echo $product_rec['label']; ?>" class="input_field widefat" /></td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Price</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo $product_rec['price']; ?>" autocomplete="off" />
+											<td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo $product_rec['price']; ?>" autocomplete="off" class="small-text" />
 											Ex.: 29.95 or 10, use 0 for a free (download button will be shown instead of the buy now)
 											</td>
 										</tr>
@@ -110,7 +110,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 													$ext_link = $product_rec['file'];
 												}
 
-												echo esc_attr($ext_link); ?>" class="input_field" />
+												echo esc_attr($ext_link); ?>" class="widefat" />
 											<p>
 												Example: http://yourdomain.com/some-document.pdf<br/>
 												Example: ftp://yourdomain.com/sample.doc<br/>
@@ -119,8 +119,13 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 										</tr>
 										<tr valign="top">
 											<th scope="row">Active</th>
-											<td><input type="checkbox" name="<?php echo $settings_key; ?>[active]" value="1"
-														<?php echo empty($product_rec) || !empty($product_rec['active']) ? 'checked="checked"' : ''; ?> /></td>
+											<td>
+                                                <label for="cyberstore_add_product_active">
+                                                    <input type="checkbox" id="cyberstore_add_product_active" name="<?php echo $settings_key; ?>[active]" value="1"
+                                                            <?php echo empty($product_rec) || !empty($product_rec['active']) ? 'checked="checked"' : ''; ?> />
+                                                    Enabled
+                                                </label>
+                                            </td>
 										</tr>
 									</table>
 									<p>

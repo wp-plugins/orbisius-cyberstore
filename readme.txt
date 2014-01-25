@@ -136,6 +136,9 @@ n/a
 
 == Changelog ==
 
+= 1.2.6 =
+* Improved Add product page
+
 = 1.2.5 =
 * Improved UI
 
