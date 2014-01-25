@@ -3,8 +3,8 @@ Contributors: lordspace,orbisius
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7APYDVPBCSY9A
 Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore,woocommerce,paypal, e-commerce, e-shop, e-store,  payment, paypal, Paypal shopping cart, sell digital products, shop, shopping cart, wordperss ecommerce, WordPress shopping cart, wp, wp store,edl,Easy Digital Downloads
 Requires at least: 2.8
-Tested up to: 3.8
-Stable tag: 1.2.3
+Tested up to: 3.8.1
+Stable tag: 1.2.4
 License: GPLv2 or later
 
 Orbisius CyberStore plugin allows you to start selling your digital products such as e-books, reports in minutes.
@@ -137,12 +137,11 @@ n/a
 
 == Changelog ==
 
-= 1.2.5 =
+= 1.2.4 =
 * Passing logged in user ID and email (if any) to the custom params
 * Fixed: download is sent only on payment and not on other IPN events e.g. refund, new_case (dispute) etc.
-
-= 1.2.4 =
 * Passed product record after txn in 'orb_cyber_store_ext_after_txn' action
+* Tested with WP 3.8.1
 
 = 1.2.3 =
 * Pro-active fix: if the currency is entered in lowercase paypal will return an error so the plugin will auto-uppercase it.
