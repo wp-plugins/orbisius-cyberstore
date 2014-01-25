@@ -35,6 +35,11 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											<th scope="row">Status</th>
 											<td>
 												<?php echo empty($opts['status']) ? 'Disabled' : 'Enabled'; ?>
+
+                                                |
+                                                <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/?utm_source=<?php echo str_replace('.php', '', basename($plugin_file));?>&utm_medium=plugin-settings&utm_campaign=product"
+                                   title="If you want a custom web/mobile app/plugin developed contact us. This opens in a new window/tab"
+                                    class="button-primary" target="_blank">Get Extensions</a>
 											</td>
 										</tr>
 									</table>
