@@ -136,6 +136,9 @@ n/a
 
 == Changelog ==
 
+= 1.2.5 =
+* Improved UI
+
 = 1.2.4 =
 * Passing logged in user ID and email (if any) to the custom params
 * Fixed: download is sent only on payment and not on other IPN events e.g. refund, new_case (dispute) etc.
