@@ -11,12 +11,6 @@ Orbisius CyberStore plugin allows you to start selling your digital products suc
 
 == Description ==
 
-= Support =
-> Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
-> Please do NOT use the WordPress forums or other places to seek support.
-> New: We have launched our <a href="http://club.orbisius.com/products/" target="_blank" title="[new window]">membership site</a>
-> which gives you access to all of our premium plugins at an affordable price.
-
 Orbisius CyberStore (formerly known as DigiShop within the WordPress Plugin Directory) is a WordPress plugin which allows you to setup your e-store and start selling your digital products such as e-books, reports in minutes.
 It adds a simple buy now button which sends your customer to PayPal to complete the payment and after that he/she is returned to your site.
 
@@ -26,7 +20,6 @@ It adds a simple buy now button which sends your customer to PayPal to complete 
 
 = Demo =
 http://www.youtube.com/watch?v=6EKNMYjzwlM
-
 
 = Benefits / Features =
 
@@ -80,6 +73,12 @@ The plugin has several cool <a href="http://club.orbisius.com/products/wordpress
 = Author =
 
 Svetoslav Marinov (Slavi) | <a href="http://orbisius.com" title="Custom Web Programming, Web Design, e-commerce, e-store, Wordpress Plugin Development, Facebook and Mobile App Development in Niagara Falls, St. Catharines, Ontario, Canada" target="_blank">Custom Web and Mobile Programming by Orbisius.com</a>
+
+= Support =
+> Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
+> Please do NOT use the WordPress forums or other places to seek support.
+> New: We have launched our <a href="http://club.orbisius.com/products/" target="_blank" title="[new window]">membership site</a>
+> which gives you access to all of our premium plugins at an affordable price.
 
 == Installation ==
 
