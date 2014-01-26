@@ -70,7 +70,6 @@ class Orbisius_CyberStore {
     private $plugin_tinymce_name = 'wwwpdigishop'; // if you change it update the tinymce/editor_plugin.js and reminify the .min.js file.
     private $paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
     private $paypal_submit_image_src = 'https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif';
-    private $db_version = '1.0';
     private $plugin_default_opts = array(
         'status' => 0,
         'test_mode' => 0,
@@ -155,6 +154,10 @@ class Orbisius_CyberStore {
 			}
 
 			add_action('plugins_loaded', array($inst, 'init'), 100);
+            // http://codex.wordpress.org/Creating_Tables_with_Plugins
+            // since 3.1 the register_activation_hook is not called when a plugin is updated, so to run the above
+            // code on automatic upgrade you need to check the plugin db version on another hook. like this:
+            add_action('plugins_loaded', array($inst, 'install_db_tables'), 200);
 
 			define('ORBISIUS_DIGISHOP_BASE_DIR', dirname(__FILE__)); // e.g. // htdocs/wordpress/wp-content/plugins/wp-command-center
 			define('ORBISIUS_DIGISHOP_DIR_NAME', $inst->plugin_dir_name);
@@ -196,11 +199,6 @@ class Orbisius_CyberStore {
             add_action('admin_init', array($this, 'register_settings'));
             add_action('admin_init', array($this, 'load_admin_assets'));
             add_action('admin_notices', array($this, 'notices'));
-
-            // http://codex.wordpress.org/Creating_Tables_with_Plugins
-            // since 3.1 the register_activation_hook is not called when a plugin is updated, so to run the above
-            // code on automatic upgrade you need to check the plugin db version on another hook. like this:
-            add_action('plugins_loaded', array($this, 'install_db_tables'));
         } else {
             $opts = $this->get_options();
 
@@ -544,28 +542,52 @@ SHORT_CODE_EOF;
             /*'orders' => "
                 ",*/
            ),
+
+           // this db adds 2 more fields; meta_info and attribs each 8k to store extra info.
+           '1.1' => array(
+               'products' => "
+                    CREATE TABLE `%%TABLE_NAME%%` (
+                    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+                    `label` VARCHAR( 255 ) NOT NULL DEFAULT '',
+                    `price` DOUBLE NOT NULL DEFAULT '0.0',
+                    `sale_price` double NOT NULL DEFAULT '0',
+                    `file` varchar(255) NOT NULL DEFAULT '' COMMENT 'digital product',
+                    `file_ext_src` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+                    `hash` VARCHAR( 100 ) NOT NULL COMMENT 'used for downloads',
+                    `added_on` DATETIME NOT NULL ,
+                    `attribs` varchar(8192) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+                    `meta_info` varchar(8192) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+                    `status` INT NOT NULL DEFAULT '1' COMMENT '1-Sale, 2-Pre-Order, 3 Subscription',
+                    `active` INT NOT NULL DEFAULT '0',
+                    INDEX ( `status` , `active` )
+                    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+               ",
+           ),
     );
 
+    private $plugin_uses_db_ver = '1.1';
+
     /**
-     * Creates db tables and upgrades them if necessary
+     * Creates db tables and upgrades them if necessary.
+     * To create a new db table or change existing one you'll need to edit
+     * the tables aboves this method.
      */
     function install_db_tables() {
-        $opts = $this->get_options();
-
         // we don't need to constantly perform checks
-        if (!empty($opts['db_checked'])) {
-            return 1;
-        }
+        $plugin_uses_db_ver = $this->plugin_uses_db_ver; // current in the code
+        $db_ver_key = $this->plugin_id_str . "_db_version";
+        $db_version_site = get_option($db_ver_key); // what version is the db schema of the current site
 
+        //$db_version_site = '1.0'; /*TMP*/
+        
+        if ($db_version_site == $plugin_uses_db_ver) {
+            return 1; // the site is using the latest db version
+        }
+        
         global $wpdb;
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-        $version = $this->db_version; // current in the code
-        $tables = $this->db_tables[$version];
-
-        $db_ver_set = 0;
-        $db_ver_key = $this->plugin_id_str . "_db_version";
-        $db_version_site = get_option($db_ver_key); // what version is the db schema of the current site
+        $tables = $this->db_tables[$plugin_uses_db_ver];
 
         // create OR upgrades db tables if necessary
         foreach ($tables as $table_name => $sql) {
@@ -574,15 +596,10 @@ SHORT_CODE_EOF;
             $sql = str_replace('%%TABLE_NAME%%', $table_name, $sql);
 
             if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name
-                    || (!empty($db_version_site) && $db_version_site != $version)) {
-                dbDelta($sql);
+                    || (!empty($db_version_site) && $db_version_site != $plugin_uses_db_ver)) {
+                dbDelta($sql); // WP will alter the db
 
-                if (empty($db_ver_set)) {
-                    update_option($db_ver_key, $version);
-                    $db_ver_set = 1;
-                    $opts['db_checked'] = 1;
-                    $this->set_options($opts);
-                }
+                update_option($db_ver_key, $plugin_uses_db_ver);
             }
         }
     }
@@ -593,7 +610,7 @@ SHORT_CODE_EOF;
     function uninstall_db_tables() {
         global $wpdb;
 
-        $version = $this->db_version;
+        $version = $this->plugin_uses_db_ver;
         $tables = $this->db_tables[$version];
 
         foreach ($tables as $table_name => $sql) {
@@ -607,7 +624,6 @@ SHORT_CODE_EOF;
      */
     function on_activate() {
         $this->install_db_tables();
-        $opts['db_checked'] = 1;
         $this->set_options($opts);
     }
 
@@ -615,10 +631,9 @@ SHORT_CODE_EOF;
      * Handles the plugin deactivation.
      */
     function on_deactivate() {
-        $opts['status'] = 0;
+        /*$opts['status'] = 0;
         $opts['test_mode'] = 0;
-        $opts['db_checked'] = 0;
-        $this->set_options($opts);
+        $this->set_options($opts);*/
 
         // uncomment only when testing! we don't want the user to loose everything because he/she deactivated the plugin
         //$this->uninstall_db_tables();
@@ -629,6 +644,7 @@ SHORT_CODE_EOF;
      */
     function on_uninstall() {
         delete_option($this->plugin_settings_key);
+        delete_option($this->plugin_id_str . "_db_version");        
         $this->uninstall_db_tables();
     }
 

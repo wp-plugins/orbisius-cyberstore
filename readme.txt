@@ -136,6 +136,10 @@ n/a
 
 == Changelog ==
 
+= 1.2.8 =
+* Added a new db table fields: file_ext_src, meta_info, attribs
+* Removed some unused settings variables
+
 = 1.2.7 =
 * Added link to extensions on the dashboard
 
