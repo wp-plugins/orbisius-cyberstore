@@ -381,13 +381,13 @@ SHORT_CODE_EOF;
         $notify_url = $this->payment_notify_url;
         $currency = $opts['currency'];
         $price = $prev_rec['price'];
+        $price = sprintf("%01.2f", $price);
 
         $return_page = Orbisius_CyberStoreUtil::add_url_params($post_url, array($this->web_trigger_key => 'txn_ok'));
         $cancel_return = Orbisius_CyberStoreUtil::add_url_params($post_url, array($this->web_trigger_key => 'txn_error'));
 
         $item_name = esc_attr($prev_rec['label']);
         $item_number = $prev_rec['id'];
-        $price = sprintf("%01.2f", $price);
 
         $custom = http_build_query(array('id' => $item_number, 'site' => $this->site_url));
 
@@ -401,7 +401,6 @@ SHORT_CODE_EOF;
          */
         // paypal's logic is inverted but we'll be positive. i.e. when we don't want shipping we'll set no_shipping -> 1
         // https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_Appx_websitestandard_htmlvariables
-
         if (isset($attr['require_shipping'])) { // shipping settings for a specific product
             $no_shipping = empty($attr['require_shipping']) ? 1 : 2;
         } else {
@@ -411,7 +410,7 @@ SHORT_CODE_EOF;
         // if the user wants to add some call to action BEFORE the buy now button
         $pre_buy_now = apply_filters('orb_cyber_store_ext_filter_before_buy_now', '');
         $buffer .= $pre_buy_now;
-// is_variable
+
         if (!empty($opts['render_old_paypal_form'])) {
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
@@ -435,8 +434,26 @@ SHORT_CODE_EOF;
         } else {
             // either the attribute is set to render price OR a plugin wants that
             $render_price = !empty($attr['render_price']) || apply_filters('orb_cyber_store_ext_filter_render_price', false);
-            
-			if ($render_price) {
+
+            // Do we need to pass any extra data to the payment form?
+            $extra_params_buff = '';
+            $extra_params = array();
+            $extra_params = apply_filters('orb_cyber_store_ext_filter_extra_params', $extra_params);
+
+			if ($this->is_variable($prev_rec)) {
+                $var_prices_options = array();
+
+                $variable_pricing = $this->parse_variable_array_and_encode2array($prev_rec);
+
+                //$default = $variable_pricing[0]['price']; // get first key's price
+                $default = 0; // first option is default. we'll use an index starting from 0
+
+                foreach ($variable_pricing as $idx => $rec) {
+                    $var_prices_options[$idx] = $rec['label'];
+                }
+
+                $extra_params_buff .= Orbisius_CyberStoreUtil::html_boxes('var_price', $default, $var_prices_options);
+            } elseif ($render_price) {
 				// of dollars in Canada, US & Australia we'll prefix the money with $ sign
 				$default_currency_prefix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? '$' : '';
 				$default_currency_suffix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? $currency : '';
@@ -462,29 +479,11 @@ SHORT_CODE_EOF;
                 $buffer = apply_filters('orb_cyber_store_ext_filter_price_container', $buffer);
 			}
 
-            // Do we need to pass any extra data to the payment form?
-            $extra_params_buff = '';
-            $extra_params = array();
-            $extra_params = apply_filters('orb_cyber_store_ext_filter_extra_params', $extra_params);
-
             foreach ($extra_params as $key => $val) {
                 $key = esc_attr($key);
                 $val = esc_attr($val);
-                $extra_params_buff .= "<input type='hidden' id='{$this->plugin_id_str}_extra_$key' name='{$this->plugin_id_str}extra[$key]' value='$val' />\n";
-            }
-
-            if ($this->is_variable($prev_rec)) {
-                $var_prices_options = array();
-
-                $variable_pricing = $this->parse_variable_array_and_encode2array($prev_rec);
-
-                $default = $variable_pricing[0]['cost']; // get first key's cost
-
-                foreach ($variable_pricing as $rec) {
-                    $var_prices_options[ $rec['cost'] ] = $rec['label'];
-                }
-
-                $extra_params_buff .= Orbisius_CyberStoreUtil::html_boxes($this->plugin_id_str . '_var_price', $default, $var_prices_options);
+                $extra_params_buff .= "<input type='hidden' id='{$this->plugin_id_str}_extra_$key'
+                    name='{$this->plugin_id_str}extra[$key]' value='$val' />\n";
             }
 
             $buffer .= <<<SHORT_CODE_EOF
@@ -1019,8 +1018,6 @@ SHORT_CODE_EOF;
             $post_id = empty($data[$this->plugin_id_str . '_post_id']) ? 0 : $data[$this->plugin_id_str . '_post_id'];
             $no_shipping = isset($data[$this->plugin_id_str . '_no_shipping']) ? $data[$this->plugin_id_str . '_no_shipping'] : 1; // can be 0/1
 
-            $post_url = get_permalink($post_id);
-
             $id = Orbisius_CyberStoreUtil::stop_bad_input($id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
             $post_id = Orbisius_CyberStoreUtil::stop_bad_input($post_id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
 
@@ -1031,6 +1028,28 @@ SHORT_CODE_EOF;
                 wp_die($this->plugin_name . ': Invalid Product ID: ' . $id);
             }
 
+            $item_name = $product_rec['label'];
+            $item_number = $product_rec['id'];
+            $price = $product_rec['price'];
+            $custom_params = array( 'id' => $item_number, 'item_name' => $item_name, 'site' => $this->site_url );
+
+            // if this variable is set that means that we have a variable selected option.
+            // The selected option can be 0 that's why we don't use !empty()
+            // It will take override the new price if the option is correct.
+            if (isset($data['var_price'])) {
+                $variable_options = $this->parse_variable_array_and_encode2array($product_rec);
+                $selected_variation_idx = $data['var_price']; // 0 ... N
+
+                if (isset($variable_options[$selected_variation_idx])) {
+                    $variable_option = $variable_options[$selected_variation_idx];
+                    $price = $variable_option['price'];
+
+                    $item_name .= ' ' . $variable_option['label']; // the license type to the product name
+                }
+            }
+
+            $price = sprintf("%01.2f", $price);
+            $post_url = get_permalink($post_id); // we need this so we can redirect the user to the same page again.
             $paypal_url = $this->paypal_url;
 
             if (!empty($opts['test_mode'])) {
@@ -1040,12 +1059,6 @@ SHORT_CODE_EOF;
                 $email = $opts['business_email'];
             }
 
-            $item_name = esc_attr($product_rec['label']);
-            $item_number = $product_rec['id'];
-
-            $price = $product_rec['price'];
-            $price = sprintf("%01.2f", $price);
-
             $cancel_return = Orbisius_CyberStoreUtil::add_url_params($post_url, array($this->web_trigger_key => 'txn_error'));
             $return_page = Orbisius_CyberStoreUtil::add_url_params($post_url, array($this->web_trigger_key => 'txn_ok'));
 
@@ -1053,8 +1066,6 @@ SHORT_CODE_EOF;
             if (!empty($opts['secure_hop_url']) && (stripos($opts['secure_hop_url'], 'https://') !== false)) {
                 $return_page = Orbisius_CyberStoreUtil::add_url_params($opts['secure_hop_url'], array('r' => $return_page));
             }
-
-            $custom_params = array( 'id' => $item_number, 'item_name' => $item_name, 'site' => $this->site_url );
 
             if ( function_exists('wp_get_current_user')
                     && ( $current_user = wp_get_current_user() )
@@ -1088,6 +1099,8 @@ SHORT_CODE_EOF;
 
             $this->log('paypal_checkout URL: ' . $location);
             $this->log('paypal_checkout Params: ' . var_export($paypal_params, 1));
+
+//wp_die($location);
 
             if (has_action('orb_cyber_store_process_payment')) {
                 $payment_result = do_action('orb_cyber_store_process_payment', $paypal_url, $paypal_params);
@@ -1568,7 +1581,7 @@ MSG_EOF;
             parse_str($product_rec['attribs'], $attribs); // get other docs
 
             foreach ($attribs['variable_data'] as $row) {
-                $lines[] = "{$row['label']} | {$row['cost']} | {$row['extra_params']}";
+                $lines[] = "{$row['label']} | {$row['price']} | {$row['extra_params']}";
             }
         }
 
@@ -1576,10 +1589,11 @@ MSG_EOF;
     }
 
     /**
-     * Parses a buffer of variable data and puts it into the product.
+     * Parses a product array record and parses its 'attribs' field.
+     * It will extract variable_data and return it as an array
      *
      * @param array $product_rec
-     * @param str $data_buff
+     * @param array $data_buff
      */
     public function parse_variable_array_and_encode2array($product_rec = array()) {
         $attribs = array();
@@ -1620,7 +1634,7 @@ MSG_EOF;
                 $fields_arr = array_map('trim', $fields_arr);
 
                 $label = $fields_arr[0];
-                $cost = $fields_arr[1];
+                $price = $fields_arr[1];
                 $extra_params = empty($fields_arr[2]) ? '' : $fields_arr[2];
 
                 /*$type_fmt = $label;
@@ -1632,7 +1646,7 @@ MSG_EOF;
 
 				$attribs['variable_data'][] = array(
                     'label' => $label,
-                    'cost' => $cost,
+                    'price' => $price,
                     'extra_params' => $extra_params,
                 );
 			}
