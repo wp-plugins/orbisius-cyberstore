@@ -30,10 +30,8 @@ if (!empty($_POST)) {
 if (!empty($id)) {
     $product_rec = $orbisius_digishop_obj->get_product($id, 'admin');
     
-    $attribs = array();
-    
     if ($orbisius_digishop_obj->is_variable($product_rec)) {
-        $product_rec['variable_pricing'] = $orbisius_digishop_obj->decode_variable($product_rec);
+        $product_rec['variable_pricing'] = $orbisius_digishop_obj->parse_variable_array_and_encode2str($product_rec);
     }
 }
 

@@ -1541,31 +1541,24 @@ MSG_EOF;
         return $default_fields;
     }
 
-    const DECODE_RETURN_STR = 1;
-    const DECODE_RETURN_ARRAY = 2;
-
     /**
-     * Parses the product record and extracts the 'variable_pricing' attribute. which is
+     * Parses the product record and extracts its 'variable_pricing' attribute. which is
      * stored as URL encoded string.
      * 
      * @param array $product_rec
      */
-    public function decode_variable($product_rec = array(), $return = self::DECODE_RETURN_STR) {
+    public function parse_variable_array_and_encode2str($product_rec = array()) {
         $attribs = $lines = array();
 
         if (is_array($product_rec) && !empty($product_rec['attribs'])) {
-            parse_str($product_rec['attribs'], $attribs);
+            parse_str($product_rec['attribs'], $attribs); // get other docs
 
             foreach ($attribs['variable_data'] as $row) {
                 $lines[] = "{$row['label']} | {$row['cost']} | {$row['extra_params']}";
             }
         }
 
-        if ($return == self::DECODE_RETURN_STR) {
-            return join("\n", $lines);
-        } else {
-
-        }
+        return join("\n", $lines);
     }
 
     /**
@@ -1574,18 +1567,17 @@ MSG_EOF;
      * @param array $product_rec
      * @param str $data_buff
      */
-    public function parse_variable($product_rec = array(), $data_buff = '') {
+    public function parse_variable_str_and_encode($product_rec = array(), $data_buff = '') {
 		$attribs = array();
-        
-        $buff_arr = preg_split('#[\n\r]+#si', $data_buff); // we need lines
-        $buff_arr = array_map('trim', $buff_arr);
 
         // parse existing data
         if (!empty($product_rec['attribs'])) {
             parse_str($product_rec['attribs'], $attribs);
-            // delete or keep?
-            $attribs['variable_data'] = array();
+            $attribs['variable_data'] = array(); // delete or keep?
         }
+
+        $buff_arr = preg_split('#[\n\r]+#si', $data_buff); // we need lines
+        $buff_arr = array_map('trim', $buff_arr);
 
 		foreach ($buff_arr as $line) {
             // Line can look like this
@@ -1663,7 +1655,7 @@ MSG_EOF;
             }
 
             $variable_pricing_buff = empty($data['variable_pricing']) ? '' : $data['variable_pricing'];
-            $attribs = $this->parse_variable($prev_rec, $variable_pricing_buff);
+            $attribs = $this->parse_variable_str_and_encode($prev_rec, $variable_pricing_buff);
 
             if (!empty($attribs)) {
                 $product_data['attribs'] = $attribs;
