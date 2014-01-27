@@ -1112,7 +1112,7 @@ SHORT_CODE_EOF;
             $this->log('paypal_checkout URL: ' . $location);
             $this->log('paypal_checkout Params: ' . var_export($paypal_params, 1));
 
-wp_die($location);
+//wp_die($location);
 
             if (has_action('orb_cyber_store_process_payment')) {
                 $payment_result = do_action('orb_cyber_store_process_payment', $paypal_url, $paypal_params);
