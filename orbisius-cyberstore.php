@@ -472,7 +472,21 @@ SHORT_CODE_EOF;
                 $val = esc_attr($val);
                 $extra_params_buff .= "<input type='hidden' id='{$this->plugin_id_str}_extra_$key' name='{$this->plugin_id_str}extra[$key]' value='$val' />\n";
             }
-		
+
+            if ($this->is_variable($prev_rec)) {
+                $var_prices_options = array();
+
+                $variable_pricing = $this->parse_variable_array_and_encode2array($prev_rec);
+
+                $default = $variable_pricing[0]['cost']; // get first key's cost
+
+                foreach ($variable_pricing as $rec) {
+                    $var_prices_options[ $rec['cost'] ] = $rec['label'];
+                }
+
+                $extra_params_buff .= Orbisius_CyberStoreUtil::html_boxes($this->plugin_id_str . '_var_price', $default, $var_prices_options);
+            }
+
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 <form id="{$this->plugin_id_str}_form_$id" class="{$this->plugin_id_str}_form" action="$post_url_esc" method="post" $form_new_window onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show();">
@@ -1561,6 +1575,23 @@ MSG_EOF;
         return join("\n", $lines);
     }
 
+    /**
+     * Parses a buffer of variable data and puts it into the product.
+     *
+     * @param array $product_rec
+     * @param str $data_buff
+     */
+    public function parse_variable_array_and_encode2array($product_rec = array()) {
+        $attribs = array();
+
+        // parse existing data
+        if (!empty($product_rec['attribs'])) {
+            parse_str($product_rec['attribs'], $attribs);
+        }
+
+        return empty($attribs['variable_data']) ? array() : $attribs['variable_data'];
+    }
+    
     /**
      * Parses a buffer of variable data and puts it into the product.
      *
