@@ -1045,6 +1045,8 @@ SHORT_CODE_EOF;
                     $price = $variable_option['price'];
 
                     $item_name .= ' ' . $variable_option['label']; // the license type to the product name
+
+                    // TODO: pass the selected license to the $custom_params to paypal
                 }
             }
 
@@ -1110,7 +1112,7 @@ SHORT_CODE_EOF;
             $this->log('paypal_checkout URL: ' . $location);
             $this->log('paypal_checkout Params: ' . var_export($paypal_params, 1));
 
-//wp_die($location);
+wp_die($location);
 
             if (has_action('orb_cyber_store_process_payment')) {
                 $payment_result = do_action('orb_cyber_store_process_payment', $paypal_url, $paypal_params);
@@ -1591,7 +1593,7 @@ MSG_EOF;
             parse_str($product_rec['attribs'], $attribs); // get other docs
 
             foreach ($attribs['variable_data'] as $row) {
-                $lines[] = "{$row['label']} | {$row['price']} | {$row['extra_params']}";
+                $lines[] = "{$row['label']} | {$row['price']} | {$row['params']}";
             }
         }
 
@@ -1636,8 +1638,7 @@ MSG_EOF;
 
 		foreach ($buff_arr as $line) {
             // Line can look like this
-            // Developer License (Unlimited Domains) | 49.95 | license=3
-
+            // Developer License (Unlimited Domains) | 49.95 | license=dev or license=pro or license=personal,
 			if (!empty($line)) {
                 $line = preg_replace('#\s+#si', ' ', $line); // we need just once space
                 $fields_arr = preg_split('#\s*\|\s*#si', $line); // we need fields split up by a pipe |
@@ -1645,19 +1646,24 @@ MSG_EOF;
 
                 $label = $fields_arr[0];
                 $price = $fields_arr[1];
+                $price = trim($price, '$,'); // no dollars in the price
+                
                 $extra_params = empty($fields_arr[2]) ? '' : $fields_arr[2];
+                $extra_params = preg_replace('#\s+#si', '-', $extra_params);
 
+                // TODO??? should we add a parameter based on the label?
+                // e.g. Developer License (Unlimited Domains)
+                // variation_name=developer_license
+                // variation_descr=Unlimited Domains
                 /*$type_fmt = $label;
                 $type_fmt = strtolower($type_fmt);
                 $type_fmt = preg_replace('#\s*\(.*#si', '', $type_fmt); // remove after everything after the first bracket (
-                $extra_params .= 'license_label=' . $type_fmt;
-                
-                $extra_params = preg_replace('#\s+#si', '-', $extra_params); // we need just once space*/
+                $extra_params .= 'license_label=' . $type_fmt;*/
 
 				$attribs['variable_data'][] = array(
                     'label' => $label,
                     'price' => $price,
-                    'extra_params' => $extra_params,
+                    'params' => $extra_params,
                 );
 			}
 		}
