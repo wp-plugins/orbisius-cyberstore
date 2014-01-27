@@ -29,6 +29,12 @@ if (!empty($_POST)) {
 
 if (!empty($id)) {
     $product_rec = $orbisius_digishop_obj->get_product($id, 'admin');
+    
+    $attribs = array();
+    
+    if ($orbisius_digishop_obj->is_variable($product_rec)) {
+        $product_rec['variable_pricing'] = $orbisius_digishop_obj->decode_variable($product_rec);
+    }
 }
 
 ?>
@@ -74,6 +80,18 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											<th scope="row">Price</th>
 											<td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo $product_rec['price']; ?>" autocomplete="off" class="small-text" />
 											Ex.: 29.95 or 10, use 0 for a free (download button will be shown instead of the buy now)
+											</td>
+										</tr>
+                                        <tr valign="top">
+											<th scope="row">Variable Pricing</th>
+                                            <td>
+                                                <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat" rows="5"><?php
+                                                    echo $product_rec['variable_pricing']; ?></textarea>
+                                                <br/>Example: <br/>
+                                                <textarea class="widefat" readonly="readonly">
+Personal License  (1 domain) | 19.95
+Business License  (3 domains) | 29.95
+Developer License  (Unlimited Domains) | 49.95</textarea>
 											</td>
 										</tr>
 										<tr valign="top">

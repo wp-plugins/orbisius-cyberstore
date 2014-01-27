@@ -14,38 +14,38 @@
     </editor-bookmarks>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="7">
         <file>
-            <url>menu.product.add.php</url>
-            <bookmark id="0">
-                <name/>
-                <line>65</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>orbisius-cyberstore.php</url>
             <bookmark id="1">
                 <name/>
-                <line>843</line>
+                <line>859</line>
                 <key/>
             </bookmark>
             <bookmark id="7">
                 <name/>
-                <line>863</line>
+                <line>879</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>984</line>
+                <line>1000</line>
                 <key/>
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>1141</line>
+                <line>1157</line>
                 <key/>
             </bookmark>
             <bookmark id="5">
                 <name/>
-                <line>1240</line>
+                <line>1256</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>menu.product.add.php</url>
+            <bookmark id="0">
+                <name/>
+                <line>65</line>
                 <key/>
             </bookmark>
         </file>
@@ -69,9 +69,8 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/orbisius-cyberstore.php</file>
         <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/readme.txt</file>
         <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.product.add.php</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/orbisius-cyberstore.php</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.dashboard.php</file>
     </open-files>
 </project-private>

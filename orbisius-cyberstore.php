@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Orbisius CyberStore (former DigShop) plugin allows you to start selling your digital products such as e-books, reports in minutes.
-  Version: 1.2.7
+  Version: 1.2.8
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -411,7 +411,7 @@ SHORT_CODE_EOF;
         // if the user wants to add some call to action BEFORE the buy now button
         $pre_buy_now = apply_filters('orb_cyber_store_ext_filter_before_buy_now', '');
         $buffer .= $pre_buy_now;
-
+// is_variable
         if (!empty($opts['render_old_paypal_form'])) {
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
@@ -1533,11 +1533,99 @@ MSG_EOF;
             'file' => '',
             'label' => '',
             'price' => '',
+            'variable_pricing' => '',
             'ext_link' => '',
             'active' => 1,
         );
 
         return $default_fields;
+    }
+
+    const DECODE_RETURN_STR = 1;
+    const DECODE_RETURN_ARRAY = 2;
+
+    /**
+     * Parses the product record and extracts the 'variable_pricing' attribute. which is
+     * stored as URL encoded string.
+     * 
+     * @param array $product_rec
+     */
+    public function decode_variable($product_rec = array(), $return = self::DECODE_RETURN_STR) {
+        $attribs = $lines = array();
+
+        if (is_array($product_rec) && !empty($product_rec['attribs'])) {
+            parse_str($product_rec['attribs'], $attribs);
+
+            foreach ($attribs['variable_data'] as $row) {
+                $lines[] = "{$row['label']} | {$row['cost']} | {$row['extra_params']}";
+            }
+        }
+
+        if ($return == self::DECODE_RETURN_STR) {
+            return join("\n", $lines);
+        } else {
+
+        }
+    }
+
+    /**
+     * Parses a buffer of variable data and puts it into the product.
+     *
+     * @param array $product_rec
+     * @param str $data_buff
+     */
+    public function parse_variable($product_rec = array(), $data_buff = '') {
+		$attribs = array();
+        
+        $buff_arr = preg_split('#[\n\r]+#si', $data_buff); // we need lines
+        $buff_arr = array_map('trim', $buff_arr);
+
+        // parse existing data
+        if (!empty($product_rec['attribs'])) {
+            parse_str($product_rec['attribs'], $attribs);
+            // delete or keep?
+            $attribs['variable_data'] = array();
+        }
+
+		foreach ($buff_arr as $line) {
+            // Line can look like this
+            // Developer License (Unlimited Domains) | 49.95 | license=3
+
+			if (!empty($line)) {
+                $line = preg_replace('#\s+#si', ' ', $line); // we need just once space
+                $fields_arr = preg_split('#\s*\|\s*#si', $line); // we need fields split up by a pipe |
+                $fields_arr = array_map('trim', $fields_arr);
+
+                $label = $fields_arr[0];
+                $cost = $fields_arr[1];
+                $extra_params = empty($fields_arr[2]) ? '' : $fields_arr[2];
+
+                /*$type_fmt = $label;
+                $type_fmt = strtolower($type_fmt);
+                $type_fmt = preg_replace('#\s*\(.*#si', '', $type_fmt); // remove after everything after the first bracket (
+                $extra_params .= 'license_label=' . $type_fmt;
+                
+                $extra_params = preg_replace('#\s+#si', '-', $extra_params); // we need just once space*/
+
+				$attribs['variable_data'][] = array(
+                    'label' => $label,
+                    'cost' => $cost,
+                    'extra_params' => $extra_params,
+                );
+			}
+		}
+
+        return http_build_query($attribs);
+    }
+
+    /**
+     *
+     * @param type $product_rec
+     * @param type $data_buff
+     */
+    public function is_variable($product_rec = array()) {
+        $yes = !empty($product_rec['attribs']) && (strpos($product_rec['attribs'], 'variable_data') !== false);
+        return $yes;
     }
 
     /**
@@ -1549,11 +1637,9 @@ MSG_EOF;
      */
     public function admin_product($data = array(), $id = null) {
         global $wpdb;
-        
         $st = 0;
+        $data = array_map('trim', $data); // if sending arrays this will break 'em
         
-        $prev_rec = array();
-
         $id = Orbisius_CyberStoreUtil::stop_bad_input($id, Orbisius_CyberStoreUtil::SANITIZE_NUMERIC);
 
         if (empty($data['label'])) {
@@ -1569,9 +1655,18 @@ MSG_EOF;
         $ext_link = empty($data['ext_link']) ? '' : trim($data['ext_link']);
 
         if (!$this->has_errors()) {
+            $prev_rec = array();
+
             // add product
             if (!empty($id)) {
                 $prev_rec = $this->get_product($id, 'admin');
+            }
+
+            $variable_pricing_buff = empty($data['variable_pricing']) ? '' : $data['variable_pricing'];
+            $attribs = $this->parse_variable($prev_rec, $variable_pricing_buff);
+
+            if (!empty($attribs)) {
+                $product_data['attribs'] = $attribs;
             }
 
             // TODO Sanitize vars
@@ -2066,6 +2161,44 @@ class Orbisius_CyberStoreUtil {
         }
 
         $html .= '</select>';
+        $html .= "\n";
+
+        return $html;
+    }
+
+    /**
+     * Generates radio or checkboxes. If $sel is empty the first element from the $options array
+     * will be used as default.
+     * $buff .= 'License: ' . Orbisius_CyberStoreUtil::html_boxes('license', empty($_REQUEST['license']) ? '' : $_REQUEST['license'], $license_types);
+     *
+     * @param type $name
+     * @param type $sel
+     * @param type $options
+     * @param type $attr
+     * @return string
+     */
+    public static function html_boxes($name = '', $sel = null, $options = array(), $attr = '') {
+        $esc_name = strtolower($name);
+        $esc_name = preg_replace('#[^\w-]#si', '_', $esc_name);
+        $esc_name = esc_attr($esc_name);
+        $html = "\n<div id='$esc_name' $attr>\n";
+
+        $type = 'radio';
+        $sep = "<br/>\n";
+
+        if (empty($sel)) {
+            $first_key = key($options); // First Element's Key
+            //$first_value = reset($options); // First Element's Value
+
+            $sel = $first_key;
+        }
+
+        foreach ($options as $key => $label) {
+            $checked = $sel == $key ? ' checked="checked"' : '';
+            $html .= "\t<label> <input type='$type' name='$esc_name' value='$key' $checked> $label</label>" . $sep;
+        }
+
+        $html .= '</div>';
         $html .= "\n";
 
         return $html;
