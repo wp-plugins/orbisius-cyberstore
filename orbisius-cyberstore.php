@@ -1092,6 +1092,16 @@ SHORT_CODE_EOF;
                 'cancel_return' => $cancel_return,
             );
 
+            // Pass-through variable you can use to identify your invoice number for this purchase.
+            // Default – No variable is passed back to you.
+            // Let's create a nice invoice so we know which site this order was made on.
+            // see https://developer.paypal.com/webapps/developer/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/
+            if (!empty($_SERVER['HTTP_HOST'])) {
+                // CLUB.ORBISIUS.COM-201401261103059-01345
+                $invoice = str_replace('WWW.', '', strtoupper($_SERVER['HTTP_HOST'])) . '-' . date('Ymd-His'). '-' . sprintf("%05d", mt_rand(999, 99999));
+                $paypal_params['invoice'] = $invoice;
+            }
+
 			$paypal_url = apply_filters('orb_cyber_store_paypal_url', $paypal_url);
 			$paypal_params = apply_filters('orb_cyber_store_paypal_params', $paypal_params);
 			
