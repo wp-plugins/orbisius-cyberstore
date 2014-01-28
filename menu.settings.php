@@ -45,8 +45,13 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											</td>
 										</tr>
 										<tr valign="top">
-											<th scope="row">PayPal Email</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[business_email]" value="<?php echo $opts['business_email']; ?>" class="input_field" /></td>
+											<th scope="row">PayPal Email / Currency</th>
+											<td><input type="text" name="<?php echo $settings_key; ?>[business_email]" value="<?php echo $opts['business_email']; ?>" class="input_field" />
+
+                                                | Currency
+                                                <input type="text" name="<?php echo $settings_key; ?>[currency]" value="<?php echo $opts['currency']; ?>" size="4"/> Example: USD, CAD, EUR
+                                                    <a href="https://developer.paypal.com/webapps/developer/docs/classic/api/currency_codes/" target="_blank">See full list</a>
+                                            </td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Order Notification Email</th>
@@ -95,29 +100,20 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											<td><input type="text" name="<?php echo $settings_key; ?>[purchase_error]" value="<?php echo $opts['purchase_error']; ?>" class="input_field widefat"/></td>
 										</tr>
 										<tr valign="top">
-											<th scope="row">Currency</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[currency]" value="<?php echo $opts['currency']; ?>" /> Example: USD, CAD, EUR
-												<a href="https://developer.paypal.com/webapps/developer/docs/classic/api/currency_codes/" target="_blank">See full list</a>
-											</td>
-										</tr>
-										<tr valign="top">
-											<th scope="row">Submit the form in a new window</th>
+											<th scope="row">Misc</th>
 											<td>
-												<label for="digishop_form_new_window">
-														<input type="checkbox" id="digishop_form_new_window" name="<?php echo $settings_key; ?>[form_new_window]" value="1"
-															<?php echo empty($opts['form_new_window']) ? '' : 'checked="checked"'; ?> /> Enable form submission in a new window</label>
-											</td>
-										</tr>
-										<tr valign="top">
-											<th scope="row">Require buyer's shipping address (on PayPal's site)</th>
-											<td>
-												<label for="digishop_require_shipping">
-														<input type="checkbox" id="digishop_require_shipping" name="<?php echo $settings_key; ?>[require_shipping]" value="1"
-															<?php echo empty($opts['require_shipping']) ? '' : 'checked="checked"'; ?> /> Enable</label>
-
-                                                <br/><label for="digishop_render_price">
+                                                <label for="digishop_render_price">
 														<input type="checkbox" id="digishop_render_price" name="<?php echo $settings_key; ?>[render_price]" value="1"
 															<?php echo empty($opts['render_price']) ? '' : 'checked="checked"'; ?> /> Show Price (above the Buy Now button)</label>
+
+                                                <br/><label for="digishop_require_shipping">
+														<input type="checkbox" id="digishop_require_shipping" name="<?php echo $settings_key; ?>[require_shipping]" value="1"
+															<?php echo empty($opts['require_shipping']) ? '' : 'checked="checked"'; ?> /> Require buyer's shipping address (on PayPal's site)</label>
+
+                                                
+                                                <br/><label for="digishop_form_new_window">
+														<input type="checkbox" id="digishop_form_new_window" name="<?php echo $settings_key; ?>[form_new_window]" value="1"
+															<?php echo empty($opts['form_new_window']) ? '' : 'checked="checked"'; ?> /> Enable form submission in a new window</label>
 											</td>
 										</tr>
 										<?php if (0) : /* No need to parse old code because this plugin has to read another db table and match ids. */ ?>

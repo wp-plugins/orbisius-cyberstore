@@ -148,6 +148,9 @@ n/a
 * Using curl by default to validate a transaction and if it doesn't work then try fsockopen
 * Loading a minified CSS in the admin
 * Added an option to select if the price will be shown above the Buy Now button
+* Added price rendering for variable products too.
+* Moved the currency field near the paypal email
+* Combined a few misc checkboxes into one row to save some space
 
 = 1.2.7 =
 * Added link to extensions on the dashboard

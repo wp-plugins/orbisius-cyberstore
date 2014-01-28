@@ -71,7 +71,7 @@ class Orbisius_CyberStore {
     private $paypal_submit_image_src = 'https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif';
     private $plugin_default_opts = array(
         'status' => 0,
-        'render_price' => 0,
+        'render_price' => 1,
         'test_mode' => 0,
         'logging_enabled' => 0,
         'parse_old_shortcode' => '',
