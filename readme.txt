@@ -141,6 +141,7 @@ n/a
 * Removed some unused settings variables
 * Passed through a self generated invoice field that includes the site name and date and time of the transaction
 * Added System Note field
+* Made add/edit to stay on the same page
 
 = 1.2.7 =
 * Added link to extensions on the dashboard

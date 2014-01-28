@@ -2,7 +2,7 @@
 
 $msg = '';
 
-$id = !isset($_REQUEST['id']) ? null : $_REQUEST['id'];
+$id = !isset($_REQUEST['id']) ? 0 : $_REQUEST['id'];
 $settings_key = $orbisius_digishop_obj->get('plugin_settings_key');
 $db_prefix = $orbisius_digishop_obj->get('plugin_db_prefix');
 
@@ -19,6 +19,7 @@ if (!empty($_POST)) {
     } else {
         $shortcode = '[' . $orbisius_digishop_obj->get('plugin_id_str') . ' id="' . $ret_id . '"]';
         $msg = $orbisius_digishop_obj->message("Successfully added/updated record. Shortcode: $shortcode", 1);
+        $id = $ret_id;
     }
 
     // preserve data only when updating or error adding
@@ -68,15 +69,16 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                             <div class="inside">
                                 <form method="post" enctype="multipart/form-data">
 									<?php settings_fields($orbisius_digishop_obj->get('plugin_dir_name')); ?>
+                                    <input type="hidden" name="id" value="<?php echo esc_attr($id); ?>" />
 
 									<table class="form-table">
 										<tr valign="top">
 											<th scope="row">Product Name</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[label]" value="<?php echo $product_rec['label']; ?>" class="input_field widefat" /></td>
+											<td><input type="text" name="<?php echo $settings_key; ?>[label]" value="<?php echo esc_attr($product_rec['label']); ?>" class="input_field widefat" /></td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Price</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo $product_rec['price']; ?>" autocomplete="off" class="small-text" />
+											<td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo esc_attr($product_rec['price']); ?>" autocomplete="off" class="small-text" />
 											Ex.: 29.95 or 10, use 0 for a free (download button will be shown instead of the buy now)
 											</td>
 										</tr>
