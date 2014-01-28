@@ -71,6 +71,7 @@ class Orbisius_CyberStore {
     private $paypal_submit_image_src = 'https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif';
     private $plugin_default_opts = array(
         'status' => 0,
+        'render_price' => 0,
         'test_mode' => 0,
         'logging_enabled' => 0,
         'parse_old_shortcode' => '',
@@ -81,7 +82,7 @@ class Orbisius_CyberStore {
         'submit_button_img_src' => 'https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif',
         'business_email' => '',
         'purchase_subject' => 'Download Link',
-        'purchase_content' => "Dear %%FIRST_NAME%%,\n\nThank you for your order.\nTransaction: %%TXN_ID%%\nHere is the download link: %%DOWNLOAD_LINK%% for %%PRODUCT_NAME%%.\n\nRegards,\n%%SITE%% team",
+        'purchase_content' => "Dear %%FIRST_NAME%%,\n\nThank you for your order.\nPrice: %%PRODUCT_PRICE%%\nTransaction: %%TXN_ID%%\nHere is the download link: %%DOWNLOAD_LINK%% for %%PRODUCT_NAME%%.\n\nRegards,\n%%SITE%% team",
         'currency' => 'USD',
         'purchase_thanks' => 'Thanks. The payment is being processing now. You should receive an email very soon.',
         'purchase_error' => 'There was a problem with the payment.',
@@ -461,7 +462,7 @@ SHORT_CODE_EOF;
 SHORT_CODE_EOF;
         } else {
             // either the attribute is set to render price OR a plugin wants that
-            $render_price = !empty($attr['render_price']) || apply_filters('orb_cyber_store_ext_filter_render_price', false);
+            $render_price = !empty($opts['render_price']) || !empty($attr['render_price']) || apply_filters('orb_cyber_store_ext_filter_render_price', false);
 
             // Do we need to pass any extra data to the payment form?
             $extra_params_buff = '';
@@ -487,21 +488,13 @@ SHORT_CODE_EOF;
 				$default_currency_suffix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? $currency : '';
 			
 				$label = empty($attr['price_label']) ? 'Price' : $attr['price_label'];
-				$currency_prefix = empty($attr['currency_prefix']) ? $default_currency_prefix : $attr['currency_prefix']; // e.g. $
-				$currency_suffix = empty($attr['currency_suffix']) ? $default_currency_suffix : $attr['currency_suffix']; // USD defaults to currency
-				$price_suffix = empty($attr['price_suffix']) ? '' : $attr['price_suffix']; // e.g. (one time purchase)
-
                 $label = apply_filters('orb_cyber_store_ext_filter_price_label', $label);
-                $currency_prefix = apply_filters('orb_cyber_store_ext_filter_currency_prefix', $currency_prefix);
-                $currency_suffix = apply_filters('orb_cyber_store_ext_filter_currency_suffix', $currency_suffix);
-                $price_suffix = apply_filters('orb_cyber_store_ext_filter_price_suffix', $price_suffix);
+
+                $price_fmt = Orbisius_CyberStoreUtil::format_price($price, $currency);
 
                 $cls = "{$this->plugin_id_str}_product_price ";
                 $cls = apply_filters('orb_cyber_store_ext_filter_price_container_css', $cls); // in case somebody wants to add more CSS
-
-                $buffer .= "\n<div class='$cls'>
-					$label: {$currency_prefix}$price {$currency_suffix} {$price_suffix}
-					</div>\n";
+                $buffer .= "\n<div class='$cls'>$label: $price_fmt</div>\n";
 
                 // this is the whole buffer
                 $buffer = apply_filters('orb_cyber_store_ext_filter_price_container', $buffer);
@@ -1302,7 +1295,7 @@ SHORT_CODE_EOF;
                     '%%TXN_ID%%' => $data['txn_id'],
                     '%%SITE%%' => $this->site_url,
                     '%%PRODUCT_NAME%%' => $product_rec['label'],
-                    '%%PRODUCT_PRICE%%' => $product_rec['price'],
+                    '%%PRODUCT_PRICE%%' => Orbisius_CyberStoreUtil::format_price($product_rec['price'], $opts['currency']),
                 );
 
                 $email_subject = str_ireplace(array_keys($vars), array_values($vars), $email_subject);
@@ -1426,7 +1419,7 @@ SHORT_CODE_EOF;
 
         if (empty($opts['status'])) {
             if (!Orbisius_CyberStoreUtil::is_on_plugin_page()) {
-                echo $this->message($this->plugin_name . " is currently not configured or disabled. Please, configure it or enable it from "
+                echo $this->message($this->plugin_name . " is currently not configured or is disabled. Please, configure it or enable it from "
                     . "<a href='{$this->plugin_admin_url_prefix}/menu.settings.php'> {$this->plugin_name} &gt; Settings</a>");
             }
         } elseif (!empty($opts['test_mode']) && Orbisius_CyberStoreUtil::is_on_plugin_page()) { // show the notice only when checking the settings.
@@ -1436,7 +1429,7 @@ SHORT_CODE_EOF;
                     . "<a href='{$this->plugin_admin_url_prefix}/menu.settings.php'> {$this->plugin_name} &gt; Settings</a>");
             } else {
                 echo $this->message($this->plugin_name . " is currently in Sandbox mode. To accept real transactions please uncheck Sandbox mode from "
-                    . "<a href='{$this->plugin_admin_url_prefix}/menu.settings.php'> {$this->plugin_name} &gt; Settings</a>");
+                    . "<a href='{$this->plugin_admin_url_prefix}/menu.settings.php'> {$this->plugin_name} &gt; Settings &gt; Advanced</a>");
             }
         }
     }
@@ -2359,6 +2352,25 @@ class Orbisius_CyberStoreUtil {
         $upload_mb = min($max_upload, $max_post, $memory_limit);
 
         return $upload_mb;
+    }
+
+    /**
+     * proto str formatFileSize( int $size )
+     *
+     * @param string
+     * @return string 1 KB/ MB
+     */
+    public static function format_price($price, $currency = '') {
+        $common_dollar_currencies = array('CAD', 'USD', 'AUD', 'HKD', 'NZD', 'SGD');
+
+        // of dollars in Canada, US & Australia we'll prefix the money with $ sign
+        $currency_prefix = in_array($currency, $common_dollar_currencies) ? '$' : '';
+        $currency_suffix = $currency;
+
+        $price_fmt = "{$currency_prefix}$price {$currency_suffix}";
+        $price_fmt = apply_filters('orb_cyber_store_ext_filter_price_format', $price_fmt);
+
+        return $price_fmt;
     }
 
     /**

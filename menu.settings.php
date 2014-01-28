@@ -70,7 +70,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 												<p>
 													<div>
 														<strong>Supported Variables <a href="javascript:void(0);" onclick="jQuery('.suppored_vars').toggle('slow');return false;">(show/hide)</a></strong>
-														<ul class="suppored_vars app_hide">
+														<ul class="suppored_vars app_hide hide-if-js">
 															<li>%%SITE%%</li>
 															<li>%%FIRST_NAME%% - Payer's first name</li>
 															<li>%%LAST_NAME%% - Payer's last name</li>
@@ -114,6 +114,10 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 												<label for="digishop_require_shipping">
 														<input type="checkbox" id="digishop_require_shipping" name="<?php echo $settings_key; ?>[require_shipping]" value="1"
 															<?php echo empty($opts['require_shipping']) ? '' : 'checked="checked"'; ?> /> Enable</label>
+
+                                                <br/><label for="digishop_render_price">
+														<input type="checkbox" id="digishop_render_price" name="<?php echo $settings_key; ?>[render_price]" value="1"
+															<?php echo empty($opts['render_price']) ? '' : 'checked="checked"'; ?> /> Show Price (above the Buy Now button)</label>
 											</td>
 										</tr>
 										<?php if (0) : /* No need to parse old code because this plugin has to read another db table and match ids. */ ?>
