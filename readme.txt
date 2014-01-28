@@ -140,6 +140,7 @@ n/a
 * Added a new db table fields: file_ext_src, meta_info, attribs
 * Removed some unused settings variables
 * Passed through a self generated invoice field that includes the site name and date and time of the transaction
+* Added System Note field
 
 = 1.2.7 =
 * Added link to extensions on the dashboard

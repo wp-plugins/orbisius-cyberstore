@@ -572,6 +572,7 @@ SHORT_CODE_EOF;
                     `meta_info` varchar(8192) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
                     `status` INT NOT NULL DEFAULT '1' COMMENT '1-Sale, 2-Pre-Order, 3 Subscription',
                     `active` INT NOT NULL DEFAULT '0',
+                    `system_note` varchar(1024) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
                     INDEX ( `status` , `active` )
                     ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
                ",
@@ -1572,8 +1573,10 @@ MSG_EOF;
             'file' => '',
             'label' => '',
             'price' => '',
+            'system_note' => '',
             'variable_pricing' => '',
             'ext_link' => '',
+            'file_ext_src' => '',
             'active' => 1,
         );
 
@@ -1728,6 +1731,7 @@ MSG_EOF;
             $product_data['price'] = trim($data['price'], ' $');
             $product_data['active'] = empty($data['active']) ? 0 : 1;
             $product_data['added_on'] = empty($prev_rec['added_on']) ? current_time('mysql') : $prev_rec['added_on'];
+            $product_data['system_note'] = $data['system_note'];
 
             // upload
             if (!empty($_FILES['file']) && $_FILES['file']['error'] == UPLOAD_ERR_OK) {

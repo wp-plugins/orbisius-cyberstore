@@ -83,7 +83,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                         <tr valign="top">
 											<th scope="row">Variable Pricing</th>
                                             <td>
-                                                <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat" rows="5"><?php
+                                                <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat" rows="3"><?php
                                                     echo $product_rec['variable_pricing']; ?></textarea>
                                                 <br/>Example: <br/>
                                                 <textarea class="widefat" readonly="readonly">
@@ -103,8 +103,8 @@ Developer License  (Unlimited Domains) | 49.95</textarea>
 													<?php
 														if (!Orbisius_CyberStoreUtil::validate_url($product_rec['file'])) {
 															if (file_exists($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) {
-																echo $product_rec['file'] . ' (' . Orbisius_CyberStoreUtil::format_file_size(
-																	@filesize($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) . ')';
+																echo '<span class="app_success">' . $product_rec['file'] . ' (' . Orbisius_CyberStoreUtil::format_file_size(
+																	@filesize($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) . ') </span>';
 															} else {
 																echo "<span class='app_error'>The uploaded file [{$product_rec['file']}] cannot be found.</span>";
 															}
@@ -131,6 +131,13 @@ Developer License  (Unlimited Domains) | 49.95</textarea>
 												Example: http://yourdomain.com/some-document.pdf<br/>
 												Example: ftp://yourdomain.com/sample.doc<br/>
 												If your file is too big you can provide an external link and your users will be redirected to that file. </p>
+											</td>
+										</tr>
+                                        <tr valign="top">
+											<th scope="row">System Note (optional | 1024 characters limit)</th>
+                                            <td>
+                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="widefat" rows="3"><?php
+                                                    echo $product_rec['system_note']; ?></textarea>
 											</td>
 										</tr>
 										<tr valign="top">
