@@ -1425,8 +1425,10 @@ SHORT_CODE_EOF;
         $opts = $this->get_options();
 
         if (empty($opts['status'])) {
-            echo $this->message($this->plugin_name . " is currently disabled. Please, enable it from "
+            if (!Orbisius_CyberStoreUtil::is_on_plugin_page()) {
+                echo $this->message($this->plugin_name . " is currently not configured or disabled. Please, configure it or enable it from "
                     . "<a href='{$this->plugin_admin_url_prefix}/menu.settings.php'> {$this->plugin_name} &gt; Settings</a>");
+            }
         } elseif (!empty($opts['test_mode']) && Orbisius_CyberStoreUtil::is_on_plugin_page()) { // show the notice only when checking the settings.
             if (!empty($opts['sandbox_only_ip'])) {
                 echo $this->message($this->plugin_name . " is currently in Sandbox mode for <strong>{$opts['sandbox_only_ip']}</strong> address only. "
@@ -1861,17 +1863,8 @@ class Orbisius_CyberStoreUtil {
      * That way the notice will be shown only on the plugin's page.
      */
     public static function is_on_plugin_page() {
-        $orbisius_digishop_obj = Orbisius_CyberStore::get_instance();
-
         $req_uri = $_SERVER['REQUEST_URI'];
-        $id_str = $orbisius_digishop_obj->get('plugin_id_str');
-
-        $req_uri = str_replace('_', '-', $req_uri);
-        $id_str = str_replace('_', '-', $id_str);
-
-        // because the plugin id str and uri can have dashes or underscore we'll make underscore dashes
-        // for both req uri and plugin str id
-        $stat = preg_match('#' . preg_quote($id_str) . '#si', $req_uri);
+        $stat = stripos($req_uri, 'orbisius-cyberstore') !== false;
 
         return $stat;
     }

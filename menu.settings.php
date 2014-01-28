@@ -64,7 +64,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 												<?php if (has_action('orb_cyber_store_render_textarea2richtext')) : ?>
 													<?php do_action('orb_cyber_store_render_textarea2richtext', $opts, $settings_key, 'purchase_content'); ?>
 												<?php else : ?>
-												   <textarea name="<?php echo $settings_key; ?>[purchase_content]"><?php echo $opts['purchase_content']; ?></textarea>
+                                                    <textarea name="<?php echo $settings_key; ?>[purchase_content]" class="widefat" rows="8"><?php echo $opts['purchase_content']; ?></textarea>
 												<?php endif; ?>
 
 												<p>
@@ -129,17 +129,21 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 										</tr>
 										<?php endif; ?>
 
-										<?php if (has_action('orb_cyber_store_render_extension_settings')) : ?>
-											<tr valign="top">
-												<th scope="row"><strong>Extensions</strong></th>
-												<td colspan="1">
-													
-												</td>
-											</tr>
+                                        <tr valign="top">
+                                            <th scope="row" colspan="2"><h2>Extensions
+                                                    |
+                                                <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/?utm_source=<?php
+                                                    echo str_replace('.php', '', basename($plugin_file));?>&utm_medium=plugin-settings&utm_campaign=product"
+                                                    title="If you want a custom web/mobile app/plugin developed contact us. This opens in a new window/tab"
+                                                    class="button-primary" target="_blank">Get Extensions</a>
+                                                </h2>
+                                            </th>
+                                        </tr>
+
+										<?php if (0&&has_action('orb_cyber_store_render_extension_settings')) : ?>
 											<?php do_action('orb_cyber_store_render_extension_settings', $opts, $settings_key); ?>
 										<?php else : ?>
 											<tr valign="top">
-												<!--<th scope="row">Extension Name</th>-->
 												<td colspan="2">
 													No extensions found.
 												</td>
@@ -148,13 +152,13 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 
 										<tr valign="top">
 											<th scope="row" colspan="2">
-												<h3>Advanced 
-													(<a href="javascript:void(0);" onclick="jQuery('.digishop_advanced_options').toggle('slow');return false;">show/hide</a>)
-												</h3>
+												<h2>Advanced
+													(<a href="javascript:void(0);" onclick="jQuery('.digishop_advanced_options').toggle();return false;">show/hide</a>)
+												</h2>
 											</th>
 										</tr>
 										</table>
-										<table class="digishop_advanced_options app_hide">
+										<table class="digishop_advanced_options app_hide hide-if-js">
 										<tr valign="top">
 											<th scope="row">Sandbox (no real transactions)</th>
 											<td>
