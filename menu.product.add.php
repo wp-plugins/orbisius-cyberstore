@@ -84,7 +84,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											<th scope="row">Variable Pricing (price override)</th>
                                             <td>
                                                 <a href="javascript:void(0);" onclick="jQuery('.orb_variable_pricing_ex').toggle();return false;">show/hide</a><br/>
-                                                <span class="orb_variable_pricing_ex hide-if-js">
+                                                <div class="orb_variable_pricing_ex hide-if-js">
                                                     <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat"><?php
                                                         echo $product_rec['variable_pricing']; ?></textarea>
                                                     <br/>Example: <br />
@@ -92,7 +92,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 Personal License  (1 domain) | 19.95
 Business License  (3 domains) | 29.95
 Developer License  (Unlimited Domains) | 49.95</textarea>
-                                                </span>
+                                                </div>
 											</td>
 										</tr>
 										<tr valign="top">
