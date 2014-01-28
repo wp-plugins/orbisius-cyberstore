@@ -143,6 +143,7 @@ n/a
 * Added System Note field
 * Made add/edit to stay on the same page
 * Made product titles click and to lead to edit product
+* Added more mime-types so the download option can server files with the correct type that means less warnings that it is a binary/executable file
 
 = 1.2.7 =
 * Added link to extensions on the dashboard

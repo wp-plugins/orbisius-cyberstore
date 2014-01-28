@@ -1997,6 +1997,22 @@ class Orbisius_CyberStoreUtil {
     }
 
     /**
+     * Removes the directory, also some extra s1111. chars from a filename that makes it unique.
+     * This is primarily used by the download
+     * @param str $file
+     */
+    public static function clean_file($file) {
+        $file = trim($file);
+        $file = basename($file);
+
+        // if a file with the same name existed we've appended some numbers to the filename but before
+        // the extension. Now we'll offer the file without the appended numbers.
+        $file = preg_replace('#-sss\d+(\.\w{2,5})$#si', '\\1', $file);
+
+        return $file;
+    }
+
+    /**
      * Serves the file for download. Forces the browser to show Save as and not open the file in the browser.
      * Makes the script run for 12h just in case and after the file is sent the script stops.
      *
@@ -2032,12 +2048,8 @@ class Orbisius_CyberStoreUtil {
         }
 
         // the actual file that will be downloaded
-        $download_file_name = basename($file);
-
-        // if a file with the same name existed we've appended some numbers to the filename but before
-        // the extension. Now we'll offer the file without the appended numbers.
-        $download_file_name = preg_replace('#-sss\d+(\.\w{2,5})$#si', '\\1', $download_file_name);
-
+        $download_file_name = self::clean_file($file);
+        
         $default_content_type = 'application/octet-stream';
 
         $ext = end(explode('.', $download_file_name));
@@ -2046,11 +2058,61 @@ class Orbisius_CyberStoreUtil {
         // http://en.wikipedia.org/wiki/Internet_media_type
         $content_types_array = array(
             'pdf' => 'application/pdf',
+            'exe' => 'application/octet-stream',
             'zip' => 'application/zip',
+            'gzip' => 'application/gzip',
             'gz' => 'application/x-gzip',
+            'z' => 'application/x-compress',
+
+            'cer' => 'application/x-x509-ca-cert',
+            'vcf' => 'application/text/x-vCard',
+            'vcard' => 'application/text/x-vCard',
+
+            // doc
+            "tsv" => "text/tab-separated-values",
+            "txt" => "text/plain",
+            'dot' => 'application/msword',
+            'rtf' => 'application/msword',
             'doc' => 'application/msword',
+            'docx' => 'application/msword',
             'xls' => 'application/vnd.xls',
+            'xlsx' => 'application/vnd.ms-excel',
+            'csv' => 'application/vnd.ms-excel',
             'ppt' => 'application/vnd.ms-powerpoint',
+            'pptx' => 'application/vnd.ms-powerpoint',
+            'mdb' => 'application/x-msaccess',
+            'mpp' => 'application/vnd.ms-project',
+
+            'js' => 'text/javascript',
+            'css' => 'text/css',
+            'htm' => 'text/html',
+            'html' => 'text/html',
+
+            // images
+            'gif' => 'image/gif',
+            'png' => 'image/png',
+            'jpg' => 'image/jpg',
+            'jpeg' => 'image/jpg',
+            'jfif' => 'image/pipeg',
+            'jpe' => 'image/jpeg',
+            'bmp' => 'image/bmp',
+
+            'ics' => 'text/calendar',
+
+            // audio & video
+            'au' => 'audio/basic',
+            'mid' => 'audio/mid',
+            'mp3' => 'audio/mpeg',
+            'avi' => 'video/x-msvideo',
+            'mp4' => 'video/mp4',
+            'mp2' => 'video/mpeg',
+            'mpa' => 'video/mpeg',
+            'mpe' => 'video/mpeg',
+            'mpeg' => 'video/mpeg',
+            'mpg' => 'video/mpeg',
+            'mpv2' => 'video/mpeg',
+            'mov' => 'video/quicktime',
+            'movie' => 'video/x-sgi-movie',
         );
 
         $content_type = empty($content_types_array[$ext]) ? $default_content_type : $content_types_array[$ext];
