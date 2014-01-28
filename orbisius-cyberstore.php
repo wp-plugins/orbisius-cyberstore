@@ -68,7 +68,6 @@ class Orbisius_CyberStore {
     private $plugin_admin_url_prefix = null; // filled in later
     private $plugin_home_page = 'http://orbisius.com/site/products/digishop/';
     private $plugin_tinymce_name = 'wwwpdigishop'; // if you change it update the tinymce/editor_plugin.js and reminify the .min.js file.
-    private $paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
     private $paypal_submit_image_src = 'https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif';
     private $plugin_default_opts = array(
         'status' => 0,
@@ -215,6 +214,39 @@ class Orbisius_CyberStore {
 
             add_action('get_footer', array($this, 'public_notices')); // status after TXN
         }
+    }
+
+    /**
+     * for now it's hard coded
+     */
+    function get_gateway() {
+        return 'paypal';
+    }
+
+    /**
+     * This returns the URL and an email depending on the gateway.
+     * If test mode is enabled it will return the test params as well as
+     * sandbox email (paypal)
+     */
+    function get_gateway_params() {
+        $url = 'https://www.paypal.com/cgi-bin/webscr';
+
+        $opts = $this->get_options();
+
+        if (!empty($opts['test_mode'])) {
+			if (empty($opts['sandbox_only_ip'])
+						|| (!empty($opts['sandbox_only_ip']) && $_SERVER['REMOTE_ADDR'] == $opts['sandbox_only_ip'])) {
+				$url = str_replace('paypal.com', 'sandbox.paypal.com', $url);
+				$email = empty($opts['sandbox_business_email']) ? $opts['business_email'] : $opts['sandbox_business_email'];
+			}
+        } else {
+            $email = $opts['business_email'];
+        }
+
+        $data['url'] = $url;
+        $data['email'] = $email;
+
+        return $data;
     }
 
     /**
@@ -365,18 +397,10 @@ SHORT_CODE_EOF;
             return $buffer;
         }
 
-        $paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
-
-        if (!empty($opts['test_mode'])) {
-			if (empty($opts['sandbox_only_ip'])
-						|| (!empty($opts['sandbox_only_ip']) && $_SERVER['REMOTE_ADDR'] == $opts['sandbox_only_ip'])) {
-				//$paypal_url = str_replace('paypal.com', 'sandbox.paypal.com', $paypal_url);
-				$paypal_url = str_replace('paypal.com', 'sandbox.paypal.com', $paypal_url);
-				$email = empty($opts['sandbox_business_email']) ? $opts['business_email'] : $opts['sandbox_business_email'];
-			}
-        } else {
-            $email = $opts['business_email'];
-        }
+        $gateway_params = $this->get_gateway_params();
+        
+        $gateway_url = $gateway_params['url'];
+        $email = $gateway_params['email'];
 
         $notify_url = $this->payment_notify_url;
         $currency = $opts['currency'];
@@ -414,7 +438,7 @@ SHORT_CODE_EOF;
         if (!empty($opts['render_old_paypal_form'])) {
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
-<form action="$paypal_url" method="post" target="_blank" >
+<form action="$gateway_url" method="post" target="_blank" >
             <input type='hidden' name="business" value="$email" />
             <input type="hidden" name="cmd" value="_xclick" />
             <input type='hidden' name="item_name" value="$item_name" />
@@ -1053,14 +1077,8 @@ SHORT_CODE_EOF;
 
             $price = sprintf("%01.2f", $price);
             $post_url = get_permalink($post_id); // we need this so we can redirect the user to the same page again.
-            $paypal_url = $this->paypal_url;
 
-            if (!empty($opts['test_mode'])) {
-                $paypal_url = str_replace('paypal.com', 'sandbox.paypal.com', $paypal_url);
-                $email = empty($opts['sandbox_business_email']) ? $opts['business_email'] : $opts['sandbox_business_email'];
-            } else {
-                $email = $opts['business_email'];
-            }
+            $gateway_params = $this->get_gateway_params();
 
             $cancel_return = Orbisius_CyberStoreUtil::add_url_params($post_url, array($this->web_trigger_key => 'txn_error'));
             $return_page = Orbisius_CyberStoreUtil::add_url_params($post_url, array($this->web_trigger_key => 'txn_ok'));
@@ -1078,7 +1096,11 @@ SHORT_CODE_EOF;
             }
 
             // Does the user want to inject some more params?
-            $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params);
+            $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params); // obs
+            $custom_params = apply_filters('orb_cyber_store_gateway_custom_params', $custom_params); // new
+            
+            $email = $gateway_params['email'];
+            $gateway_url = $gateway_params['url'];
 
             $paypal_params = array(
                 'cmd' => '_xclick',
@@ -1105,10 +1127,15 @@ SHORT_CODE_EOF;
                 $paypal_params['invoice'] = $invoice;
             }
 
-			$paypal_url = apply_filters('orb_cyber_store_paypal_url', $paypal_url);
+            // obsolete
+			$gateway_url = apply_filters('orb_cyber_store_paypal_url', $gateway_url);
 			$paypal_params = apply_filters('orb_cyber_store_paypal_params', $paypal_params);
+
+            // new
+			$gateway_url = apply_filters('orb_cyber_store_gateway_url', $gateway_url);
+			$paypal_params = apply_filters('orb_cyber_store_gateway_params', $paypal_params);
 			
-            $location = $paypal_url . '?' . http_build_query($paypal_params);
+            $location = $gateway_url . '?' . http_build_query($paypal_params);
 
             $this->log('paypal_checkout URL: ' . $location);
             $this->log('paypal_checkout Params: ' . var_export($paypal_params, 1));
@@ -1116,7 +1143,7 @@ SHORT_CODE_EOF;
 //wp_die($location);
 
             if (has_action('orb_cyber_store_process_payment')) {
-                $payment_result = do_action('orb_cyber_store_process_payment', $paypal_url, $paypal_params);
+                $payment_result = do_action('orb_cyber_store_process_payment', $gateway_url, $paypal_params);
             } else {
                 wp_redirect($location);
                 exit;
@@ -1222,36 +1249,22 @@ SHORT_CODE_EOF;
             //$data['cmd'] = '_notify-validate';
             unset($data['digishop_cmd']); // paypal will not validate the TXN if there are extra params.
 
-            $sandbox = 0;
-            $paypal_url = $this->paypal_url;
+            $gateway_params = $this->get_gateway_params();
 
-            if (!empty($opts['test_mode'])) {
-                // we are in test mode
-                // and if the sandbox IP is supplied we are going to enable sandbox only for that IP address.
-                if (empty($opts['sandbox_only_ip'])
-							|| !empty($data['test_ipn']) // PayPal submits this
-                            || (!empty($opts['sandbox_only_ip']) && $_SERVER['REMOTE_ADDR'] == $opts['sandbox_only_ip'])) {
-                    //$paypal_url = str_replace('paypal.com', 'sandbox.paypal.com', $paypal_url);
-					$sandbox = 1;
-                }
-            }
+            $gateway_url = $gateway_params['url'];
+            $email = $gateway_params['email'];
 
-            //$paypal_url = Orbisius_CyberStoreUtil::add_url_params($paypal_url, $data);
 			$this->log("Plugin $opts " . var_export($opts, 1));
 			$this->log("Test Mode: {$opts['test_mode']} ?");
 			$this->log("Sandbox Only IP: {$opts['sandbox_only_ip']} ?");
 			$this->log("Remote Addr: {$_SERVER['REMOTE_ADDR']} == Sandbox only IP {$opts['sandbox_only_ip']} ?");
 
-            $ua = new Orbisius_CyberStoreCrawler();
-
-            //$check_status = $ua->fetch($paypal_url);
-			$paypal_buffer = Orbisius_CyberStoreUtil::verify_paypal($data, $sandbox);
+			$paypal_buffer = Orbisius_CyberStoreUtil::call_payment_gateway($data);
 
             // Let's try again
             if (empty($paypal_buffer)) {
                 $this->log('paypal_ipn (2): will try to call paypal again. Got data: ' . var_export($data, 1));
-                //$check_status = $ua->fetch($paypal_url);
-				$paypal_buffer = Orbisius_CyberStoreUtil::verify_paypal($data, $sandbox);
+				$paypal_buffer = Orbisius_CyberStoreUtil::call_payment_gateway($data);
             }
 
             if (!empty($paypal_buffer)) {
@@ -1342,6 +1355,8 @@ SHORT_CODE_EOF;
                 if (!empty($opts['callback_url'])) {
                     $data['digishop_callback_time'] = time();
                     $callback_url = Orbisius_CyberStoreUtil::add_url_params($opts['callback_url'], $data);
+
+                    $ua = new Orbisius_CyberStoreCrawler();
                     $cb_status = $ua->fetch($callback_url);
 
                     $this->log("Called Callback URL: " . $callback_url . " status: $cb_status\nContent (from Callback URL): \n"
@@ -2383,25 +2398,87 @@ class Orbisius_CyberStoreUtil {
         return $size . " $size_suff";
     }
 
-	function verify_paypal($data = array(), $sandbox = 0) {
-		$res = '';
-		$obj = Orbisius_CyberStore::get_instance();
-
-		$req = 'cmd=_notify-validate';
+    /**
+     * Prepares params exactly how paypal expects them to be.
+     * They have to be in the right order otherwise they will fail.
+     *
+     * @param array $data
+     * @param str $cmd
+     * @return str
+     */
+	public function prepare_gateway_params($data = array(), $cmd = '_notify-validate') {
+        $query_str = 'cmd=' . urlencode($cmd);
 
 		foreach ($data as $key => $value) {
+			$key = urlencode(stripslashes($key)); // JIC
 			$value = urlencode(stripslashes($value));
-			$req .= "&$key=$value";
+			$query_str .= "&$key=$value";
 		}
 
-		if ($sandbox) {
-			$host = 'www.sandbox.paypal.com';
-		} else {
-			$host = 'www.paypal.com';
-		}
+        return $query_str;
+    }
+    
+    /**
+     *
+     * @param type $data
+     */
+	public function call_payment_gateway_curl($data = array()) {
+        if (!function_exists('curl_init')) {
+            $obj->log(__METHOD__ . " : TXN (0): php curl extension not found. Sorry, gotta go.");
+            return false;
+        }
+
+        $obj = Orbisius_CyberStore::get_instance();
+
+        $gw_data = $obj->get_gateway_params();
+        $url = $gw_data['url'];
+
+        $req = self::prepare_gateway_params($data, '_notify-validate');
+
+        $ch = curl_init();
+        
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FAILONERROR, 1); // TRUE to fail verbosely if the HTTP code returned is greater than or equal to 400.
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
+        curl_setopt($ch, CURLOPT_USERAGENT, "Orbisius_CyberStore_WordPress_Plugin/1.0 (+http://wordpress.org/plugins/orbisius-cyberstore/)");
+
+        $result = curl_exec($ch); // run the curl process (and return the result to $result
+
+        $obj->log(__METHOD__ . " : TXN (0): url: [$url], req: [$req], result: [$result]");
+
+        curl_close($ch);
+
+        return $result;
+    }
+
+    /**
+     *
+     * @param type $data
+     */
+	public function call_payment_gateway_fsockopen($data = array()) {
+        if (!function_exists('fsockopen')) {
+            $obj->log(__METHOD__ . " : TXN (0): php fsockopen not found. Sorry, gotta go.");
+            return false;
+        }
+
+        $res = '';
+        $req = self::prepare_gateway_params($data, '_notify-validate');
+
+		$obj = Orbisius_CyberStore::get_instance();
+        $gw_data = $obj->get_gateway_params();
+        $url = $gw_data['url'];
+
+        // component is available since: php 5.1.2, WP needs 5.2 at least so we're good.
+        $host = parse_url($url, PHP_URL_HOST);
+        $path = parse_url($url, PHP_URL_PATH);
 
 		// post back to PayPal system to validate
-		$header = "POST /cgi-bin/webscr HTTP/1.0\r\n";
+		$header = "POST $path HTTP/1.0\r\n";
 
 		// If testing on Sandbox use:
 		$header .= "Host: $host:443\r\n";
@@ -2415,7 +2492,8 @@ class Orbisius_CyberStoreUtil {
 
 		if (!$fp) {
 			$obj->log(__METHOD__ . " : Didn't succeed on first attempt: $errno, $errstr");
-			$fp = fsockopen ("ssl://$host", 443, $errno, $errstr, 45);
+            usleep(500);
+			$fp = fsockopen("ssl://$host", 443, $errno, $errstr, 45);
 		}
 
 		if (!$fp) {
@@ -2425,7 +2503,7 @@ class Orbisius_CyberStoreUtil {
 			fputs($fp, $header . $req);
 
 			while (!feof($fp)) {
-				$res .= fgets($fp, 2048);
+				$res .= fgets($fp, 4096);
 
 				// next layer will check
 				/*if (trim($res) ==  "VERIFIED") {
@@ -2444,7 +2522,25 @@ class Orbisius_CyberStoreUtil {
 		$obj->log(__METHOD__ . " : TXN (3): Error");
 
 		return $res;
-	}
+    }
+
+    /**
+     * Calls the payment gateway and returns the response.
+     * 
+     * @param array $data
+     * @return string
+     */
+	public function call_payment_gateway($data = array()) {
+        $res = $this->call_payment_gateway_curl($data); // let's first try with php curl and then fsock
+
+        if (!empty($res)) {
+            return $res;
+        }
+
+        $res = $this->call_payment_gateway_fsockopen($data);
+
+        return $res;
+    }
 }
 
 class Orbisius_CyberStoreCrawler {
