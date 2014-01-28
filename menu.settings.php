@@ -13,13 +13,16 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                <strong>Settings saved.</strong>
             <?php else : ?>
                Orbisius CyberStore plugin allows you to start selling your digital products such as e-books, reports in minutes.
+               
             <?php endif; ?>
         </p></div>
 		
         <div id="poststuff">
 
             <div id="post-body" class="metabox-holder columns-2">
-
+                <!--<div class="submit" style="display: inline;border: 1px solid red;">
+                                    <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+                                </div>-->
                 <!-- main content -->
                 <div id="post-body-content">
 
@@ -56,7 +59,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 										<tr valign="top">
 											<th scope="row">Order Notification Email</th>
 											<td><input type="text" name="<?php echo $settings_key; ?>[notification_email]" value="<?php echo $opts['notification_email']; ?>" class="input_field" />
-												The plugin will send order info to that email (usually same as customer's)
+												The plugin will send order info to that email (usually same as site admin email)
 											</td>
 										</tr>
 										<tr valign="top">
@@ -135,7 +138,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                                 <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/?utm_source=<?php
                                                     echo str_replace('.php', '', basename($plugin_file));?>&utm_medium=plugin-settings&utm_campaign=product"
                                                     title="If you want a custom web/mobile app/plugin developed contact us. This opens in a new window/tab"
-                                                    class="button-primary" target="_blank">Get Extensions</a>
+                                                    class="button" target="_blank">Get Extensions</a>
                                                 </h2>
                                             </th>
                                         </tr>
