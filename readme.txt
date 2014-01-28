@@ -147,6 +147,7 @@ n/a
 * Refactored code and centralized the paygw params and test mode detection.
 * Using curl by default to validate a transaction and if it doesn't work then try fsockopen
 * Loading a minified CSS in the admin
+* Added an option to select if the price will be shown above the Buy Now button
 
 = 1.2.7 =
 * Added link to extensions on the dashboard
