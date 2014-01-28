@@ -2423,12 +2423,12 @@ class Orbisius_CyberStoreUtil {
      * @param type $data
      */
 	public function call_payment_gateway_curl($data = array()) {
+        $obj = Orbisius_CyberStore::get_instance();
+        
         if (!function_exists('curl_init')) {
             $obj->log(__METHOD__ . " : TXN (0): php curl extension not found. Sorry, gotta go.");
             return false;
         }
-
-        $obj = Orbisius_CyberStore::get_instance();
 
         $gw_data = $obj->get_gateway_params();
         $url = $gw_data['url'];
@@ -2441,7 +2441,7 @@ class Orbisius_CyberStoreUtil {
         curl_setopt($ch, CURLOPT_FAILONERROR, 1); // TRUE to fail verbosely if the HTTP code returned is greater than or equal to 400.
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
         curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
@@ -2449,7 +2449,7 @@ class Orbisius_CyberStoreUtil {
 
         $result = curl_exec($ch); // run the curl process (and return the result to $result
 
-        $obj->log(__METHOD__ . " : TXN (0): url: [$url], req: [$req], result: [$result]");
+        $obj->log(__METHOD__ . " : TXN (0): url: [$url], req: [$req], result: [$result], error: [" . curl_error($ch) . ']');
 
         curl_close($ch);
 
@@ -2461,6 +2461,8 @@ class Orbisius_CyberStoreUtil {
      * @param type $data
      */
 	public function call_payment_gateway_fsockopen($data = array()) {
+        $obj = Orbisius_CyberStore::get_instance();
+
         if (!function_exists('fsockopen')) {
             $obj->log(__METHOD__ . " : TXN (0): php fsockopen not found. Sorry, gotta go.");
             return false;
@@ -2468,8 +2470,6 @@ class Orbisius_CyberStoreUtil {
 
         $res = '';
         $req = self::prepare_gateway_params($data, '_notify-validate');
-
-		$obj = Orbisius_CyberStore::get_instance();
         $gw_data = $obj->get_gateway_params();
         $url = $gw_data['url'];
 
@@ -2544,7 +2544,6 @@ class Orbisius_CyberStoreUtil {
 }
 
 class Orbisius_CyberStoreCrawler {
-
     private $user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0";
     private $error = null;
     private $buffer = null;
