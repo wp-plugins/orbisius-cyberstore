@@ -63,9 +63,11 @@ $active_product = " <img src='$adm_prefix/images/product_active.png' title='' al
                                         </small>
                                     <?php endif; ?>
                                 </td>
-                                <td><?php
-                                    echo $rec['label'];
+                                <td>
+                                    <a class="app_edit_button" title="Edit Product"
+                                       href="<?php echo Orbisius_CyberStoreUtil::add_url_params($edit_url, array('id' => $rec['id'])); ?>"><?php echo $rec['label']; ?></a>
 
+                                    <?php
                                     if (!empty($rec['file'])) {
                                         if (Orbisius_CyberStoreUtil::validate_url($rec['file']) || file_exists($plugin_uploads_dir . $rec['file'])) {
                                             echo " <img src='$adm_prefix/images/attach.png' title='The product has a file linked to it.' alt='' />";
