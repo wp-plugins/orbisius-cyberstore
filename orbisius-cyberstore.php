@@ -479,14 +479,14 @@ SHORT_CODE_EOF;
 
                 foreach ($variable_pricing as $idx => $rec) {
                     $var_prices_options[$idx] = $rec['label'];
+
+                    if (!empty($opts['render_price'])) {
+                        $var_prices_options[$idx] .= ' - ' . Orbisius_CyberStoreUtil::format_price($rec['price'], $currency);
+                    }
                 }
 
                 $extra_params_buff .= Orbisius_CyberStoreUtil::html_boxes('var_price', $default, $var_prices_options);
             } elseif ($render_price) {
-				// of dollars in Canada, US & Australia we'll prefix the money with $ sign
-				$default_currency_prefix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? '$' : '';
-				$default_currency_suffix = in_array(strtoupper($currency), array('CAD', 'USD', 'AUD', )) ? $currency : '';
-			
 				$label = empty($attr['price_label']) ? 'Price' : $attr['price_label'];
                 $label = apply_filters('orb_cyber_store_ext_filter_price_label', $label);
 
