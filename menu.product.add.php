@@ -140,7 +140,7 @@ Developer License  (Unlimited Domains) | 49.95</textarea>
                                         <tr valign="top">
 											<th scope="row">System Note (optional | 1024 characters limit)</th>
                                             <td>
-                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="widefat orb_product_note aaahide-if-js" rows="3"><?php
+                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="widefat orb_product_note aaahide-if-js"><?php
                                                     echo $product_rec['system_note']; ?></textarea>
 											</td>
 										</tr>
