@@ -1638,6 +1638,7 @@ MSG_EOF;
 
         $buff_arr = preg_split('#[\n\r]+#si', $data_buff); // we need lines
         $buff_arr = array_map('trim', $buff_arr);
+        $buff_arr = array_unique($buff_arr); // make sure there is no multiple variables
 
 		foreach ($buff_arr as $line) {
             // Line can look like this

@@ -81,15 +81,18 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											</td>
 										</tr>
                                         <tr valign="top">
-											<th scope="row">Variable Pricing</th>
+											<th scope="row">Variable Pricing (price override)</th>
                                             <td>
-                                                <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat" rows="3"><?php
-                                                    echo $product_rec['variable_pricing']; ?></textarea>
-                                                <br/>Example: <br/>
-                                                <textarea class="widefat" readonly="readonly">
+                                                <a href="javascript:void(0);" onclick="jQuery('.orb_variable_pricing_ex').toggle();return false;">show/hide</a><br/>
+                                                <span class="orb_variable_pricing_ex hide-if-js">
+                                                    <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat"><?php
+                                                        echo $product_rec['variable_pricing']; ?></textarea>
+                                                    <br/>Example: <br />
+                                                    <textarea class="widefat " readonly="readonly">
 Personal License  (1 domain) | 19.95
 Business License  (3 domains) | 29.95
 Developer License  (Unlimited Domains) | 49.95</textarea>
+                                                </span>
 											</td>
 										</tr>
 										<tr valign="top">
@@ -128,15 +131,14 @@ Developer License  (Unlimited Domains) | 49.95</textarea>
 
 												echo esc_attr($ext_link); ?>" class="widefat" />
 											<p>
-												Example: http://yourdomain.com/some-document.pdf<br/>
-												Example: ftp://yourdomain.com/sample.doc<br/>
+												Example: http://yourdomain.com/some-document.pdf OR ftp://yourdomain.com/sample.doc<br/>
 												If your file is too big you can provide an external link and your users will be redirected to that file. </p>
 											</td>
 										</tr>
                                         <tr valign="top">
 											<th scope="row">System Note (optional | 1024 characters limit)</th>
                                             <td>
-                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="widefat" rows="3"><?php
+                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="widefat orb_product_note aaahide-if-js" rows="3"><?php
                                                     echo $product_rec['system_note']; ?></textarea>
 											</td>
 										</tr>
@@ -151,14 +153,16 @@ Developer License  (Unlimited Domains) | 49.95</textarea>
                                             </td>
 										</tr>
 									</table>
-									<p>
-										<br/>Notes:
+									
+									<p class="submit">
+										<input type="submit" class="button-primary" value="<?php _e('Add/Update Product') ?>" />
+									</p>
+
+                                    <p>
+										Notes:
 										<br/> One file per product. If you need more please add them into a ZIP archive file.
 										<br/> * The maximum file upload size is determined by your hosting company.
 										If it is too low (e.g. less than 2 MB) contact your hosting to increase it.
-									</p>
-									<p class="submit">
-										<input type="submit" class="button-primary" value="<?php _e('Add/Update Product') ?>" />
 									</p>
 								</form>
                             </div> <!-- .inside -->
