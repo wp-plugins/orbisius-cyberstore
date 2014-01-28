@@ -1,0 +1,15 @@
+.orbisius_cyberstore .app_table{width:30%}
+.orbisius_cyberstore .app_table_half{width:50%}
+.orbisius_cyberstore .app_table_medium{width:75%}
+.orbisius_cyberstore .app_table_full{width:100%}
+.orbisius_cyberstore .app_table td{padding:10px}
+.orbisius_cyberstore .ext_row{border:1px solid #ccc}
+.orbisius_cyberstore .input_field,.orbisius_cyberstore .input_field{min-width:220px;width:550px}
+.orbisius_cyberstore .form-table textarea{width:550px;height:150px}
+.orbisius_cyberstore .success,.orbisius_cyberstore .app_success{color:green}
+.orbisius_cyberstore .app_hide{display:none}
+.orbisius_cyberstore .app_message_box{_margin:5px 5px 15px;background-color:#ffc;margin:0;padding:5px}
+.orbisius_cyberstore .main_content{float:left;width:73%;vertical-align:top;margin:0;padding:0}
+.orbisius_cyberstore_donation{margin-left:10px;text-align:center}
+.orbisius_cyberstore .app_error,.orbisius_cyberstore .app_delete_button,.asterisk,.app_asterisk{color:red}
+.orbisius_cyberstore .zzz_app_admin_sidebar,.orbisius_cyberstore .op_cmd_right{float:right;width:20%;margin:0;padding:0}

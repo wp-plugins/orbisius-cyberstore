@@ -146,6 +146,7 @@ n/a
 * Added more mime-types so the download option can server files with the correct type that means less warnings that it is a binary/executable file
 * Refactored code and centralized the paygw params and test mode detection.
 * Using curl by default to validate a transaction and if it doesn't work then try fsockopen
+* Loading a minified CSS in the admin
 
 = 1.2.7 =
 * Added link to extensions on the dashboard

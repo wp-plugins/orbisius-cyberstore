@@ -260,8 +260,12 @@ class Orbisius_CyberStore {
      * Loads CSS. Called by admin_init -> this means that they are not loaded on the public side.
      */
     public function load_admin_assets() {
-        wp_register_style($this->plugin_dir_name, $this->plugin_url . 'css/main.css', false, 0.31);
+        $suffix = empty($_SERVER['DEV_ENV']) ? '.min' : '';
+
+        wp_register_style($this->plugin_dir_name, plugins_url("/css/main{$suffix}.css", __FILE__), false,
+                filemtime( plugin_dir_path( __FILE__ ) . "/css/main{$suffix}.css" ) );
         wp_enqueue_style($this->plugin_dir_name);
+
     }
 
     /**
