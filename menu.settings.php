@@ -187,7 +187,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											<th scope="row">Submit Button Image Source
 													<br/>(optional)
 											</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[submit_button_img_src]" value="<?php echo $opts['submit_button_img_src']; ?>" class="input_field" />
+											<td><input type="text" name="<?php echo $settings_key; ?>[submit_button_img_src]" value="<?php echo $opts['submit_button_img_src']; ?>" class="widefat" />
 												Example: http://domain.com/image.jpg ,
 												<?php
 												if (!empty($opts['submit_button_img_src'])) {
@@ -248,7 +248,7 @@ EOF;
 										</tr>
 										<tr valign="top">
 											<th scope="row">Secure HOP URL</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[secure_hop_url]" value="<?php echo $opts['secure_hop_url']; ?>" class="input_field" />
+											<td><input type="text" name="<?php echo $settings_key; ?>[secure_hop_url]" value="<?php echo $opts['secure_hop_url']; ?>" class="widefat" />
 												<br/>Example: https://secure.yoursite.com/proxy.php
 												<br/>
 												The main idea of the Secure HOP URL is to redirect to another URL. It must redirect to an address passed by the "r" parameter.
@@ -274,7 +274,7 @@ EOF;
 										</tr>
 										<tr valign="top">
 											<th scope="row">Post Transaction Callback URL</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[callback_url]" value="<?php echo $opts['callback_url']; ?>" class="input_field" />
+											<td><input type="text" name="<?php echo $settings_key; ?>[callback_url]" value="<?php echo $opts['callback_url']; ?>" class="widefat" />
 												<br/>Example: http://yourdomain.com/another_ipn.php
 												<br/>
 												This is useful if you want to do execute operations after a transaction. <br/>
@@ -503,6 +503,5 @@ EOF;
             </div> <!-- #post-body .metabox-holder .columns-2 -->
 
             <br class="clear">
-        </div> <!-- #poststuff -->
-		
+        </div> <!-- #poststuff -->		
 </div> <!-- /wrap -->
