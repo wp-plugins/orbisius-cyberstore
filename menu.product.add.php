@@ -139,8 +139,8 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                             <td>
                                                 <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat"><?php
                                                     echo $product_rec['variable_pricing']; ?></textarea>
-                                                <br/>Example: <a href="javascript:void(0);" onclick="jQuery('.orb_variable_pricing_ex').toggle();return false;">show/hide</a><br/>
-                                                <div class="orb_variable_pricing_ex <?php echo empty($product_rec['variable_pricing']) ? 'hide-if-js' : ''; ?> ">
+                                                <br/>Examples: <a href="javascript:void(0);" onclick="jQuery('.orb_variable_pricing_ex').toggle();return false;">show/hide</a><br/>
+                                                <div class="orb_variable_pricing_ex hide-if-js">
                                                     <br />
                                                     <textarea class="widefat " readonly="readonly">
 Personal License (1 domain) | 19.95 | limits=1
