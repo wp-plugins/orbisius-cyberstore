@@ -41,7 +41,6 @@ if (empty($_ENV['ORBISIUS_DIGISHOP_TEST'])) {
 
     register_activation_hook(__FILE__, array($orbisius_digishop_obj, 'on_activate'));
     register_deactivation_hook(__FILE__, array($orbisius_digishop_obj, 'on_deactivate'));
-    //register_uninstall_hook(__FILE__, array($orbisius_digishop_obj, 'on_uninstall'));
 }
 
 class Orbisius_CyberStore {
@@ -1050,9 +1049,9 @@ SHORT_CODE_EOF;
                 wp_die($this->plugin_name . ': Invalid Product ID: ' . $id);
             }
 
+            $price = $product_rec['price'];
             $item_name = $product_rec['label'];
             $item_number = $product_rec['id'];
-            $price = $product_rec['price'];
             $custom_params = array( 'id' => $item_number, 'item_name' => $item_name, 'site' => $this->site_url );
 
             // if this variable is set that means that we have a variable selected option.

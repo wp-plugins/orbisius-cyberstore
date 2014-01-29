@@ -85,8 +85,8 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                         <tr valign="top">
 											<th scope="row">Variable Pricing (price override)</th>
                                             <td>
-                                                <a href="javascript:void(0);" onclick="jQuery('.orb_variable_pricing_ex').toggle();return false;">show/hide</a><br/>
-                                                <div class="orb_variable_pricing_ex hide-if-js">
+                                                <?php echo empty($product_rec['variable_pricing']) ? '<a href="javascript:void(0);" onclick="jQuery(\'.orb_variable_pricing_ex\').toggle();return false;">show/hide</a><br/>' : ''; ?>
+                                                <div class="orb_variable_pricing_ex <?php echo empty($product_rec['variable_pricing']) ? 'hide-if-js' : ''; ?> ">
                                                     <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat"><?php
                                                         echo $product_rec['variable_pricing']; ?></textarea>
                                                     <br/>Example: <br />
