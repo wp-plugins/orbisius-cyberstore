@@ -155,6 +155,7 @@ n/a
 * Reduced the custom params that are sent to paypal. Send only to most necessary onces.
 * Passing product_name as a custom parameter to paypal
 * Re-organized add product so it's super simple and advanced things are in the advanced hidden section, optionally toggle-able
+* Fixed a weird bug that was deleting the product hash
 
 = 1.2.7 =
 * Added link to extensions on the dashboard

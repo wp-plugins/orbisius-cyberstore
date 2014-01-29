@@ -1971,7 +1971,6 @@ MSG_EOF;
             $product_data['attribs'] = $attribs;
 
             // TODO Sanitize vars
-            $product_data['hash'] = '';
             $product_data['label'] = $data['label'];
             $product_data['price'] = trim($data['price'], ' $');
             $product_data['active'] = empty($data['active']) ? 0 : 1;
