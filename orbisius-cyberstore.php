@@ -1435,29 +1435,27 @@ SHORT_CODE_EOF;
 
                 // if that was a variation, it would have been passed in the 'custom' variable array that PayPal sents us back.
                 if (isset($paypal_custom_data['variation_id'])) {
-                    $product_label = $price_label = 'n/a';
+                    $price_label = 'n/a';
                     
                     $all_variations = $this->parse_variable_array_and_encode2array($product_rec);
 
                     if (isset($all_variations[$paypal_custom_data['variation_id']])) {
                         $var_rec = $all_variations[$paypal_custom_data['variation_id']];
-                        $product_label = $product_rec['label'] . ' ' . $var_rec['label'];
                         $price_label = Orbisius_CyberStoreUtil::format_price($var_rec['price'], $opts['currency']);
                     }
                 } else {
-                    $product_label = $product_rec['label'];
                     $price_label = Orbisius_CyberStoreUtil::format_price($product_rec['price'], $opts['currency']);
                 }
 
                 $vars = array(
+                    '%%SITE%%' => $this->site_url,
+                    '%%TXN_ID%%' => $data['txn_id'],
                     '%%FIRST_NAME%%' => $data['first_name'],
                     '%%LAST_NAME%%' => $data['last_name'],
                     '%%EMAIL%%' => $data['payer_email'],
-                    '%%DOWNLOAD_LINK%%' => Orbisius_CyberStoreUtil::add_url_params($this->site_url, array($dl_key => $download_hash)),
-                    '%%TXN_ID%%' => $data['txn_id'],
-                    '%%SITE%%' => $this->site_url,
-                    '%%PRODUCT_NAME%%' => $product_label,
+                    '%%PRODUCT_NAME%%' => $data['item_name'], // $product_label = $product_rec['label'] . ' ' . $var_rec['label'];
                     '%%PRODUCT_PRICE%%' => $price_label,
+                    '%%DOWNLOAD_LINK%%' => Orbisius_CyberStoreUtil::add_url_params($this->site_url, array($dl_key => $download_hash)),
                 );
 
                 $email_subject = str_ireplace(array_keys($vars), array_values($vars), $email_subject);
