@@ -1968,10 +1968,7 @@ MSG_EOF;
 
             $variable_pricing_buff = empty($data['variable_pricing']) ? '' : $data['variable_pricing'];
             $attribs = $this->parse_variable_str_and_encode($prev_rec, $variable_pricing_buff);
-
-            if (!empty($attribs)) {
-                $product_data['attribs'] = $attribs;
-            }
+            $product_data['attribs'] = $attribs;
 
             // TODO Sanitize vars
             $product_data['hash'] = '';

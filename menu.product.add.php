@@ -85,11 +85,11 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                         <tr valign="top">
 											<th scope="row">Variable Pricing (price override)</th>
                                             <td>
-                                                <?php echo empty($product_rec['variable_pricing']) ? '<a href="javascript:void(0);" onclick="jQuery(\'.orb_variable_pricing_ex\').toggle();return false;">show/hide</a><br/>' : ''; ?>
+                                                <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat"><?php
+                                                    echo $product_rec['variable_pricing']; ?></textarea>
+                                                <br/>Example: <a href="javascript:void(0);" onclick="jQuery('.orb_variable_pricing_ex').toggle();return false;">show/hide</a><br/>
                                                 <div class="orb_variable_pricing_ex <?php echo empty($product_rec['variable_pricing']) ? 'hide-if-js' : ''; ?> ">
-                                                    <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat"><?php
-                                                        echo $product_rec['variable_pricing']; ?></textarea>
-                                                    <br/>Example: <br />
+                                                    <br />
                                                     <textarea class="widefat " readonly="readonly">
 Personal License (1 domain) | 19.95 | limits=1
 Business License (3 domains) | 29.95 | limits=3
@@ -139,21 +139,22 @@ Developer License (Unlimited Domains) | 49.95 | limits=999</textarea>
 											</td>
 										</tr>
                                         <tr valign="top">
-											<th scope="row">System Note (optional | 1024 characters limit)</th>
+											<th scope="row">System Note (Optional)</th>
                                             <td>
-                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="widefat orb_product_note aaahide-if-js"><?php
-                                                    echo $product_rec['system_note']; ?></textarea>
+                                                <input type="text" name="<?php echo $settings_key; ?>[system_note]" class="orb_product_note" placeholder=""
+                                                       value="<?php echo $product_rec['system_note']; ?>" /> (Admin use only | 1024 character limit)
+                                                
 											</td>
 										</tr>
-										<tr valign="top">
+                                        <tr valign="top">
 											<th scope="row">Active</th>
-											<td>
+                                            <td>
                                                 <label for="cyberstore_add_product_active">
                                                     <input type="checkbox" id="cyberstore_add_product_active" name="<?php echo $settings_key; ?>[active]" value="1"
                                                             <?php echo empty($product_rec) || !empty($product_rec['active']) ? 'checked="checked"' : ''; ?> />
                                                     Enabled
                                                 </label>
-                                            </td>
+											</td>
 										</tr>
 									</table>
 									
