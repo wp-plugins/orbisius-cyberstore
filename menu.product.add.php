@@ -45,7 +45,7 @@ $opts = $orbisius_digishop_obj->get_options();
 $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 
 ?>
-<div class="wrap">
+<div class="wrap orbisius_cyberstore">
         <h2>Orbisius CyberStore &rarr; Add/Edit Product</h2>
 
         <?php if (!empty($msg)) : ?>

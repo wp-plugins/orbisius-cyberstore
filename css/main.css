@@ -23,16 +23,6 @@
     border:1px solid #ccc;
 }
 
-.orbisius_cyberstore .input_field, .orbisius_cyberstore .input_field {
-	min-width:220px;
-    width:550px;
-}
-
-.orbisius_cyberstore .form-table textarea {
-	width:550px;
-    height: 150px;
-}
-
 .orbisius_cyberstore .success, .orbisius_cyberstore .app_success {
     color: green;
 }

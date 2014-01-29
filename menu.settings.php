@@ -181,14 +181,14 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 														value="<?php echo $opts['sandbox_only_ip']; ?>" class="input_field" />
 												Your IP: <?php echo $_SERVER['REMOTE_ADDR']; ?> (<a href="javascript:void(0);" onclick="jQuery('#sandbox_only_ip').val('<?php echo $_SERVER['REMOTE_ADDR']; ?>');"
 																										title="This will use your current IP address as sandbox IP address.">Use</a>)
-												<p>If the sandbox is enabled and you have entered IP in the box the sandbox will be enabled only for that specific IP address. <br/>
-													Is it made for testing live installation of Orbisius_CyberStore.
+                                                    <p>If the sandbox is enabled and you have entered IP the sandbox mode will be enabled for that specific IP address <strong>only</strong>. <br/>
+													Is it made for testing live installation of Orbisius CyberStore.
 												</p>
 											</td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Sandbox PayPal Email</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[sandbox_business_email]" value="<?php echo $opts['sandbox_business_email']; ?>" class="input_field" /></td>
+											<td><input type="text" name="<?php echo $settings_key; ?>[sandbox_business_email]" value="<?php echo $opts['sandbox_business_email']; ?>" class="widefat" /></td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Submit Button Image Source
