@@ -76,7 +76,12 @@ $active_product = " <img src='$adm_prefix/images/product_active.png' title='' al
                                         }
                                     }
                                     ?></td>
-                                <td><?php echo empty($rec['price']) ? 'Free' : $rec['price']; ?></td>
+                                <td><?php if ($orbisius_digishop_obj->is_variable($rec)) {
+                                            echo 'Multiple Prices (Variable Product)';
+                                        } else {
+                                            echo empty($rec['price']) ? 'Free' : $rec['price'];
+                                        }
+                                    ?></td>
                                 <td>
                                     <a class="app_edit_button" href="<?php echo Orbisius_CyberStoreUtil::add_url_params($edit_url, array('id' => $rec['id'])); ?>">Edit</a>
                                     |

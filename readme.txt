@@ -158,6 +158,7 @@ n/a
 * Fixed a weird bug that was deleting the product hash. The hashes are recreated when the new db is instantiated.
 * Added a download link in the add/edit product
 * Added an info icon to alert when the product has variable pricing as the variable info is hidden in the advanced section
+* Showing which products has variable pricing in CyberStore | Products
 
 = 1.2.7 =
 * Added link to extensions on the dashboard
