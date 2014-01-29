@@ -80,6 +80,12 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											<th scope="row">Price</th>
 											<td><input type="text" name="<?php echo $settings_key; ?>[price]" value="<?php echo esc_attr($product_rec['price']); ?>" autocomplete="off" class="small-text" />
 											Ex.: 29.95 or 10, use 0 for a free (download button will be shown instead of the buy now)
+                                            
+                                            <?php if (!empty($product_rec['variable_pricing'])) : ?>
+                                                <div class="app_success"><img src='<?php echo $orbisius_digishop_obj->get('plugin_url'); ?>/images/information.png'
+                                                     title='The product has variable prices.' alt='' /> This product has variable pricing and the default price will be ignored. See Advanced for more info.
+                                                </div>
+                                            <?php endif; ?>
 											</td>
 										</tr>
 										<tr valign="top">

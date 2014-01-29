@@ -157,6 +157,7 @@ n/a
 * Re-organized add product so it's super simple and advanced things are in the advanced hidden section, optionally toggle-able
 * Fixed a weird bug that was deleting the product hash. The hashes are recreated when the new db is instantiated.
 * Added a download link in the add/edit product
+* Added an info icon to alert when the product has variable pricing as the variable info is hidden in the advanced section
 
 = 1.2.7 =
 * Added link to extensions on the dashboard
