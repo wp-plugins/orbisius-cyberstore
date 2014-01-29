@@ -764,13 +764,15 @@ SHORT_CODE_EOF;
         $db_ver_key = $this->plugin_id_str . "_db_version";
         $db_version_site = get_option($db_ver_key); // what version is the db schema of the current site
 
-        //$db_version_site = '1.0'; /*TMP*/
-        
+        //$db_version_site = '1.0'; /*TMP / force db update to 1.1 */
         if ($db_version_site == $plugin_uses_db_ver) {
             return 1; // the site is using the latest db version
         }
         
         global $wpdb;
+
+        $this->fix_missing_product_hash();
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
         $tables = $this->db_tables[$plugin_uses_db_ver];
@@ -784,9 +786,8 @@ SHORT_CODE_EOF;
             if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name
                     || (!empty($db_version_site) && $db_version_site != $plugin_uses_db_ver)) {
                 dbDelta($sql); // WP will alter the db
-
                 update_option($db_ver_key, $plugin_uses_db_ver);
-            }
+           }
         }
     }
 
@@ -1933,6 +1934,20 @@ MSG_EOF;
     }
 
     /**
+     * Loads all products that have an attached file but don't have a hash field set (my bad).
+     */
+    public function fix_missing_product_hash() {
+        global $wpdb;
+        
+        $products = $this->get_products(" WHERE hash = '' AND file <> '' ");
+
+        foreach ($products as $rec) {
+            $product_data['hash'] = Orbisius_CyberStoreUtil::generate_hash($rec['file']);
+            $wpdb->update($this->plugin_db_prefix . 'products', $product_data, array('id' => $rec['id']));
+        }
+    }
+
+    /**
      * Adds or updates a product. Returns the ID of the inserted or updated product.
      * Uses $wpdb to make requests to the db.
      *
@@ -2063,10 +2078,13 @@ MSG_EOF;
      * @param int $id
      * @return bool 1 ok; 0 error (when saving)
      */
-    function get_products() {
+    function get_products($where = '') {
         global $wpdb;
         $data = array();
-        $data = $wpdb->get_results("SELECT * FROM {$this->plugin_db_prefix}products", ARRAY_A);
+
+        $where = apply_filters( 'orb_cyber_store_get_products_where', $where );
+
+        $data = $wpdb->get_results("SELECT * FROM {$this->plugin_db_prefix}products $where", ARRAY_A);
         $data = apply_filters( 'orb_cyber_store_get_products', $data );
 
         return $data;
