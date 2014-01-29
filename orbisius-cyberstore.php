@@ -1201,16 +1201,17 @@ SHORT_CODE_EOF;
             // The selected option can be 0 that's why we don't use !empty()
             // It will take override the new price if the option is correct.
             if (isset($data['var_price'])) {
-                $variable_options = $this->parse_variable_array_and_encode2array($product_rec);
+                $all_variations = $this->parse_variable_array_and_encode2array($product_rec);
                 $selected_variation_idx = $data['var_price']; // 0 ... N
 
-                if (isset($variable_options[$selected_variation_idx])) {
-                    $variable_option = $variable_options[$selected_variation_idx];
+                if (isset($all_variations[$selected_variation_idx])) {
+                    $variable_option = $all_variations[$selected_variation_idx];
                     $price = $variable_option['price'];
 
                     $item_name .= ' ' . $variable_option['label']; // the license type to the product name
 
                     // TODO: pass the selected license to the $custom_params to paypal
+                    $custom_params['variation_id'] = $selected_variation_idx;
                 }
             }
 
@@ -1432,6 +1433,22 @@ SHORT_CODE_EOF;
                 $file = $this->plugin_uploads_dir . '___sys_txn_dl_' . $download_hash . '.txt';
                 Orbisius_CyberStoreUtil::write($file, $product_rec['hash']);
 
+                // if that was a variation, it would have been passed in the 'custom' variable array that PayPal sents us back.
+                if (isset($paypal_data['variation_id'])) {
+                    $product_label = $price_label = 'n/a';
+                    
+                    $all_variations = $this->parse_variable_array_and_encode2array($product_rec);
+
+                    if (isset($all_variations[$paypal_data['variation_id']])) {
+                        $var_rec = $all_variations[$paypal_data['variation_id']];
+                        $product_label = $product_rec['label'] . ' ' . $var_rec['label'];
+                        $price_label = Orbisius_CyberStoreUtil::format_price($var_rec['price'], $opts['currency']);
+                    }
+                } else {
+                    $product_label = $product_rec['label'];
+                    $price_label = Orbisius_CyberStoreUtil::format_price($product_rec['price'], $opts['currency']);
+                }
+
                 $vars = array(
                     '%%FIRST_NAME%%' => $data['first_name'],
                     '%%LAST_NAME%%' => $data['last_name'],
@@ -1439,8 +1456,8 @@ SHORT_CODE_EOF;
                     '%%DOWNLOAD_LINK%%' => Orbisius_CyberStoreUtil::add_url_params($this->site_url, array($dl_key => $download_hash)),
                     '%%TXN_ID%%' => $data['txn_id'],
                     '%%SITE%%' => $this->site_url,
-                    '%%PRODUCT_NAME%%' => $product_rec['label'],
-                    '%%PRODUCT_PRICE%%' => Orbisius_CyberStoreUtil::format_price($product_rec['price'], $opts['currency']),
+                    '%%PRODUCT_NAME%%' => $product_label,
+                    '%%PRODUCT_PRICE%%' => $price_label,
                 );
 
                 $email_subject = str_ireplace(array_keys($vars), array_values($vars), $email_subject);
