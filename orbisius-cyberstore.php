@@ -70,6 +70,7 @@ class Orbisius_CyberStore {
     private $paypal_submit_image_src = 'https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif';
     private $plugin_default_opts = array(
         'status' => 0,
+        'render_title' => 1,
         'render_price' => 1,
         'test_mode' => 0,
         'logging_enabled' => 0,
@@ -603,10 +604,11 @@ SHORT_CODE_EOF;
             $render_price = !empty($opts['render_price']) || !empty($attr['render_price']) || apply_filters('orb_cyber_store_ext_filter_render_price', false);
 
             // Do we need to pass any extra data to the payment form?
-            $extra_params_buff = '';
+            $price_buff = '';
             $extra_params = array();
             $extra_params = apply_filters('orb_cyber_store_ext_filter_extra_params', $extra_params);
-
+            $extra_params_buff = '';
+         
 			if ($this->is_variable($prev_rec)) {
                 $var_prices_options = array();
 
@@ -630,13 +632,24 @@ SHORT_CODE_EOF;
 
                 $price_fmt = Orbisius_CyberStoreUtil::format_price($price, $currency);
 
-                $cls = "{$this->plugin_id_str}_product_price ";
-                $cls = apply_filters('orb_cyber_store_ext_filter_price_container_css', $cls); // in case somebody wants to add more CSS
-                $buffer .= "\n<div class='$cls'>$label: $price_fmt</div>\n";
-
-                // this is the whole buffer
-                $buffer = apply_filters('orb_cyber_store_ext_filter_price_container', $buffer);
+                $price_buff .= "\n<div class='{$this->plugin_id_str}_product_price'>$label: $price_fmt</div>\n";
+                $price_buff = apply_filters('orb_cyber_store_ext_filter_price_container', $price_buff);
 			}
+
+            $product_buff = "\n<div id='{$this->plugin_id_str}_container_{$prev_rec['id']}' class='{$this->plugin_id_str}_container'>";
+
+            if (!empty($opts['render_title'])) {
+                $product_title = esc_attr($prev_rec['label']);
+                $product_buff .= "<div id='{$this->plugin_id_str}_product_title_{$prev_rec['id']}' class='{$this->plugin_id_str}_product_title'>$product_title</div>\n";
+            }
+
+            if (!empty($price_buff)) { // doesn't exist for variable products
+                $product_buff .= "<div id='{$this->plugin_id_str}_product_price_{$prev_rec['id']}' class='{$this->plugin_id_str}_product_price'>$price_buff</div>\n";
+            }
+
+            $product_buff .= "</div> <!-- .{$this->plugin_id_str}_container -->\n";
+
+            $buffer .= $product_buff;
 
             foreach ($extra_params as $key => $val) {
                 $key = esc_attr($key);

@@ -105,9 +105,13 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 										<tr valign="top">
 											<th scope="row">Misc</th>
 											<td>
-                                                <label for="digishop_render_price">
+                                                <label for="digishop_render_title">
+														<input type="checkbox" id="digishop_render_title" name="<?php echo $settings_key; ?>[render_title]" value="1"
+															<?php echo empty($opts['render_title']) ? '' : 'checked="checked"'; ?> /> Show product title (above the Buy Now button)</label>
+
+                                                <br/> <label for="digishop_render_price">
 														<input type="checkbox" id="digishop_render_price" name="<?php echo $settings_key; ?>[render_price]" value="1"
-															<?php echo empty($opts['render_price']) ? '' : 'checked="checked"'; ?> /> Show Price (above the Buy Now button)</label>
+															<?php echo empty($opts['render_price']) ? '' : 'checked="checked"'; ?> /> Show product price (above the Buy Now button)</label>
 
                                                 <br/><label for="digishop_require_shipping">
 														<input type="checkbox" id="digishop_require_shipping" name="<?php echo $settings_key; ?>[require_shipping]" value="1"
