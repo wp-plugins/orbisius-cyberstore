@@ -82,7 +82,50 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											Ex.: 29.95 or 10, use 0 for a free (download button will be shown instead of the buy now)
 											</td>
 										</tr>
+										<tr valign="top">
+											<th scope="row">File</th>
+											<td>
+												<input type="file" name="file" value="" /> Max file upload size:
+													<?php echo Orbisius_CyberStoreUtil::get_max_upload_size(); ?> MB *
+												
+                                                    <?php if (!empty($product_rec['file'])) : ?>
+                                                        <br/>
+                                                        <?php
+                                                            if (!Orbisius_CyberStoreUtil::validate_url($product_rec['file'])) {
+                                                                if (file_exists($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) {
+                                                                    echo '<span class="app_success">' . $product_rec['file'] . ' (' . Orbisius_CyberStoreUtil::format_file_size(
+                                                                        @filesize($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) . ') </span>';
+                                                                } else {
+                                                                    echo "<span class='app_error'>The uploaded file [{$product_rec['file']}] cannot be found.</span>";
+                                                                }
+                                                            }
+                                                        ?>
+                                                    <?php elseif (!empty($id)) : ?>
+                                                        <span class="app_error">You haven't uploaded a file yet.</span>
+                                                    <?php endif; ?>
+											</td>
+										</tr>
                                         <tr valign="top">
+											<th scope="row">Active</th>
+                                            <td>
+                                                <label for="cyberstore_add_product_active">
+                                                    <input type="checkbox" id="cyberstore_add_product_active" name="<?php echo $settings_key; ?>[active]" value="1"
+                                                            <?php echo empty($product_rec) || !empty($product_rec['active']) ? 'checked="checked"' : ''; ?> />
+                                                    Enabled
+                                                </label>
+											</td>
+										</tr>
+                                        <tr valign="top">
+											<th scope="row" colspan="2">
+												<h3>Advanced
+													(<a href="javascript:void(0);" onclick="jQuery('.digishop_advanced_add_options').toggle();return false;">show/hide</a>)
+												</h3>
+											</th>
+										</tr>
+										</table>
+                                    
+										<table class="digishop_advanced_add_options form-table hide-if-js">
+										<tr valign="top">
 											<th scope="row">Variable Pricing (price override)</th>
                                             <td>
                                                 <textarea name="<?php echo $settings_key; ?>[variable_pricing]" class="widefat"><?php
@@ -96,29 +139,6 @@ Business License (3 domains) | 29.95 | limits=3
 Developer License (Unlimited Domains) | 49.95 | limits=999</textarea>
                                                     <br/>If you enter variable pricing this will override the price field.
                                                 </div>
-											</td>
-										</tr>
-										<tr valign="top">
-											<th scope="row">File</th>
-											<td>
-												<input type="file" name="file" value="" /> Max file upload size:
-													<?php echo Orbisius_CyberStoreUtil::get_max_upload_size(); ?> MB *
-												
-												<?php if (!empty($product_rec['file'])) : ?>
-													<br/>
-													<?php
-														if (!Orbisius_CyberStoreUtil::validate_url($product_rec['file'])) {
-															if (file_exists($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) {
-																echo '<span class="app_success">' . $product_rec['file'] . ' (' . Orbisius_CyberStoreUtil::format_file_size(
-																	@filesize($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) . ') </span>';
-															} else {
-																echo "<span class='app_error'>The uploaded file [{$product_rec['file']}] cannot be found.</span>";
-															}
-														}
-													?>
-												<?php elseif (!empty($id)) : ?>
-												<span class="app_error">You haven't uploaded a file yet.</span>
-												<?php endif; ?>
 											</td>
 										</tr>
 										<tr valign="top">
@@ -141,19 +161,8 @@ Developer License (Unlimited Domains) | 49.95 | limits=999</textarea>
                                         <tr valign="top">
 											<th scope="row">System Note (Optional)</th>
                                             <td>
-                                                <input type="text" name="<?php echo $settings_key; ?>[system_note]" class="orb_product_note" placeholder=""
-                                                       value="<?php echo $product_rec['system_note']; ?>" /> (Admin use only | 1024 character limit)
-                                                
-											</td>
-										</tr>
-                                        <tr valign="top">
-											<th scope="row">Active</th>
-                                            <td>
-                                                <label for="cyberstore_add_product_active">
-                                                    <input type="checkbox" id="cyberstore_add_product_active" name="<?php echo $settings_key; ?>[active]" value="1"
-                                                            <?php echo empty($product_rec) || !empty($product_rec['active']) ? 'checked="checked"' : ''; ?> />
-                                                    Enabled
-                                                </label>
+                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="orb_product_note"><?php
+                                                    echo $product_rec['system_note']; ?></textarea> (Admin use only | 1024 character limit)
 											</td>
 										</tr>
 									</table>
