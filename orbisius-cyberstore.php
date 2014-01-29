@@ -1154,18 +1154,27 @@ SHORT_CODE_EOF;
         // see: https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNandPDTVariables/
         elseif (!empty($data[$this->web_trigger_key])
                 && $data[$this->web_trigger_key] == 'paypal_ipn'
-                && $data['txn_type'] == 'web_accept' ) {
+                /*&& $data['txn_type'] == 'web_accept' */ ) {
             // checking if this TXN has been processed. Paypal should always provide a unique TXN ID
 			$data = $_POST;
 
             if (!empty($data['txn_id'])) {
+                $cnt = 1;
+                
                 $txn_flag_file = $this->plugin_uploads_dir . '___sys_txn_' . Orbisius_CyberStoreUtil::generate_hash($data['txn_id']) . '.txt';
                 $do_stop = 0;
 
                 if (file_exists($txn_flag_file)) {
                     $this->log('paypal txn already processed. Will not process the txn. Got data: ' . var_export($data, 1));
 
-                    $do_stop = 1;
+                    $cnt = file_get_contents($txn_flag_file, LOCK_SH);
+                    $cnt = empty($cnt) ? 1 : $cnt;
+
+                    if ($cnt > 3) {
+                        $do_stop = 1;
+                    } else {
+                        file_put_contents($txn_flag_file, $cnt + 1, LOCK_EX);
+                    }
                 } else {
                     touch($txn_flag_file);
                 }
@@ -1184,18 +1193,12 @@ SHORT_CODE_EOF;
                 if ($do_stop) {
                     // wp_die defaults to: 500 error code and this may/will cause paypal to call the site again
                     wp_die($this->m($this->get('plugin_name')
-                        . ': this transaction seem to have been processed already. Stopping.', 0, 1)
+                        . ': this transaction seem to have been processed already. Stopping. Cnt: ' . $cnt, 0, 1)
                         . $this->add_plugin_credits(), 'Process same TXN again?', array( 'response' => 200 ) );
                 }
             }
 
-            $admin_email = get_option('admin_email');
-
-            if (!empty($opts['notification_email'])) {
-                $admin_email = $opts['notification_email'];
-            } else { // ?? send to business email ???
-
-            }
+            $admin_email = !empty($opts['notification_email']) ? $opts['notification_email'] : get_option('admin_email');
 
 			$order_from_host = apply_filters('orb_cyber_store_order_from_host', "[{$_SERVER['HTTP_HOST']}]");
 			$order_from_name = apply_filters('orb_cyber_store_order_from_name', 'WordPress');
