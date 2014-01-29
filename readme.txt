@@ -155,7 +155,8 @@ n/a
 * Reduced the custom params that are sent to paypal. Send only to most necessary onces.
 * Passing product_name as a custom parameter to paypal
 * Re-organized add product so it's super simple and advanced things are in the advanced hidden section, optionally toggle-able
-* Fixed a weird bug that was deleting the product hash
+* Fixed a weird bug that was deleting the product hash. The hashes are recreated when the new db is instantiated.
+* Added a download link in the add/edit product
 
 = 1.2.7 =
 * Added link to extensions on the dashboard

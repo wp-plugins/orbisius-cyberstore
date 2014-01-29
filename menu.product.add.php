@@ -95,6 +95,9 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                                                 if (file_exists($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) {
                                                                     echo '<span class="app_success">' . $product_rec['file'] . ' (' . Orbisius_CyberStoreUtil::format_file_size(
                                                                         @filesize($orbisius_digishop_obj->get('plugin_uploads_dir') . $product_rec['file'])) . ') </span>';
+
+                                                                    $link = Orbisius_CyberStoreUtil::add_url_params($orbisius_digishop_obj->get('site_url'), array($orbisius_digishop_obj->get('download_key') => $product_rec['hash']));
+                                                                    echo "| <a href='$link'>Download</a>";
                                                                 } else {
                                                                     echo "<span class='app_error'>The uploaded file [{$product_rec['file']}] cannot be found.</span>";
                                                                 }
