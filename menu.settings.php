@@ -175,6 +175,10 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											</td>
 										</tr>
 										<tr valign="top">
+											<th scope="row">Sandbox PayPal Email</th>
+											<td><input type="text" name="<?php echo $settings_key; ?>[sandbox_business_email]" value="<?php echo $opts['sandbox_business_email']; ?>" class="widefat" /></td>
+										</tr>
+                                        <tr valign="top">
 											<th scope="row">Sandbox IP Address</th>
 											<td>
 												<input type="text" id="sandbox_only_ip" name="<?php echo $settings_key; ?>[sandbox_only_ip]"
@@ -185,10 +189,6 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 													Is it made for testing live installation of Orbisius CyberStore.
 												</p>
 											</td>
-										</tr>
-										<tr valign="top">
-											<th scope="row">Sandbox PayPal Email</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[sandbox_business_email]" value="<?php echo $opts['sandbox_business_email']; ?>" class="widefat" /></td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Submit Button Image Source
