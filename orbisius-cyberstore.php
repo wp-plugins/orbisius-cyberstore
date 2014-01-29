@@ -1192,10 +1192,15 @@ SHORT_CODE_EOF;
                 wp_die($this->plugin_name . ': Invalid Product ID: ' . $id);
             }
 
+            // We need to also send product name in the custom data so the order system can link the license with the update system.
+            // The product name is the name of the file
+            $product_name = $product_rec['file'];
+            $product_name = Orbisius_CyberStoreUtil::clean_file($product_name, 1);
+
             $price = $product_rec['price'];
             $item_name = $product_rec['label'];
             $item_number = $product_rec['id'];
-            $custom_params = array( 'id' => $item_number, 'item_name' => $item_name, 'site' => $this->site_url );
+            $custom_params = array( 'id' => $item_number, 'product_name' => $product_name );
 
             // if this variable is set that means that we have a variable selected option.
             // The selected option can be 0 that's why we don't use !empty()
@@ -2220,8 +2225,9 @@ class Orbisius_CyberStoreUtil {
      * Removes the directory, also some extra s1111. chars from a filename that makes it unique.
      * This is primarily used by the download
      * @param str $file
+     * @param bool $clean_ext - cleans the extension as well, default:0 -> no
      */
-    public static function clean_file($file) {
+    public static function clean_file($file, $clean_ext = 0) {
         $file = trim($file);
         $file = basename($file);
 
@@ -2229,6 +2235,10 @@ class Orbisius_CyberStoreUtil {
         // the extension. Now we'll offer the file without the appended numbers.
         $file = preg_replace('#-sss\d+(\.\w{2,5})$#si', '\\1', $file);
 
+        if ($clean_ext) {
+            $file = preg_replace('#\.\w{2,4}$#si', '', $file); // rm ext
+        }
+        
         return $file;
     }
 

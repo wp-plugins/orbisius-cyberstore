@@ -39,6 +39,7 @@ http://www.youtube.com/watch?v=6EKNMYjzwlM
 * Supports a secure HOP URL. The main idea of the Secure HOP URL is to redirect to another URL. The script must redirect to an address passed by the "r" parameter.
 Having this kind of redirect is very useful because when your visitors are about to return to your site PayPal checks and if the returning URL is a non-ssl link then it puts a warning with makes the user experience less than optimal. Orbisius CyberStore includes a sample redirect script that you can install on your secure site.
 * Supports free products (since v1.2.3) for download and adds a Download button instead of Buy Now button
+* Since v1.2.8 supports variable products e.g. a digital product with multiple licenses, product notes
 
 = New attributes =
 
@@ -151,6 +152,8 @@ n/a
 * Added price rendering for variable products too.
 * Moved the currency field near the paypal email
 * Combined a few misc checkboxes into one row to save some space
+* Reduced the custom params that are sent to paypal. Send only to most necessary onces.
+* Passing product_name as a custom parameter to paypal
 
 = 1.2.7 =
 * Added link to extensions on the dashboard
