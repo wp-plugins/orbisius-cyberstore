@@ -194,22 +194,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 												</p>
 											</td>
 										</tr>
-										<tr valign="top">
-											<th scope="row">Submit Button Image Source
-													<br/>(optional)
-											</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[submit_button_img_src]" value="<?php echo $opts['submit_button_img_src']; ?>" class="widefat" />
-												Example: http://domain.com/image.jpg ,
-												<?php
-												if (!empty($opts['submit_button_img_src'])) {
-													echo <<<EOF
-						<br/> <span style="vertical-align:middle;">Preview: <img src="{$opts['submit_button_img_src']}" alt="" /></span>
-EOF;
-												}
-												?>
-											</td>
-										</tr>
-										<tr valign="top">
+                                        <tr valign="top">
 											<th scope="row">Logging (for debugging purposes only!)</th>
 											<td>
 													<label for="digishop_logging">
@@ -253,8 +238,23 @@ EOF;
 															echo "</div>";
 														}
 													}
-													
+
 													?>
+											</td>
+										</tr>
+										<tr valign="top">
+											<th scope="row">Submit Button Image Source
+													<br/>(optional)
+											</th>
+											<td><input type="text" name="<?php echo $settings_key; ?>[submit_button_img_src]" value="<?php echo $opts['submit_button_img_src']; ?>" class="widefat" />
+												Example: http://domain.com/image.jpg ,
+												<?php
+												if (!empty($opts['submit_button_img_src'])) {
+													echo <<<EOF
+						<br/> <span style="vertical-align:middle;">Preview: <img src="{$opts['submit_button_img_src']}" alt="" /></span>
+EOF;
+												}
+												?>
 											</td>
 										</tr>
 										<tr valign="top">
