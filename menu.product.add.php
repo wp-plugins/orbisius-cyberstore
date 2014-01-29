@@ -91,9 +91,10 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                                         echo $product_rec['variable_pricing']; ?></textarea>
                                                     <br/>Example: <br />
                                                     <textarea class="widefat " readonly="readonly">
-Personal License  (1 domain) | 19.95
-Business License  (3 domains) | 29.95
-Developer License  (Unlimited Domains) | 49.95</textarea>
+Personal License (1 domain) | 19.95 | limits=1
+Business License (3 domains) | 29.95 | limits=3
+Developer License (Unlimited Domains) | 49.95 | limits=999</textarea>
+                                                    <br/>If you enter variable pricing this will override the price field.
                                                 </div>
 											</td>
 										</tr>

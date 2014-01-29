@@ -1212,6 +1212,10 @@ SHORT_CODE_EOF;
 
                     // TODO: pass the selected license to the $custom_params to paypal
                     $custom_params['variation_id'] = $selected_variation_idx;
+
+                    if (!empty($variable_option['params'])) {
+                        $custom_params = array_merge($variable_option['params'], $custom_params);
+                    }
                 }
             }
 
@@ -1415,14 +1419,8 @@ SHORT_CODE_EOF;
                 $buffer = trim($buffer);
 
                 $subject_prefix = empty($data['test_ipn']) ? '' : 'Test Txn: ';
-
-                // TODO: insert order ?
                 $email_subject = $subject_prefix . $opts['purchase_subject'];
-                $email_buffer = $opts['purchase_content'];
-
-                if (empty($email_buffer)) {
-                    $email_buffer = $this->plugin_default_opts['purchase_content'];
-                }
+                $email_buffer = empty($opts['purchase_content']) ? $this->plugin_default_opts['purchase_content'] : $opts['purchase_content'];
 
                 // Download link will be shortened by using a shortening class
                 // we'll generate an ID e.g. time based + the IP of the person
@@ -1506,7 +1504,7 @@ SHORT_CODE_EOF;
 
                 $this->log('TXN Status: ' . $data['digishop_paypal_status']);
 
-                do_action('orb_cyber_store_ext_after_txn', $data, $product_rec);
+                do_action('orb_cyber_store_ext_after_txn', $data, $product_rec, $paypal_custom_data);
                 
                 // Let's execute the callback
                 if (!empty($opts['callback_url'])) {
@@ -1778,21 +1776,78 @@ MSG_EOF;
     }
 
     /**
-     * Parses a product array record and parses its 'attribs' field.
+     * Parses a product array record for its 'attribs' field.
      * It will extract variable_data and return it as an array
      *
      * @param array $product_rec
      * @param array $data_buff
      */
     public function parse_variable_array_and_encode2array($product_rec = array()) {
-        $attribs = array();
+        $attribs = $variable_data = array();
 
         // parse existing data
         if (!empty($product_rec['attribs'])) {
             parse_str($product_rec['attribs'], $attribs);
+
+            $variable_data = empty($attribs['variable_data']) ? array() : $attribs['variable_data'];
+
+            // make 'params' field (from query str) to array
+            foreach ($variable_data as $idx => $rec) {                
+                if (!empty($rec['params'])) {
+                    $params = array();
+                    $param_str = $rec['params'];
+                    parse_str($param_str, $params);
+                    $rec['params'] = empty($params) ? array() : $params;
+                    $variable_data[$idx] = $rec;
+                }
+            }
         }
 
-        return empty($attribs['variable_data']) ? array() : $attribs['variable_data'];
+        // Converts this (query str):
+        // variable_data%5B0%5D%5Blabel%5D=Personal+License+%281+domain%29&variable_data%5B0%5D%5Bprice%5D=19.95&variable_data%5B0%5D%5Bparams%5D=limits%3D1&variable_data%5B1%5D%5Blabel%5D=Business+License+%283+domains%29&variable_data%5B1%5D%5Bprice%5D=29.95&variable_data%5B1%5D%5Bparams%5D=limits%3D3&variable_data%5B2%5D%5Blabel%5D=Developer+License+%28Unlimited+Domains%29&variable_data%5B2%5D%5Bprice%5D=49.95&variable_data%5B2%5D%5Bparams%5D=limits%3D999
+        // to this
+        /*
+        array(3) {
+            [0]=>
+            array(3) {
+              ["label"]=>
+              string(27) "Personal License (1 domain)"
+              ["price"]=>
+              string(5) "19.95"
+              ["params"]=>
+              array(1) {
+                ["limits"]=>
+                string(1) "1"
+              }
+            }
+            [1]=>
+            array(3) {
+              ["label"]=>
+              string(28) "Business License (3 domains)"
+              ["price"]=>
+              string(5) "29.95"
+              ["params"]=>
+              array(1) {
+                ["limits"]=>
+                string(1) "3"
+              }
+            }
+            [2]=>
+            array(3) {
+              ["label"]=>
+              string(37) "Developer License (Unlimited Domains)"
+              ["price"]=>
+              string(5) "49.95"
+              ["params"]=>
+              array(1) {
+                ["limits"]=>
+                string(3) "999"
+              }
+            }
+          }
+         */
+
+        return $variable_data;
     }
     
     /**
