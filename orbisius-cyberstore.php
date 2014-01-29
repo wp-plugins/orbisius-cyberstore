@@ -250,6 +250,146 @@ class Orbisius_CyberStore {
     }
 
     /**
+     * Prepares params exactly how paypal expects them to be.
+     * They have to be in the right order otherwise they will fail.
+     *
+     * @param array $data
+     * @param str $cmd
+     * @return str
+     */
+	public function prepare_gateway_params($data = array(), $cmd = '_notify-validate') {
+        $query_str = 'cmd=' . urlencode($cmd);
+
+		foreach ($data as $key => $value) {
+			$key = urlencode(stripslashes($key)); // JIC
+			$value = urlencode(stripslashes($value));
+			$query_str .= "&$key=$value";
+		}
+
+        return $query_str;
+    }
+
+    /**
+     *
+     * @param type $data
+     */
+	public function call_payment_gateway_curl($data = array()) {
+        if (!function_exists('curl_init')) {
+            $this->log(__METHOD__ . " : TXN (0): php curl extension not found. Sorry, gotta go.");
+            return false;
+        }
+
+        $gw_data = $this->get_gateway_params();
+        $url = $gw_data['url'];
+
+        $req = $this->prepare_gateway_params($data, '_notify-validate');
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FAILONERROR, 1); // TRUE to fail verbosely if the HTTP code returned is greater than or equal to 400.
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
+        curl_setopt($ch, CURLOPT_USERAGENT, "Orbisius_CyberStore_WordPress_Plugin/1.0 (+http://wordpress.org/plugins/orbisius-cyberstore/)");
+
+        $result = curl_exec($ch); // run the curl process (and return the result to $result
+
+        $this->log(__METHOD__ . " : TXN (0): url: [$url], req: [$req], result: [$result], error: [" . curl_error($ch) . ']');
+
+        curl_close($ch);
+
+        return $result;
+    }
+
+    /**
+     *
+     * @param type $data
+     */
+	public function call_payment_gateway_fsockopen($data = array()) {
+        if (!function_exists('fsockopen')) {
+            $this->log(__METHOD__ . " : TXN (0): php fsockopen not found. Sorry, gotta go.");
+            return false;
+        }
+
+        $res = '';
+        $req = $this->prepare_gateway_params($data, '_notify-validate');
+        $gw_data = $this->get_gateway_params();
+        $url = $gw_data['url'];
+
+        // component is available since: php 5.1.2, WP needs 5.2 at least so we're good.
+        $host = parse_url($url, PHP_URL_HOST);
+        $path = parse_url($url, PHP_URL_PATH);
+
+		// post back to PayPal system to validate
+		$header = "POST $path HTTP/1.0\r\n";
+
+		// If testing on Sandbox use:
+		$header .= "Host: $host:443\r\n";
+		$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
+		$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
+
+        $errno = $errstr = false;
+		$fp = fsockopen("ssl://$host", 443, $errno, $errstr, 30);
+
+		$this->log(__METHOD__ . " : TXN (0): host: [$host]; header: [$header], req: [$req]");
+
+		if (!$fp) {
+			$this->log(__METHOD__ . " : Didn't succeed on first attempt: $errno, $errstr");
+            usleep(500);
+			$fp = fsockopen("ssl://$host", 443, $errno, $errstr, 45);
+		}
+
+		if (!$fp) {
+			$this->log(__METHOD__ . " : TXN (2): Cannot connect: $errno, $errstr");
+			return false;
+		} else {
+			fputs($fp, $header . $req);
+
+			while (!feof($fp)) {
+				$res .= fgets($fp, 4096);
+
+				// next layer will check
+				/*if (trim($res) ==  "VERIFIED") {
+					$this->log(__METHOD__ . " : TXN (buff): Success. Content: $res");
+
+				}*/
+			}
+
+			fclose($fp);
+
+			$this->log(__METHOD__ . " : TXN (buff): Content: [$res]");
+
+			return $res;
+		}
+
+		$this->log(__METHOD__ . " : TXN (3): Error");
+
+		return $res;
+    }
+
+    /**
+     * Calls the payment gateway and returns the response.
+     *
+     * @param array $data
+     * @return string
+     */
+	public function call_payment_gateway($data = array()) {
+        $res = $this->call_payment_gateway_curl($data); // let's first try with php curl and then fsock
+
+        if (!empty($res)) {
+            return $res;
+        }
+
+        $res = $this->call_payment_gateway_fsockopen($data);
+
+        return $res;
+    }
+
+    /**
      * Loads CSS. Called by admin_init -> this means that they are not loaded on the public side.
      */
     public function load_assets() {
@@ -1261,12 +1401,12 @@ SHORT_CODE_EOF;
 			$this->log("Sandbox Only IP: {$opts['sandbox_only_ip']} ?");
 			$this->log("Remote Addr: {$_SERVER['REMOTE_ADDR']} == Sandbox only IP {$opts['sandbox_only_ip']} ?");
 
-			$paypal_buffer = Orbisius_CyberStoreUtil::call_payment_gateway($data);
+			$paypal_buffer = $this->call_payment_gateway($data);
 
             // Let's try again
             if (empty($paypal_buffer)) {
                 $this->log('paypal_ipn (2): will try to call paypal again. Got data: ' . var_export($data, 1));
-				$paypal_buffer = Orbisius_CyberStoreUtil::call_payment_gateway($data);
+				$paypal_buffer = $this->call_payment_gateway($data);
             }
 
             if (!empty($paypal_buffer)) {
@@ -2410,150 +2550,6 @@ class Orbisius_CyberStoreUtil {
         $size = number_format($size, 2);
 
         return $size . " $size_suff";
-    }
-
-    /**
-     * Prepares params exactly how paypal expects them to be.
-     * They have to be in the right order otherwise they will fail.
-     *
-     * @param array $data
-     * @param str $cmd
-     * @return str
-     */
-	public function prepare_gateway_params($data = array(), $cmd = '_notify-validate') {
-        $query_str = 'cmd=' . urlencode($cmd);
-
-		foreach ($data as $key => $value) {
-			$key = urlencode(stripslashes($key)); // JIC
-			$value = urlencode(stripslashes($value));
-			$query_str .= "&$key=$value";
-		}
-
-        return $query_str;
-    }
-    
-    /**
-     *
-     * @param type $data
-     */
-	public function call_payment_gateway_curl($data = array()) {
-        $obj = Orbisius_CyberStore::get_instance();
-        
-        if (!function_exists('curl_init')) {
-            $obj->log(__METHOD__ . " : TXN (0): php curl extension not found. Sorry, gotta go.");
-            return false;
-        }
-
-        $gw_data = $obj->get_gateway_params();
-        $url = $gw_data['url'];
-
-        $req = self::prepare_gateway_params($data, '_notify-validate');
-
-        $ch = curl_init();
-        
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_FAILONERROR, 1); // TRUE to fail verbosely if the HTTP code returned is greater than or equal to 400.
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // Returns result to a variable instead of echoing
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_POST, 1); // Set curl to send data using post
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $req); // Add the request parameters to the post
-        curl_setopt($ch, CURLOPT_USERAGENT, "Orbisius_CyberStore_WordPress_Plugin/1.0 (+http://wordpress.org/plugins/orbisius-cyberstore/)");
-
-        $result = curl_exec($ch); // run the curl process (and return the result to $result
-
-        $obj->log(__METHOD__ . " : TXN (0): url: [$url], req: [$req], result: [$result], error: [" . curl_error($ch) . ']');
-
-        curl_close($ch);
-
-        return $result;
-    }
-
-    /**
-     *
-     * @param type $data
-     */
-	public function call_payment_gateway_fsockopen($data = array()) {
-        $obj = Orbisius_CyberStore::get_instance();
-
-        if (!function_exists('fsockopen')) {
-            $obj->log(__METHOD__ . " : TXN (0): php fsockopen not found. Sorry, gotta go.");
-            return false;
-        }
-
-        $res = '';
-        $req = self::prepare_gateway_params($data, '_notify-validate');
-        $gw_data = $obj->get_gateway_params();
-        $url = $gw_data['url'];
-
-        // component is available since: php 5.1.2, WP needs 5.2 at least so we're good.
-        $host = parse_url($url, PHP_URL_HOST);
-        $path = parse_url($url, PHP_URL_PATH);
-
-		// post back to PayPal system to validate
-		$header = "POST $path HTTP/1.0\r\n";
-
-		// If testing on Sandbox use:
-		$header .= "Host: $host:443\r\n";
-		$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-		$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
-
-        $errno = $errstr = false;
-		$fp = fsockopen("ssl://$host", 443, $errno, $errstr, 30);
-
-		$obj->log(__METHOD__ . " : TXN (0): host: [$host]; header: [$header], req: [$req]");
-
-		if (!$fp) {
-			$obj->log(__METHOD__ . " : Didn't succeed on first attempt: $errno, $errstr");
-            usleep(500);
-			$fp = fsockopen("ssl://$host", 443, $errno, $errstr, 45);
-		}
-
-		if (!$fp) {
-			$obj->log(__METHOD__ . " : TXN (2): Cannot connect: $errno, $errstr");
-			return false;
-		} else {
-			fputs($fp, $header . $req);
-
-			while (!feof($fp)) {
-				$res .= fgets($fp, 4096);
-
-				// next layer will check
-				/*if (trim($res) ==  "VERIFIED") {
-					$obj->log(__METHOD__ . " : TXN (buff): Success. Content: $res");
-
-				}*/
-			}
-
-			fclose($fp);
-
-			$obj->log(__METHOD__ . " : TXN (buff): Content: [$res]");
-
-			return $res;
-		}
-
-		$obj->log(__METHOD__ . " : TXN (3): Error");
-
-		return $res;
-    }
-
-    /**
-     * Calls the payment gateway and returns the response.
-     * 
-     * @param array $data
-     * @return string
-     */
-	public function call_payment_gateway($data = array()) {
-        $res = $this->call_payment_gateway_curl($data); // let's first try with php curl and then fsock
-
-        if (!empty($res)) {
-            return $res;
-        }
-
-        $res = $this->call_payment_gateway_fsockopen($data);
-
-        return $res;
     }
 }
 
