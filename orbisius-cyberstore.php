@@ -265,7 +265,6 @@ class Orbisius_CyberStore {
         wp_register_style($this->plugin_dir_name, plugins_url("/css/main{$suffix}.css", __FILE__), false,
                 filemtime( plugin_dir_path( __FILE__ ) . "/css/main{$suffix}.css" ) );
         wp_enqueue_style($this->plugin_dir_name);
-
     }
 
     /**
@@ -722,6 +721,10 @@ SHORT_CODE_EOF;
 
         if (isset($opts['sandbox_only_ip'])) {
             $opts['sandbox_only_ip'] = trim($opts['sandbox_only_ip']);
+        }
+
+        if (isset($opts['notification_email'])) {
+            $opts['notification_email'] = get_option('admin_email');
         }
 
         return $opts;
