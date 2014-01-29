@@ -1295,7 +1295,7 @@ SHORT_CODE_EOF;
         // see: https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNandPDTVariables/
         elseif (!empty($data[$this->web_trigger_key])
                 && $data[$this->web_trigger_key] == 'paypal_ipn'
-                /*&& $data['txn_type'] == 'web_accept' */ ) {
+                && $data['txn_type'] == 'web_accept') { /* we want this to be triggered only in payments and not in other actions e.g. refunds. */
             // checking if this TXN has been processed. Paypal should always provide a unique TXN ID
 			$data = $_POST;
 
@@ -1371,11 +1371,11 @@ SHORT_CODE_EOF;
                 wp_die($this->plugin_name . ': Invalid call.');
             }
 
-            $paypal_data = array();
-            parse_str($custom, $paypal_data);
+            $paypal_custom_data = array();
+            parse_str($custom, $paypal_custom_data);
 
-            if (!empty($paypal_data['id'])) {
-                $id = $paypal_data['id'];
+            if (!empty($paypal_custom_data['id'])) {
+                $id = $paypal_custom_data['id'];
             } else {
                 //$id = $data['item_number'];
             }
@@ -1434,13 +1434,13 @@ SHORT_CODE_EOF;
                 Orbisius_CyberStoreUtil::write($file, $product_rec['hash']);
 
                 // if that was a variation, it would have been passed in the 'custom' variable array that PayPal sents us back.
-                if (isset($paypal_data['variation_id'])) {
+                if (isset($paypal_custom_data['variation_id'])) {
                     $product_label = $price_label = 'n/a';
                     
                     $all_variations = $this->parse_variable_array_and_encode2array($product_rec);
 
-                    if (isset($all_variations[$paypal_data['variation_id']])) {
-                        $var_rec = $all_variations[$paypal_data['variation_id']];
+                    if (isset($all_variations[$paypal_custom_data['variation_id']])) {
+                        $var_rec = $all_variations[$paypal_custom_data['variation_id']];
                         $product_label = $product_rec['label'] . ' ' . $var_rec['label'];
                         $price_label = Orbisius_CyberStoreUtil::format_price($var_rec['price'], $opts['currency']);
                     }
