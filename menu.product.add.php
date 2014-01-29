@@ -161,7 +161,7 @@ Developer License (Unlimited Domains) | 49.95 | limits=999</textarea>
                                         <tr valign="top">
 											<th scope="row">System Note (Optional)</th>
                                             <td>
-                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="orb_product_note"><?php
+                                                <textarea name="<?php echo $settings_key; ?>[system_note]" class="orb_product_note widefat"><?php
                                                     echo $product_rec['system_note']; ?></textarea>
                                                 <br/>Admin use only | 1024 character limit.
 											</td>
