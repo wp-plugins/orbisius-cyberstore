@@ -18,7 +18,7 @@
 
 			ed.addCommand('mcewwwpdigishop', function() {
 				ed.windowManager.open({
-					file : url + '/window.php',
+                    file : ajaxurl + '?action=cyber_store_ajax_render_popup_content',
 					width : 600 + ed.getLang('wwwpdigishop.delta_width', 0),
 					height : 400 + ed.getLang('wwwpdigishop.delta_height', 0),
 					inline : 1

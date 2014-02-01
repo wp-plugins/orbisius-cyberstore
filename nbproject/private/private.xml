@@ -12,7 +12,7 @@
             <line>0</line>
         </file>
     </editor-bookmarks>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="20">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="21">
         <file>
             <url>menu.product.add.php</url>
             <bookmark id="0">
@@ -66,19 +66,19 @@
                 <line>1183</line>
                 <key/>
             </bookmark>
-            <bookmark id="19">
+            <bookmark id="21">
                 <name/>
-                <line>1213</line>
+                <line>1203</line>
                 <key/>
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>1367</line>
+                <line>1376</line>
                 <key/>
             </bookmark>
             <bookmark id="20">
                 <name/>
-                <line>1443</line>
+                <line>1446</line>
                 <key/>
             </bookmark>
         </file>
@@ -86,9 +86,6 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
         <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/orbisius-cyberstore.php</file>
         <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/readme.txt</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.settings.php</file>
         <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.product.add.php</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/css/main.css</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/css/main.min.css</file>
     </open-files>
 </project-private>

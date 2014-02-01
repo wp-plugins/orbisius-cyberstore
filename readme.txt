@@ -159,6 +159,7 @@ n/a
 * Added a download link in the add/edit product
 * Added an info icon to alert when the product has variable pricing as the variable info is hidden in the advanced section
 * Showing which products has variable pricing in CyberStore | Products
+* Fixed the way tinymce button was implemented
 
 = 1.2.7 =
 * Added link to extensions on the dashboard
