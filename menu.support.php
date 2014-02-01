@@ -23,7 +23,8 @@
 
         <h3>Support</h3>
         <div class="updated"><p>
-            ** NOTE: ** Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>.
+            ** NOTE: ** Support is handled on our site: <a href="http://club.orbisius.com/forums/forum/community-support-forum/wordpress-plugins/digishop/"
+                target="_blank" title="[new window]">http://club.orbisius.com/forums/forum/community-support-forum/wordpress-plugins/digishop/</a>.
             Please do NOT use the WordPress forums or other places to seek support.
         </p></div>
 

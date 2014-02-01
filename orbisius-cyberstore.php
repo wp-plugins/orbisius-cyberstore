@@ -520,6 +520,11 @@ class Orbisius_CyberStore {
 
         // FREE products
         if (empty($prev_rec['price'])) {
+            if (!empty($opts['render_title'])) {
+                $product_title = esc_attr($prev_rec['label']);
+                $buffer .= "<div id='{$this->plugin_id_str}_product_title_{$prev_rec['id']}' class='{$this->plugin_id_str}_product_title'>$product_title</div>\n";
+            }
+            
             $buffer .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Free Product | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 <form id="{$this->plugin_id_str}_free_download_form_$id" class="{$this->plugin_id_str}_free_download_form"

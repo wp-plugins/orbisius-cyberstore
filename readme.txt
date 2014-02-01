@@ -126,11 +126,11 @@ If you have run into issues or have questions/suggestions please register on our
 5. Settings
 6. FAQ
 7. Help
-8. Contact
+8. Extensions
 9. About
 10. Buy Now Button
 11. Buy Now Button after the transaction with the success message.
-12. Screenshot showing the download button for free products (since v.1.2.3)
+12. Screenshot showing variable products, download button for a free product and simple product
 
 == Upgrade Notice ==
 n/a
