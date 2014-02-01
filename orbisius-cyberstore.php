@@ -1131,7 +1131,7 @@ SHORT_CODE_EOF;
                 }
 
                 $hash = Orbisius_CyberStoreUtil::read($file); // long sha1 hash
-                $dl_cnt = Orbisius_CyberStoreUtil::read($dl_cnt_file);
+                $dl_cnt = is_file($dl_cnt_file) ? Orbisius_CyberStoreUtil::read($dl_cnt_file) : 0;
                 $dl_cnt = empty($dl_cnt) ? 1 : intval($dl_cnt);
 
                 if (time() - filemtime($file) > 48 * 3600) { // dl expire after 48h
