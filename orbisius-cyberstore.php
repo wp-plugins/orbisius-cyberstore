@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Orbisius CyberStore (former DigShop) plugin allows you to start selling your digital products such as e-books, reports in minutes.
-  Version: 1.2.8
+  Version: 2.0.0
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -2929,7 +2929,7 @@ function cyber_store_ajax_render_popup_content() {
             </script>
             <base target="_self" />
         </head>
-        <body id="advimage" onload="tinyMCEPopup.executeOnLoad('init();');document.body.style.display='';document.getElementById('wwwpdigishop_product_name').focus();" style="display: none">
+        <body id="advimage" onload="tinyMCEPopup.executeOnLoad('init();');document.body.style.display='';" _style="display: none;">
             <form name="wwwpdigishop_form" action="#">
                 <div class="tabs">
                     <ul>
@@ -2995,5 +2995,6 @@ function cyber_store_ajax_render_popup_content() {
         </body>
     </html>
     <?php
+    
     die(); // This is required to return a proper result
 }

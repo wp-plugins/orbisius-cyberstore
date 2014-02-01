@@ -137,7 +137,7 @@ n/a
 
 == Changelog ==
 
-= 1.2.8 =
+= 2.0.0 =
 * Added a new db table fields: file_ext_src, meta_info, attribs
 * Removed some unused settings variables
 * Passed through a self generated invoice field that includes the site name and date and time of the transaction
