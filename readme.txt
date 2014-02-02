@@ -7,16 +7,16 @@ Tested up to: 3.8.1
 Stable tag: 2.0.0
 License: GPLv2 or later
 
-Orbisius CyberStore plugin allows you to start selling your digital products such as e-books, reports in minutes.
+Orbisius CyberStore plugin allows you to start selling your digital products such as software, e-books, reports in minutes.
 
 == Description ==
 
-Orbisius CyberStore (formerly known as DigiShop within the WordPress Plugin Directory) is a WordPress plugin which allows you to setup your e-store and start selling your digital products such as e-books, reports in minutes.
-It adds a simple buy now button which sends your customer to PayPal to complete the payment and after that he/she is returned to your site.
+Orbisius CyberStore allows you to setup your e-store and start selling digital products such as software, e-books, pdf, reports in minutes.
+It adds a simple Buy Now button which sends the customer to PayPal to complete the payment and after that he/she is returned to your site.
 
 > Users of the former Orbisius DigiShop plugin:
 > Please backup your database and uploads from /wp-content/uploads/digishop before updating to the new version. Just in case.
-> You may have to re-add the products and re-insert the shortcode because this release introduces lots of changes.
+> You will have to re-add the products and re-insert the shortcode because this plugin is not compatible with the previous code.
 
 = Demo =
 http://www.youtube.com/watch?v=6EKNMYjzwlM
@@ -39,7 +39,7 @@ http://www.youtube.com/watch?v=6EKNMYjzwlM
 * Supports a secure HOP URL. The main idea of the Secure HOP URL is to redirect to another URL. The script must redirect to an address passed by the "r" parameter.
 Having this kind of redirect is very useful because when your visitors are about to return to your site PayPal checks and if the returning URL is a non-ssl link then it puts a warning with makes the user experience less than optimal. Orbisius CyberStore includes a sample redirect script that you can install on your secure site.
 * Supports free products (since v1.2.3) for download and adds a Download button instead of Buy Now button
-* Since v1.2.8 supports variable products e.g. a digital product with multiple licenses, product notes
+* Since v2.0.0 supports variable products e.g. a digital product with multiple licenses, product notes
 
 = New attributes =
 
@@ -76,7 +76,7 @@ The plugin has several cool <a href="http://club.orbisius.com/products/wordpress
 Svetoslav Marinov (Slavi) | <a href="http://orbisius.com" title="Custom Web Programming, Web Design, e-commerce, e-store, Wordpress Plugin Development, Facebook and Mobile App Development in Niagara Falls, St. Catharines, Ontario, Canada" target="_blank">Custom Web and Mobile Programming by Orbisius.com</a>
 
 = Support =
-> Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
+> Support is handled on our site: <a href="http://club.orbisius.com/forums/forum/community-support-forum/wordpress-plugins/orbisius-cyberstore/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
 > Please do NOT use the WordPress forums or other places to seek support.
 > New: We have launched our <a href="http://club.orbisius.com/products/" target="_blank" title="[new window]">membership site</a>
 > which gives you access to all of our premium plugins at an affordable price.
@@ -101,11 +101,12 @@ Orbisius CyberStore WordPress plugin is free to use for personal or commercial o
 No. You will have to manually add each of your old products.
 This version offers more features and is more stable.
 
-A little bit of history. We had a plugin called DigiShop in the WordPress plugin directory but it was removed and then we were notified about that.
-We didn't have chance to make the necessary changes.
+A little bit of history. Originally we had named the plugin DigiShop and it had about 7,000 downloads in the WordPress plugin directory.
+Somebody complained that it was infringing on their trademark and it was removed without giving us a chance to rename it.
+We were notified after the fact.
 
 = No notification emails =
-If you or your users didn't the order notification email containing the download link, please check the following
+If you or your users didn't get the order notification email containing the download link, please check the following
 * Spam/junk email folders
 * Check if your PayPal account has IPN (Instant Payment Notification) turned on.
 
@@ -115,7 +116,7 @@ http://www.youtube.com/watch?v=et8KFv0vYWM
 = Issues/questions/suggestions =
 If you have run into issues or have questions/suggestions please register on our support forum and post your suggestion or question there.
 
-> Support is handled on our site: <a href="http://club.orbisius.com/support/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
+> Support is handled on our site: <a href="http://club.orbisius.com/forums/forum/community-support-forum/wordpress-plugins/orbisius-cyberstore/" target="_blank" title="[new window]">http://club.orbisius.com/support/</a>
 > Please do NOT use the WordPress forums or other places to seek support.
 
 == Screenshots ==
@@ -136,6 +137,11 @@ If you have run into issues or have questions/suggestions please register on our
 n/a
 
 == Changelog ==
+
+= 2.0.1 =
+* Removed .htaccess as it was cause the plugin not to work with some apache servers
+* Added an index.html file in the data folder in case the .htaccess file doesn't stop people.
+* Added new filter orb_cyber_store_ext_filter_email_template_vars which allows you to add or remove replace variables such as %%PRODUCT_NAME%%
 
 = 2.0.0 =
 * Added a new db table fields: file_ext_src, meta_info, attribs
