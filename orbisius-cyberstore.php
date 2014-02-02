@@ -65,7 +65,7 @@ class Orbisius_CyberStore {
     private $plugin_support_email = 'help@orbisius.com'; //
     private $plugin_support_link = 'http://miniads.ca/widgets/contact/profile/digishop?height=200&width=500&description=Please enter your enquiry below.'; //
     private $plugin_admin_url_prefix = null; // filled in later
-    private $plugin_home_page = 'http://orbisius.com/site/products/digishop/';
+    private $plugin_home_page = 'http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/';
     private $plugin_tinymce_name = 'wwwpdigishop'; // if you change it update the tinymce/editor_plugin.js and reminify the .min.js file.
     private $paypal_submit_image_src = 'https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif';
     private $plugin_default_opts = array(
