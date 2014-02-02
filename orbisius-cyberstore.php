@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Orbisius CyberStore (former DigShop) plugin allows you to start selling your digital products such as e-books, reports in minutes.
-  Version: 2.0.0
+  Version: 2.0.1
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -1479,6 +1479,12 @@ SHORT_CODE_EOF;
                     '%%PRODUCT_PRICE%%' => $price_label,
                     '%%DOWNLOAD_LINK%%' => Orbisius_CyberStoreUtil::add_url_params($this->site_url, array($dl_key => $download_hash)),
                 );
+
+                /**
+                 * filter: orb_cyber_store_ext_filter_email_template_vars
+                 * @since 2.0.1
+                 */
+                $vars = apply_filters('orb_cyber_store_ext_filter_email_template_vars', $vars);
 
                 $email_subject = str_ireplace(array_keys($vars), array_values($vars), $email_subject);
                 $email_buffer = str_ireplace(array_keys($vars), array_values($vars), $email_buffer);
