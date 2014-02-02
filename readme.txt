@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore,woocommerce,paypal, e-commerce, e-shop, e-store,  payment, paypal, Paypal shopping cart, sell digital products, shop, shopping cart, wordperss ecommerce, WordPress shopping cart, wp, wp store,edl,Easy Digital Downloads
 Requires at least: 2.8
 Tested up to: 3.8.1
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 
 Orbisius CyberStore plugin allows you to start selling your digital products such as software, e-books, reports in minutes.
