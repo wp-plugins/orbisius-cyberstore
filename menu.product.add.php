@@ -46,7 +46,11 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 
 ?>
 <div class="wrap orbisius_cyberstore">
-        <h2>Orbisius CyberStore &rarr; Add/Edit Product</h2>
+        <h2>Orbisius CyberStore &rarr; Add/Edit Product
+        
+            | <a class="add-new-h2" href="<?php echo $orbisius_digishop_obj->get('plugin_admin_url_prefix') . '/menu.products.php'; ?>">Products</a>
+            <a class="add-new-h2" href="<?php echo $orbisius_digishop_obj->get('plugin_admin_url_prefix') . '/menu.product.add.php'; ?>">Add New</a>
+        </h2>
 
         <?php if (!empty($msg)) : ?>
            <?php echo $msg; ?>

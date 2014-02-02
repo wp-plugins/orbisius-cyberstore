@@ -138,6 +138,9 @@ n/a
 
 == Changelog ==
 
+= 2.0.2 =
+* Added links to add product and products on the add product page
+
 = 2.0.1 =
 * Removed .htaccess as it was cause the plugin not to work with some apache servers
 * Added an index.html file in the data folder in case the .htaccess file doesn't stop people.
