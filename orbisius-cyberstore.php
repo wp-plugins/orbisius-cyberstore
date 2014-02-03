@@ -520,6 +520,8 @@ class Orbisius_CyberStore {
 
         // FREE products
         if (empty($prev_rec['price'])) {
+            $buffer .= "\n<div id='{$this->plugin_id_str}_container_{$prev_rec['id']}' class='{$this->plugin_id_str}_container'>";
+
             if (!empty($opts['render_title'])) {
                 $product_title = esc_attr($prev_rec['label']);
                 $buffer .= "<div id='{$this->plugin_id_str}_product_title_{$prev_rec['id']}' class='{$this->plugin_id_str}_product_title'>$product_title</div>\n";
@@ -533,16 +535,17 @@ class Orbisius_CyberStore {
     <input type='hidden' name="{$this->plugin_id_str}_product_id" value="$id" />
     <input type='hidden' name="{$this->plugin_id_str}_post_id" value="{$post->ID}" />
 
-	<span id="{$this->plugin_id_str}_form_submit_button_container_$id" 
+	<div id="{$this->plugin_id_str}_form_submit_button_container_$id"
         class="{$this->plugin_id_str}_form_submit_button_container {$this->plugin_id_str}_free_download_btn">
 		<input id="{$this->plugin_id_str}_form_submit_button_$id" type="submit" class="{$this->plugin_id_str}_free_download_btn"
             name="submit" value="Download" />
         <span class="{$this->plugin_id_str}_loader app_hide" style="display:none;">Please wait...</span>
-	</span>
+	</div>
 </form>
 <!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 SHORT_CODE_EOF;
 
+            $buffer .= "</div> <!-- .{$this->plugin_id_str}_container -->\n";
             return $buffer;
         }
 
@@ -669,11 +672,11 @@ SHORT_CODE_EOF;
 
     $extra_params_buff
 
-	<span id="{$this->plugin_id_str}_form_submit_button_container_$id" class="{$this->plugin_id_str}_form_submit_button_container">
+	<div id="{$this->plugin_id_str}_form_submit_button_container_$id" class="{$this->plugin_id_str}_form_submit_button_container">
 		<input id="{$this->plugin_id_str}_form_submit_button_$id" type="image" class="{$this->plugin_id_str}_form_submit_button" src="$submit_button_img_src"
             border="0" name="submit" alt="Buy Now!" />
         <span class="{$this->plugin_id_str}_loader app_hide" style="display:none;">Please wait...</span>
-	</span>
+	</div>
 </form>
 <!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 SHORT_CODE_EOF;

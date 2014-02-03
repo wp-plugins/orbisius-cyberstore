@@ -140,8 +140,9 @@ n/a
 
 = 2.0.2 =
 * Added links to add product and products on the add product page
-* Moved the form into 'orb_cyber_store_container' div
+* Moved the form into 'orb_cyber_store_container' div for all product types
 * Changed example in add product
+* Somebody extension list was left turned off by mistake
 
 = 2.0.1 =
 * Removed .htaccess as it was cause the plugin not to work with some apache servers

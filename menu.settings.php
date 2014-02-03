@@ -147,7 +147,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                             </th>
                                         </tr>
 
-										<?php if (0&&has_action('orb_cyber_store_render_extension_settings')) : ?>
+										<?php if (has_action('orb_cyber_store_render_extension_settings')) : ?>
 											<?php do_action('orb_cyber_store_render_extension_settings', $opts, $settings_key); ?>
 										<?php else : ?>
 											<tr valign="top">
