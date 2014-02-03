@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Orbisius CyberStore (former DigShop) plugin allows you to start selling your digital products such as e-books, reports in minutes.
-  Version: 2.0.1
+  Version: 2.0.2
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -652,10 +652,6 @@ SHORT_CODE_EOF;
                 $product_buff .= "<div id='{$this->plugin_id_str}_product_price_{$prev_rec['id']}' class='{$this->plugin_id_str}_product_price'>$price_buff</div>\n";
             }
 
-            $product_buff .= "</div> <!-- .{$this->plugin_id_str}_container -->\n";
-
-            $buffer .= $product_buff;
-
             foreach ($extra_params as $key => $val) {
                 $key = esc_attr($key);
                 $val = esc_attr($val);
@@ -663,7 +659,7 @@ SHORT_CODE_EOF;
                     name='{$this->plugin_id_str}extra[$key]' value='$val' />\n";
             }
 
-            $buffer .= <<<SHORT_CODE_EOF
+            $product_buff .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 <form id="{$this->plugin_id_str}_form_$id" class="{$this->plugin_id_str}_form" action="$post_url_esc" method="post" $form_new_window onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show();">
     <input type='hidden' name="$aaa_cmd_key" value="paypal_checkout" />
@@ -683,6 +679,10 @@ SHORT_CODE_EOF;
 SHORT_CODE_EOF;
 
         }
+
+        $product_buff .= "</div> <!-- .{$this->plugin_id_str}_container -->\n";
+
+        $buffer .= $product_buff;
 
         $txn_status = 0;
         $extra_msg = '';
