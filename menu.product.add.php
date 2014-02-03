@@ -148,7 +148,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                                     <br />
                                                     <textarea class="widefat " readonly="readonly">
 Personal License (1 domain) | 19.95 | limits=1
-Business License (3 domains) | 29.95 | limits=3
+Multi Domain License (3 domains) | 29.95 | limits=3
 Developer License (Unlimited Domains) | 49.95 | limits=999</textarea>
                                                     <br/>If you enter variable pricing this will override the price field.
                                                 </div>

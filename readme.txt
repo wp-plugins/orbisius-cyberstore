@@ -141,6 +141,7 @@ n/a
 = 2.0.2 =
 * Added links to add product and products on the add product page
 * Moved the form into 'orb_cyber_store_container' div
+* Changed example in add product
 
 = 2.0.1 =
 * Removed .htaccess as it was cause the plugin not to work with some apache servers
