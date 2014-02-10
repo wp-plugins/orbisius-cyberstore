@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: store,ecommerce,estore,online shop, shopping cart, wordperss e-commerce, wordperss ecommerce, sell digital products, sell ebook, ebook, sell ebook,digishop,digi shop,cyber store,orbisius cyber,orbisius cyber store,cyberstore,Orbisius cyberstore,woocommerce,paypal, e-commerce, e-shop, e-store,  payment, paypal, Paypal shopping cart, sell digital products, shop, shopping cart, wordperss ecommerce, WordPress shopping cart, wp, wp store,edl,Easy Digital Downloads
 Requires at least: 2.8
 Tested up to: 3.8.1
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 
 Orbisius CyberStore plugin allows you to start selling your digital products such as software, e-books, reports in minutes.
@@ -21,12 +21,14 @@ It adds a simple Buy Now button which sends the customer to PayPal to complete t
 = Demo =
 http://www.youtube.com/watch?v=6EKNMYjzwlM
 
-= Benefits / Features =
+= Video Tutorials =
+http://www.youtube.com/playlist?list=PLfGsyhWLtLLiCa3WleGdArmG1RU6w9Ug5
 
+= Benefits / Features =
 * Easy to use
 * Downloads links are served from the main domain e.g. yourdomain.com/?orb_cyber_store_dl=f47c137
 * When download link is clicked the download dialog is shown i.e. the file does not show within the browser (forced download)
-* Handles PayPal Live and Sandbox
+* Handles PayPal Live and Sandbox (at the same time - your clients will be directed to PayPal but your transactions will go to the Sandbox, use Sandbox IP Address)
 * Functionality to enable/disable products (when a product is disabled the buy now link will not be shown and the file can't be downloaded even with the download link)
 * Customize the text for the successful and unsuccessful transaction
 * In case of a failed transaction the email is sent to the admin so he can handle the failed transaction manually
@@ -70,6 +72,7 @@ The plugin has several cool <a href="http://club.orbisius.com/products/wordpress
 * Change Language of PayPal Checkout Page
 * HTML Email + Richtext editor for order email
 * Change Email From
+* Style Order Form
 
 = Author =
 
@@ -140,6 +143,7 @@ n/a
 
 = 2.0.3 =
 * Fix: the transactions were incorrectly cleaned up resulting in invalid download hash.
+* Added a link to the video tutorials playlist
 
 = 2.0.2 =
 * Added links to add product and products on the add product page
