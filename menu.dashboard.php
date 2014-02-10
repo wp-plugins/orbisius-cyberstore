@@ -34,15 +34,28 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 										<tr valign="top">
 											<th scope="row">Status</th>
 											<td>
-												<?php echo empty($opts['status']) ? 'Disabled' : 'Enabled'; ?>
-
+												<?php echo empty($opts['status'])
+                                                    ? $orbisius_digishop_obj->m('&#x2717; Disabled')
+                                                    : $orbisius_digishop_obj->m('&#x2713; Enabled', 1); ?>
+                                                |
+                                                <a href="<?php echo $orbisius_digishop_obj->get('plugin_admin_url_prefix') . '/menu.product.add.php';?>"
+                                   title=""
+                                    class="button-primary">Add Product</a>
+                                                |
+                                                <a href="<?php echo $orbisius_digishop_obj->get('plugin_admin_url_prefix') . '/menu.products.php';?>"
+                                   title=""
+                                    class="button-primary">Products</a>
                                                 |
                                                 <a href="<?php echo $orbisius_digishop_obj->get('plugin_admin_url_prefix') . '/menu.settings.php';?>"
-                                   title="If you want a custom web/mobile app/plugin developed contact us. This opens in a new window/tab"
+                                   title=""
                                     class="button-primary">Settings</a>
                                                 |
-                                                <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/?utm_source=<?php echo str_replace('.php', '', basename($plugin_file));?>&utm_medium=plugin-settings&utm_campaign=product"
-                                   title="If you want a custom web/mobile app/plugin developed contact us. This opens in a new window/tab"
+                                                <a href="http://club.orbisius.com/forums/forum/community-support-forum/wordpress-plugins/orbisius-cyberstore/?utm_source=orbisius-cyberstore&utm_medium=plugin-dashboard&utm_campaign=product"
+                                   title="Support forums. This opens in a new window/tab"
+                                   class="button-primary" target="_blank">Support Forums</a>
+                                                |
+                                                <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/?utm_source=<?php echo str_replace('.php', '', basename($plugin_file));?>&utm_medium=plugin-dashboard&utm_campaign=product"
+                                   title="If you want to get some extesions for the plugin. This opens in a new window/tab"
                                     class="button-primary" target="_blank">Get Extensions</a>
 											</td>
 										</tr>

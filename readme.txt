@@ -144,6 +144,7 @@ n/a
 = 2.0.4 =
 * Added a link to the settings page in the dashboard
 * Fixed the tweet's suggested text (was relevant to another premium plugin of ours)
+* Added some more links (to support forums, add, products) to the dashboard page.
 
 = 2.0.3 =
 * Fix: the transactions were incorrectly cleaned up resulting in invalid download hash.
