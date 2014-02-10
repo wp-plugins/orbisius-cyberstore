@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Orbisius CyberStore (former DigShop) plugin allows you to start selling your digital products such as e-books, reports in minutes.
-  Version: 2.0.2
+  Version: 2.0.3
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -1351,14 +1351,13 @@ SHORT_CODE_EOF;
                     touch($txn_flag_file);
                 }
 
-                if (mt_rand(0, 10) % 2 == 0) { // 50% chance to cleanup the txn files after a paypal call.
-                    $txn_files = glob($this->plugin_uploads_dir . '___sys_txn_*');
+                // cleanup: clean up the old txn files after a paypal call.
+                $txn_files = glob($this->plugin_uploads_dir . '___sys_txn_*');
 
-                    foreach ($txn_files as $file) {
-                        if (time() - filemtime($txn_flag_file) > 7 * 24 * 3600) { // clean txns older than 7 days
-                            $this->log('Deleting old txn flag file: ' . $file);
-                            unlink($file);
-                        }
+                foreach ($txn_files as $file) {
+                    if ( (time() - filemtime($file)) > 7 * 24 * 3600) { // clean txns older than 7 days
+                        $this->log('Deleting old txn flag file: ' . $file);
+                        unlink($file);
                     }
                 }
 
@@ -2575,7 +2574,7 @@ class Orbisius_CyberStoreUtil {
         $esc_name = strtolower($name);
         $esc_name = preg_replace('#[^\w-]#si', '_', $esc_name);
         $esc_name = esc_attr($esc_name);
-        $html = "\n<div id='$esc_name' $attr>\n";
+        $html = "\n<div id='$esc_name' class='$esc_name' $attr>\n";
 
         $type = 'radio';
         $sep = "<br/>\n";

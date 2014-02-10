@@ -138,6 +138,9 @@ n/a
 
 == Changelog ==
 
+= 2.0.3 =
+* Fix: the transactions were incorrectly cleaned up resulting in invalid download hash.
+
 = 2.0.2 =
 * Added links to add product and products on the add product page
 * Moved the form into 'orb_cyber_store_container' div for all product types

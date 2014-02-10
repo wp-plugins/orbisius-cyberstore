@@ -25,42 +25,42 @@
             <url>orbisius-cyberstore.php</url>
             <bookmark id="10">
                 <name/>
-                <line>629</line>
+                <line>632</line>
                 <key/>
             </bookmark>
             <bookmark id="8">
                 <name/>
-                <line>664</line>
+                <line>663</line>
                 <key/>
             </bookmark>
             <bookmark id="1">
                 <name/>
-                <line>1054</line>
+                <line>1057</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>1195</line>
+                <line>1198</line>
                 <key/>
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>1201</line>
+                <line>1204</line>
                 <key/>
             </bookmark>
             <bookmark id="21">
                 <name/>
-                <line>1221</line>
+                <line>1224</line>
                 <key/>
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>1394</line>
+                <line>1397</line>
                 <key/>
             </bookmark>
             <bookmark id="20">
                 <name/>
-                <line>1464</line>
+                <line>1467</line>
                 <key/>
             </bookmark>
         </file>
@@ -85,8 +85,5 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
         <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/orbisius-cyberstore.php</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/readme.txt</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.settings.php</file>
-        <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.product.add.php</file>
     </open-files>
 </project-private>
