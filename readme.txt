@@ -141,6 +141,9 @@ n/a
 
 == Changelog ==
 
+= 2.0.5 =
+* Added some more links to tutorials
+
 = 2.0.4 =
 * Added a link to the settings page in the dashboard
 * Fixed the tweet's suggested text (was relevant to another premium plugin of ours)

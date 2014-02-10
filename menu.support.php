@@ -28,8 +28,13 @@
             Please do NOT use the WordPress forums or other places to seek support.
         </p></div>
 
+        <h3>Video Tutorials</h3>
+        <div><p>
+            YouTube playlist: <a href="http://www.youtube.com/playlist?list=PLfGsyhWLtLLiCa3WleGdArmG1RU6w9Ug5"
+                target="_blank" title="[new window]">http://www.youtube.com/playlist?list=PLfGsyhWLtLLiCa3WleGdArmG1RU6w9Ug5</a>.
+        </p></div>
+
         <h3>Demo</h3>
-		
 		<p>
             Link: <a href="http://www.youtube.com/watch?v=6EKNMYjzwlM&hd=1" target="_blank" title="[opens in a new and bigger tab/window]">http://www.youtube.com/watch?v=6EKNMYjzwlM&hd=1</a>
 			<p>

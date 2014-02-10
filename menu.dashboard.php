@@ -57,6 +57,10 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                                 <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/?utm_source=<?php echo str_replace('.php', '', basename($plugin_file));?>&utm_medium=plugin-dashboard&utm_campaign=product"
                                    title="If you want to get some extesions for the plugin. This opens in a new window/tab"
                                     class="button-primary" target="_blank">Get Extensions</a>
+                                                |
+                                                <a href="http://www.youtube.com/playlist?list=PLfGsyhWLtLLiCa3WleGdArmG1RU6w9Ug5"
+                                   title="If you want to get some extesions for the plugin. This opens in a new window/tab"
+                                    class="button-primary" target="_blank">Video Tutorials</a>
 											</td>
 										</tr>
 									</table>
