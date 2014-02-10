@@ -1355,7 +1355,7 @@ SHORT_CODE_EOF;
                 $txn_files = glob($this->plugin_uploads_dir . '___sys_txn_*');
 
                 foreach ($txn_files as $file) {
-                    if ( (time() - filemtime($file)) > 7 * 24 * 3600) { // clean txns older than 7 days
+                    if ( (time() - filemtime($file)) > 7 * 24 * 3600 ) { // clean txns older than 7 days
                         $this->log('Deleting old txn flag file: ' . $file);
                         unlink($file);
                     }
