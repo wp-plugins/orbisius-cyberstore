@@ -141,6 +141,10 @@ n/a
 
 == Changelog ==
 
+= 2.0.4 =
+* Added a link to the settings page in the dashboard
+* Fixed the tweet's suggested text (was relevant to another premium plugin of ours)
+
 = 2.0.3 =
 * Fix: the transactions were incorrectly cleaned up resulting in invalid download hash.
 * Added a link to the video tutorials playlist

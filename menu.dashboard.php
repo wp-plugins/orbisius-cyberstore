@@ -37,6 +37,10 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 												<?php echo empty($opts['status']) ? 'Disabled' : 'Enabled'; ?>
 
                                                 |
+                                                <a href="<?php echo $orbisius_digishop_obj->get('plugin_admin_url_prefix') . '/menu.settings.php';?>"
+                                   title="If you want a custom web/mobile app/plugin developed contact us. This opens in a new window/tab"
+                                    class="button-primary">Settings</a>
+                                                |
                                                 <a href="http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/extensions/?utm_source=<?php echo str_replace('.php', '', basename($plugin_file));?>&utm_medium=plugin-settings&utm_campaign=product"
                                    title="If you want a custom web/mobile app/plugin developed contact us. This opens in a new window/tab"
                                     class="button-primary" target="_blank">Get Extensions</a>
@@ -180,14 +184,16 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 
                                 &nbsp;
 
+                                <?php
+                                $plugin_data = get_plugin_data($plugin_file);
+                                $descr = $plugin_data['Description'];
+                                $descr = strlen($descr) > 50 ? substr($descr, 0, 50) . '...' : $descr;
+                                ?>
                                 <!-- Twitter: Tweet:js -->
                                 <a href="https://twitter.com/share" class="twitter-share-button"
-                                   data-lang="en" data-text="Checkout FlexPrice #WordPress plugin.It allows you change product prices in #WooCommerce"
+                                   data-lang="en" data-text="Checkout <?php echo $plugin_data['Name'];?> #WordPress #plugin <?php echo esc_attr($descr);?>"
                                    data-count="none" data-via="orbisius" data-related="orbisius,qsandbox"
-                                   data-url="<?php
-                                    $plugin_data = get_plugin_data($plugin_file);
-                                    echo $plugin_data['PluginURI'];
-                                   ?>">Tweet</a>
+                                   data-url="<?php echo $plugin_data['PluginURI'];?>">Tweet</a>
                                 <!-- /Twitter: Tweet:js -->
 
                                 <br/>
