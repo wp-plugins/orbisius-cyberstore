@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.0.5
+  Version: 2.0.6
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -40,7 +40,6 @@ if (empty($_ENV['ORBISIUS_DIGISHOP_TEST'])) {
     add_action('init', array($orbisius_digishop_obj, 'parse_request'), 50);
 
     register_activation_hook(__FILE__, array($orbisius_digishop_obj, 'on_activate'));
-    register_deactivation_hook(__FILE__, array($orbisius_digishop_obj, 'on_deactivate'));
 }
 
 class Orbisius_CyberStore {
@@ -819,7 +818,6 @@ SHORT_CODE_EOF;
      */
     function on_activate() {
         $this->install_db_tables();
-        $this->set_options($opts);
     }
 
     /**
@@ -1590,6 +1588,16 @@ SHORT_CODE_EOF;
         }
     }
 
+    /**
+     * returns .min for live and empty string for dev
+     * @return str
+     */
+    function get_assets_suffix() {
+        $suffix = empty($_SERVER['DEV_ENV']) ? '.min' : '';
+
+        return $suffix;
+    }
+
     // used to insert button in wordpress 2.5x editor
     function register_button($buttons) {
         array_push($buttons, "separator", $this->plugin_tinymce_name);
@@ -1599,7 +1607,8 @@ SHORT_CODE_EOF;
 
     // Load the TinyMCE plugin : editor_plugin.js (wp2.5)
     function add_tinymce_plugin($plugin_array) {
-        $plugin_array[$this->plugin_tinymce_name] = $this->plugin_url . 'tinymce/editor_plugin.min.js';
+        $suffix = $this->get_assets_suffix();
+        $plugin_array[$this->plugin_tinymce_name] = $this->plugin_url . "tinymce/editor_plugin$suffix.js";
 
         return $plugin_array;
     }
@@ -2864,6 +2873,16 @@ class Orbisius_CyberStore_Shorty {
     }
 }
 
+/**
+ * Are we running WP 3.9 or higher?
+ * We need this because some of the TinyMCE API has changed.
+ */
+function cyber_store_39up() {
+    global  $wp_version;
+    $wp_3_9_plus = floatval($wp_version) >= 3.9;
+
+    return $wp_3_9_plus ? 1 : 0;
+}
 
 /**
  * This is triggered by editor_plugin.min.js and WP proxies the ajax calls to this action.
@@ -2900,49 +2919,63 @@ function cyber_store_ajax_render_popup_content() {
             <script language="javascript" type="text/javascript" src="<?php echo $site_url; ?>/wp-includes/js/tinymce/utils/form_utils.js"></script>
 
             <script language="javascript" type="text/javascript">
-                function init() {
-                    tinyMCEPopup.resizeToInnerSize();
-                }
+                var app_cyber_store = {
+                    is_new_wp : <?php echo cyber_store_39up(); ?>,
 
-                function insert_wwwpdigishop_content() {
-                    var extra = '';
-                    var content;
-                    var template = '<p>[orb_cyber_store id="%%PRODUCT_ID%%"]</p><br />';
+                    init : function () {
+                        tinyMCEPopup.resizeToInnerSize();
+                    },
 
-                    var product_id = document.getElementById('product_id') ? document.getElementById('product_id').value : 0;
-                    var require_shipping = document.getElementById('require_shipping') && document.getElementById('require_shipping').checked ? 1 : 0;
-
-                    var wwwpdigishop = document.getElementById('wwwpdigishop_panel');
-
-                    content = template;
-
-                    // if we want shipping then inject this into the template before we replace the product id
-                    if (require_shipping > 0) {
-                        content = content.replace('%%PRODUCT_ID%%"', '%%PRODUCT_ID%%"' + ' require_shipping="1"');
-                    }
-
-                    // who is active ?
-                    if (wwwpdigishop.className.indexOf('current') != -1) {
-                        content = content.replace('%%PRODUCT_ID%%', product_id);
-                    }
-
-                    if (window.tinyMCE) {
-                        if (product_id > 0) {
-                            window.tinyMCE.execInstanceCommand('content', 'mceInsertContent', false, content);
+                    close : function () {
+                        if (this.is_new_wp) {
+                            top.tinymce.activeEditor.windowManager.close();
+                        } else {
+                            tinyMCEPopup.close();
                         }
-                        //Peforms a clean up of the current editor HTML.
-                        //tinyMCEPopup.editor.execCommand('mceCleanup');
-                        //Repaints the editor. Sometimes the browser has graphic glitches.
-                        tinyMCEPopup.editor.execCommand('mceRepaint');
-                        tinyMCEPopup.close();
-                    }
+                    },
 
-                    return;
-                }
+                    insert_content : function () {
+                        var extra = '';
+                        var content = '';
+                        var template = '<p>[orb_cyber_store id="%%PRODUCT_ID%%"]</p><br />';
+
+                        var product_id = document.getElementById('product_id') ? document.getElementById('product_id').value : 0;
+                        var require_shipping = document.getElementById('require_shipping') && document.getElementById('require_shipping').checked ? 1 : 0;
+
+                        var wwwpdigishop = document.getElementById('wwwpdigishop_panel');
+
+                        content = template;
+
+                        // if we want shipping then inject this into the template before we replace the product id
+                        if (require_shipping > 0) {
+                            content = content.replace('%%PRODUCT_ID%%"', '%%PRODUCT_ID%%"' + ' require_shipping="1"');
+                        }
+
+                        // who is active ?
+                        if (wwwpdigishop.className.indexOf('current') != -1) {
+                            content = content.replace('%%PRODUCT_ID%%', product_id);
+                        }
+
+                        if (this.is_new_wp) {
+                            parent.tinyMCE.execCommand('mceInsertContent', false, content);
+                        } else if (window.tinyMCE) {
+                            if (product_id > 0) {
+                                window.tinyMCE.execInstanceCommand('content', 'mceInsertContent', false, content);
+                            }
+                            
+                            //Peforms a clean up of the current editor HTML.
+                            //tinyMCEPopup.editor.execCommand('mceCleanup');
+                            //Repaints the editor. Sometimes the browser has graphic glitches.
+                            tinyMCEPopup.editor.execCommand('mceRepaint');
+                        }
+
+                        this.close();
+                    }
+                };
             </script>
             <base target="_self" />
         </head>
-        <body id="advimage" onload="tinyMCEPopup.executeOnLoad('init();');document.body.style.display='';" _style="display: none;">
+        <body id="cyber_store" onload="app_cyber_store.init();">
             <form name="wwwpdigishop_form" action="#">
                 <div class="tabs">
                     <ul>
@@ -2997,11 +3030,12 @@ function cyber_store_ajax_render_popup_content() {
 
                 <div class="mceActionPanel">
                     <div style="float: left">
-                        <input type="submit" id="insert" name="insert" value="<?php _e("Insert", 'WWWPDIGISHOP'); ?>" onclick="insert_wwwpdigishop_content();return false;" />
+                        <input type="button" id="cyber_store_insert" name="insert"
+                               value="<?php _e("Insert", 'WWWPDIGISHOP'); ?>" onclick="app_cyber_store.insert_content();" class="mceButton" />
                     </div>
 
                     <div style="float: right">
-                        <input type="button" id="cancel" name="cancel" value="<?php _e("Cancel", 'WWWPDIGISHOP'); ?>" onclick="tinyMCEPopup.close();" />
+                        <input type="button" id="cancel" name="cancel" value="<?php _e("Cancel", 'WWWPDIGISHOP'); ?>" onclick="app_cyber_store.close();" />
                     </div>
                 </div>
             </form>
