@@ -29,7 +29,7 @@
 
 			// Register example button
 			ed.addButton('wwwpdigishop', {
-				title : 'Orbisius_CyberStore',
+				title : 'Orbisius CyberStore',
 				cmd : 'mcewwwpdigishop',
 				image : url + '/../images/icon.png'
 			});
@@ -43,7 +43,7 @@
 		 */
 		getInfo : function() {
 			return {
-					longname  : 'Orbisius_CyberStore',
+					longname  : 'Orbisius CyberStore',
 					author 	  : 'Svetoslav Marinov (Slavi)',
 					authorurl : 'http://orbisius.com',
 					infourl   : 'http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/',
