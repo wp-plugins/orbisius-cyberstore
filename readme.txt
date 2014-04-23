@@ -144,6 +144,7 @@ n/a
 = 2.0.6 =
 * Found and fixed a very hidden but which was showing some notice on plugin activation
 * Tested with WP 3.9
+* Fixed tinymce for wp 3.9
 
 = 2.0.5 =
 * Added some more links to tutorials

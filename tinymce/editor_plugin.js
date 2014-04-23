@@ -33,11 +33,6 @@
 				cmd : 'mcewwwpdigishop',
 				image : url + '/../images/icon.png'
 			});
-
-			// Add a node change handler, selects the button in the UI when a image is selected
-			ed.onNodeChange.add(function(ed, cm, n) {
-				cm.setActive('wwwpdigishop', n.nodeName == 'IMG');
-			});
 		},
 
 		/**
@@ -51,7 +46,7 @@
 					longname  : 'Orbisius_CyberStore',
 					author 	  : 'Svetoslav Marinov (Slavi)',
 					authorurl : 'http://orbisius.com',
-					infourl   : 'http://orbisius.com/site/products/digishop',
+					infourl   : 'http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/',
 					version   : "1.0.0"
 			};
 		}
