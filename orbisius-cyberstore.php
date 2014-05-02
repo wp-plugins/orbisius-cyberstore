@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.0.6
+  Version: 2.0.7
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -699,7 +699,7 @@ SHORT_CODE_EOF;
         }
 
         if (!empty($extra_msg)) {
-            $extra_msg = apply_filters('orb_cyber_store_ext_filter_post_buy_now_txn_message', $extra_msg, $txn_status);
+            $extra_msg = apply_filters('orb_cyber_store_ext_filter_post_buy_now_txn_message', $extra_msg, $txn_status, $prev_rec);
             $extra_msg = "<p>$extra_msg</p>";
         }
 

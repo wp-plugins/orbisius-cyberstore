@@ -141,6 +141,9 @@ n/a
 
 == Changelog ==
 
+= 2.0.7 =
+* Passing product info to the filter that is called to displayed post transaction info
+
 = 2.0.6 =
 * Found and fixed a very hidden but which was showing some notice on plugin activation
 * Tested with WP 3.9
