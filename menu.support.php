@@ -48,7 +48,7 @@
             ?>
             <p>Share this video:
                 <!-- AddThis Button BEGIN -->
-                <div class="addthis_toolbox addthis_default_style addthis_16x16_style">
+                <div class="addthis_toolbox addthis_default_style addthis_32x32_style">
                 <a class="addthis_button_facebook" addthis:url="<?php echo $app_link?>" addthis:title="<?php echo $app_title?>" addthis:description="<?php echo $app_descr?>"></a>
                 <a class="addthis_button_twitter" addthis:url="<?php echo $app_link?>" addthis:title="<?php echo $app_title?>" addthis:description="<?php echo $app_descr?>"></a>
                 <a class="addthis_button_google_plusone" g:plusone:count="false" addthis:url="<?php echo $app_link?>" addthis:title="<?php echo $app_title?>" addthis:description="<?php echo $app_descr?>"></a>

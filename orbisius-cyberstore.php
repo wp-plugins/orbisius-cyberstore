@@ -128,6 +128,8 @@ class Orbisius_CyberStore {
 			$inst->add_product_url = $inst->plugin_admin_url_prefix . '/menu.product.add.php';
 			$inst->edit_product_url = $inst->plugin_admin_url_prefix . '/menu.product.add.php';
 
+            // @TODO: use wp_upload_dir!!!
+
             // where digital products will be saved.
             $inst->plugin_uploads_path = '/wp-content/uploads/' . $inst->plugin_id_str . '/';
             $inst->plugin_uploads_url = $site_url . $inst->plugin_uploads_path;
@@ -1050,7 +1052,7 @@ SHORT_CODE_EOF;
      *
      * @var array
      */
-    private $explicty_var_bool_check_arr = array('logging_enabled');
+    private $explicty_var_bool_check_arr = array('logging_enabled', 'render_title', 'render_price', 'require_shipping', 'form_new_window');
 
     /**
      * This is called by WP after the user hits the submit button.
@@ -1548,6 +1550,10 @@ SHORT_CODE_EOF;
                             . $ua->get_content() . "\n Data: " . var_export($data, 1));
                 }
             }
+        } elseif (!empty($data[$this->web_trigger_key])
+                && $data[$this->web_trigger_key] == 'paypal_ipn') {
+            $this->log('TXN Error (unsupported IPN txn):'. var_export($data, 1));
+            do_action('orb_cyber_store_ext_after_txn_other', $data);
         } else {
             $this->log('TXN Error (unsupported txn):'. var_export($data, 1));
             do_action('orb_cyber_store_ext_error_txn', $data);
