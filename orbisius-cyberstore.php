@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.0.7
+  Version: 2.0.8
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -91,7 +91,6 @@ class Orbisius_CyberStore {
 	private $app_title = 'Start selling your digital products (e-books, music, reports) within minutes!';
 	private $plugin_description = 'Allows you to start selling your digital products such as e-books, reports in minutes.';
 
-    private $plugin_uploads_path = null; // E.g. /wp-content/uploads/PLUGIN_ID_STR/
     private $plugin_uploads_url = null; // E.g. http://yourdomain/wp-content/uploads/PLUGIN_ID_STR/
     private $plugin_uploads_dir = null; // E.g. DOC_ROOT/wp-content/uploads/PLUGIN_ID_STR/
 
@@ -128,12 +127,21 @@ class Orbisius_CyberStore {
 			$inst->add_product_url = $inst->plugin_admin_url_prefix . '/menu.product.add.php';
 			$inst->edit_product_url = $inst->plugin_admin_url_prefix . '/menu.product.add.php';
 
-            // @TODO: use wp_upload_dir!!!
+            /*
+             Array (
+                    [path] => C:\path\to\wordpress\wp-content\uploads\2010\05
+                    [url] => http://example.com/wp-content/uploads/2010/05
+                    [subdir] => /2010/05
+                    [basedir] => C:\path\to\wordpress\wp-content\uploads
+                    [baseurl] => http://example.com/wp-content/uploads
+                    [error] =>
+                )
+             */
+            $upload_dir_rec = wp_upload_dir();
 
             // where digital products will be saved.
-            $inst->plugin_uploads_path = '/wp-content/uploads/' . $inst->plugin_id_str . '/';
-            $inst->plugin_uploads_url = $site_url . $inst->plugin_uploads_path;
-            $inst->plugin_uploads_dir = ABSPATH . ltrim($inst->plugin_uploads_path, '/');
+            $inst->plugin_uploads_url = $upload_dir_rec['baseurl'] . '/' . $inst->plugin_id_str . '/';
+            $inst->plugin_uploads_dir = $upload_dir_rec['basedir'] . '/' . $inst->plugin_id_str . '/';
 
             // will be retrieved later by ->get method calls
             $inst->plugin_db_prefix = $wpdb->prefix . $inst->plugin_id_str . '_';
@@ -428,8 +436,9 @@ class Orbisius_CyberStore {
 
         if (array_key_exists($this->web_trigger_key, $params)
                 || array_key_exists($this->download_key, $params)) {
-            if ($params[$this->web_trigger_key] == 'paypal_ipn'
-                    || $params[$this->web_trigger_key] == 'paypal_checkout') {
+            if (!empty($params[$this->web_trigger_key])
+                    && ($params[$this->web_trigger_key] == 'paypal_ipn'
+                        || $params[$this->web_trigger_key] == 'paypal_checkout')) {
                 $this->handle_non_ui($params);
             }
 
@@ -2340,7 +2349,13 @@ class Orbisius_CyberStoreUtil {
         
         $default_content_type = 'application/octet-stream';
 
-        $ext = end(explode('.', $download_file_name));
+        $get_ext_splits = explode('.', $download_file_name);
+
+        if (empty($get_ext_splits)) {
+            wp_die(__METHOD__ . " So sorry but I refuse to serve extenless file.");
+        }
+
+        $ext = end($get_ext_splits);
         $ext = strtolower($ext);
 
         // http://en.wikipedia.org/wiki/Internet_media_type
