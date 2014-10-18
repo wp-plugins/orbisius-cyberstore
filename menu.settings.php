@@ -49,22 +49,30 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 										</tr>
 										<tr valign="top">
 											<th scope="row">PayPal Email / Currency</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[business_email]" value="<?php echo $opts['business_email']; ?>" class="input_field" />
+											<td><input type="text" name="<?php echo $settings_key; ?>[business_email]" 
+                                                       placeholder="PayPal Email Address"
+                                                       value="<?php echo $opts['business_email']; ?>" class="input_field" />
 
                                                 | Currency
-                                                <input type="text" name="<?php echo $settings_key; ?>[currency]" value="<?php echo $opts['currency']; ?>" size="4"/> Example: USD, CAD, EUR
+                                                <input type="text" name="<?php echo $settings_key; ?>[currency]" 
+                                                       placeholder="Currency e.g. CAD, USD, EUR"
+                                                       value="<?php echo $opts['currency']; ?>" size="4"/> Example: USD, CAD, EUR
                                                     <a href="https://developer.paypal.com/webapps/developer/docs/classic/api/currency_codes/" target="_blank">See full list</a>
                                             </td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Order Notification Email</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[notification_email]" value="<?php echo $opts['notification_email']; ?>" class="input_field" />
+											<td><input type="text" name="<?php echo $settings_key; ?>[notification_email]" 
+                                                       placeholder="Email e.g. order@yoursite.com"
+                                                       value="<?php echo $opts['notification_email']; ?>" class="input_field" />
 												The plugin will send order info to that email (usually same as site admin email)
 											</td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Subject (download email)</th>
-											<td><input type="text" name="<?php echo $settings_key; ?>[purchase_subject]" value="<?php echo $opts['purchase_subject']; ?>" class="input_field widefat"/></td>
+											<td><input type="text" name="<?php echo $settings_key; ?>[purchase_subject]" 
+                                                       placeholder="Your download link to a recent order"
+                                                       value="<?php echo $opts['purchase_subject']; ?>" class="input_field widefat"/></td>
 										</tr>
 										<tr valign="top">
 											<th scope="row">Content (download email)</th>
