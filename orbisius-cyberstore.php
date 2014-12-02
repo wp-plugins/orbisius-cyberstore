@@ -3,14 +3,14 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.0.8
+  Version: 2.0.9
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
  */
 
 /*
-  Copyright 2011-2020 Svetoslav Marinov (slavi@slavi.biz)
+  Copyright 2011-2050 Svetoslav Marinov (slavi@slavi.biz)
 
   This program ais free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -2136,6 +2136,31 @@ class Orbisius_CyberStoreUtil {
     const FILE_APPEND = 1;
     const UNSERIALIZE_DATA = 2;
     const SERIALIZE_DATA = 3;
+
+    /**
+     * Loads news from Club Orbsius Site.
+     * <?php Orbisius_CyberStoreUtil::output_orb_widget(); ?>
+     */
+    public static function output_orb_widget($obj = '') {
+        ?>
+        <!-- Orbisius JS Widget -->
+            <?php
+                $naked_domain = !empty($_SERVER['DEV_ENV']) ? 'orbclub.com.clients.com' : 'club.orbisius.com';
+
+                if (!empty($_SERVER['DEV_ENV']) && is_ssl()) {
+                    $naked_domain = 'ssl.orbisius.com/club';
+                }
+
+                // obj could be 'author'
+                $obj = empty($obj) ? str_replace('.php', '', basename(__FILE__)) : sanitize_title($obj);
+
+                $params = '?' . http_build_query(array('p' => $obj, 'layout' => 'plugin', ));
+                echo '<div class="orbisius_ext_content"></div>' . "\n";
+                echo "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://$naked_domain/wpu/widget/$params';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'orbsius-js');</script>";
+            ?>
+            <!-- /Orbisius JS Widget -->
+        <?php
+    }
 
     /**
      * Checks if we are on a page that belongs to our plugin.

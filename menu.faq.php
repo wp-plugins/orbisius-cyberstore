@@ -24,5 +24,7 @@
                 Please do NOT use the WordPress forums or other places to seek support.
             </p></div>
         </p>
+
+        <?php Orbisius_CyberStoreUtil::output_orb_widget(); ?>
     </div>
 </div>

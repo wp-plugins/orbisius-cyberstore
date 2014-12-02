@@ -14,53 +14,53 @@
     </editor-bookmarks>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="21">
         <file>
-            <url>menu.product.add.php</url>
-            <bookmark id="0">
-                <name/>
-                <line>74</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>orbisius-cyberstore.php</url>
             <bookmark id="10">
                 <name/>
-                <line>633</line>
+                <line>642</line>
                 <key/>
             </bookmark>
             <bookmark id="8">
                 <name/>
-                <line>664</line>
+                <line>673</line>
                 <key/>
             </bookmark>
             <bookmark id="1">
                 <name/>
-                <line>1057</line>
+                <line>1066</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>1198</line>
+                <line>1207</line>
                 <key/>
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>1204</line>
+                <line>1213</line>
                 <key/>
             </bookmark>
             <bookmark id="21">
                 <name/>
-                <line>1224</line>
+                <line>1233</line>
                 <key/>
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>1396</line>
+                <line>1405</line>
                 <key/>
             </bookmark>
             <bookmark id="20">
                 <name/>
-                <line>1466</line>
+                <line>1475</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>menu.product.add.php</url>
+            <bookmark id="0">
+                <name/>
+                <line>74</line>
                 <key/>
             </bookmark>
         </file>
@@ -87,6 +87,7 @@
         <group name="Club, Updater"/>
         <group>
             <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/orbisius-cyberstore.php</file>
+            <file>file:/C:/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.settings.php</file>
         </group>
     </open-files>
 </project-private>

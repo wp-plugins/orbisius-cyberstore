@@ -187,6 +187,8 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                         </div> <!-- .postbox -->
                         <!-- /Newsletter-->
 
+                        <?php Orbisius_CyberStoreUtil::output_orb_widget(); ?>
+
                         <!-- support options -->
                         <div class="postbox">
                             <div class="inside">

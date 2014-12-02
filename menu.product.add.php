@@ -294,6 +294,8 @@ Developer License (Unlimited Domains) | 49.95 | limits=999</textarea>
                         </div> <!-- .postbox -->
                         <!-- /Newsletter-->
 
+                        <?php Orbisius_CyberStoreUtil::output_orb_widget(); ?>
+
                         <!-- support options -->
                         <div class="postbox">
                             <div class="inside">
