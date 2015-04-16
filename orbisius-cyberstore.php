@@ -2673,6 +2673,7 @@ class Orbisius_CyberStoreUtil {
         $memory_limit = (int)(ini_get('memory_limit'));
 
         $upload_mb = min($max_upload, $max_post, $memory_limit);
+		$upload_mb = trim($upload_mb);
 
         return $upload_mb;
     }

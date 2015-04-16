@@ -13,7 +13,6 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                <strong>Settings saved.</strong>
             <?php else : ?>
                Orbisius CyberStore plugin allows you to start selling your digital products such as e-books, reports in minutes.
-               
             <?php endif; ?>
         </p></div>
 		
