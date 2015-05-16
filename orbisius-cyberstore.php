@@ -424,7 +424,7 @@ class Orbisius_CyberStore {
      * @see http://www.james-vandyne.com/process-paypal-ipn-requests-through-wordpress/
      */
     public function parse_request() {
-        $params = Orbisius_CyberStoreUtil::sanitize_input();
+        $params = Orbisius_CyberStoreUtil::sanitize_data();
         $allow_local_dl = 0; // used for testing.
 
         // if 2 servers are used e.g. nginx (port 80) and apache (port 8080) the remote addr may be shown as 127.0.0.1
@@ -1337,12 +1337,12 @@ SHORT_CODE_EOF;
             }
 
             // obsolete
-			$gateway_url = apply_filters('orb_cyber_store_paypal_url', $gateway_url);
-			$paypal_params = apply_filters('orb_cyber_store_paypal_params', $paypal_params);
+			$gateway_url = apply_filters('orb_cyber_store_paypal_url', $gateway_url, $state);
+			$paypal_params = apply_filters('orb_cyber_store_paypal_params', $paypal_params, $state);
 
             // new
-			$gateway_url = apply_filters('orb_cyber_store_gateway_url', $gateway_url);
-			$paypal_params = apply_filters('orb_cyber_store_gateway_params', $paypal_params);
+			$gateway_url = apply_filters('orb_cyber_store_gateway_url', $gateway_url, $state);
+			$paypal_params = apply_filters('orb_cyber_store_gateway_params', $paypal_params, $state);
 			
             $location = $gateway_url . '?' . http_build_query($paypal_params);
 
@@ -1352,12 +1352,13 @@ SHORT_CODE_EOF;
 //wp_die($location);
 
             if (has_action('orb_cyber_store_process_payment')) {
-                $payment_result = do_action('orb_cyber_store_process_payment', $gateway_url, $paypal_params);
+                $payment_result = do_action('orb_cyber_store_process_payment', $gateway_url, $paypal_params, $state);
             } else {
                 wp_redirect($location);
                 exit;
             }
         }
+        
         // IPN called by PayPal: some people reported that they or their clients got lots of emails.
         // we'll create a hash file based on the TXN and not notify if we're called more than once by paypal
         // see: https://www.paypal.com/ca/cgi-bin/webscr?cmd=p/acc/ipn-subscriptions-outside
@@ -1366,7 +1367,7 @@ SHORT_CODE_EOF;
                 && $data[$this->web_trigger_key] == 'paypal_ipn'
                 && $data['txn_type'] == 'web_accept') { /* we want this to be triggered only in payments and not in other actions e.g. refunds. */
             // checking if this TXN has been processed. Paypal should always provide a unique TXN ID
-			$data = $_POST;
+            $data = Orbisius_CyberStoreUtil::sanitize_data($_POST);
 
             if (!empty($data['txn_id'])) {
                 $cnt = 1;
@@ -1407,6 +1408,11 @@ SHORT_CODE_EOF;
                 }
             }
 
+            $state = array(
+                'ctx' => 'ipn',
+                'data' => $data,
+            );
+
             $admin_email = !empty($opts['notification_email']) ? $opts['notification_email'] : get_option('admin_email');
 
 			$order_from_host = apply_filters('orb_cyber_store_order_from_host', "[{$_SERVER['HTTP_HOST']}]");
@@ -1417,8 +1423,6 @@ SHORT_CODE_EOF;
 
             if (!empty($data['custom'])) {
                 $custom = $data['custom'];
-            } elseif (!empty($_REQUEST['custom'])) {
-                $custom = $_REQUEST['custom'];
             } else {
                 $admin_email_buffer = 'Missing data. Got' . "\n";
                 $admin_email_buffer .= "\n\$_REQUEST: \n" . var_export($_REQUEST, 1);
@@ -1427,9 +1431,9 @@ SHORT_CODE_EOF;
                 $admin_email_buffer .= "\nBrowser: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
 
                 $email_subject = 'Invalid Transaction (missing custom field)';
-                $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
-                $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer);
-                $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
+                $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject, $state);
+                $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffert, $state);
+                $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headerst, $state);
 
                 do_action('orb_cyber_store_ext_before_send_mail', $admin_email, $email_subject, $admin_email_buffer, $headers); // html emails?
 
@@ -1441,8 +1445,10 @@ SHORT_CODE_EOF;
                 wp_die($this->plugin_name . ': Invalid call.');
             }
 
+            // was encoded let's get that data.
             $paypal_custom_data = array();
             parse_str($custom, $paypal_custom_data);
+            $paypal_custom_data = Orbisius_CyberStoreUtil::sanitize_data($paypal_custom_data);
 
             if (!empty($paypal_custom_data['id'])) {
                 $id = $paypal_custom_data['id'];
@@ -1457,6 +1463,9 @@ SHORT_CODE_EOF;
                 $this->log('paypal_ipn: Invalid/inactive Product ID: ' . $id);
                 wp_die('paypal_ipn: Invalid/inactive Product ID: ' . $id);
             }
+
+            $state['product'] = $product_rec;
+            $state['gateway_custom_data'] = $paypal_custom_data;
 
             // handle PayPal IPN calls
             //$data['cmd'] = '_notify-validate';
@@ -1534,15 +1543,15 @@ SHORT_CODE_EOF;
                 if (strpos($buffer, "VERIFIED") !== false) {
                     $headers[] = "BCC: $admin_email\r\n";
 
-                    $to = apply_filters('orb_cyber_store_ext_filter_email_to', $data['payer_email']);
-                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
-                    $email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $email_buffer);
+                    $to = apply_filters('orb_cyber_store_ext_filter_email_to', $data['payer_email'], $state);
+                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject, $state);
+                    $email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $email_buffer, $state);
                     $email_buffer = do_shortcode($email_buffer);
-                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
+                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers, $state);
 
-                    do_action('orb_cyber_store_ext_before_send_mail'); // html emails?
+                    do_action('orb_cyber_store_ext_before_send_mail', $state); // html emails?
                     $mail_status = wp_mail($to, $email_subject, $email_buffer, $headers);
-                    do_action('orb_cyber_store_ext_after_send_mail');
+                    do_action('orb_cyber_store_ext_after_send_mail', $state);
                     
                     $data['digishop_paypal_status'] = 'VERIFIED';
                     
@@ -1557,13 +1566,13 @@ SHORT_CODE_EOF;
                     $admin_email_buffer .= "\nReceived Data: \n\n" .  var_export($data, 1);
 
                     $email_subject = 'Unsuccessful Transaction';
-                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
-                    $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer);
-                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
+                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject, $state);
+                    $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer, $state);
+                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers, $state);
 
-                    do_action('orb_cyber_store_ext_before_send_mail');
+                    do_action('orb_cyber_store_ext_before_send_mail', $state);
                     $mail_status = wp_mail($admin_email, $email_subject, $admin_email_buffer, $headers);
-                    do_action('orb_cyber_store_ext_after_send_mail');
+                    do_action('orb_cyber_store_ext_after_send_mail', $state);
                     
                     if (strcmp($buffer, "INVALID") == 0) {
                         $data['digishop_paypal_status'] = 'INVALID';
@@ -2336,13 +2345,13 @@ class Orbisius_CyberStoreUtil {
 
     /**
     * Secure param retrieval or clean up of the whole req params.
-    * Orbisius_CyberStoreUtil::sanitize_input();
+    * Orbisius_CyberStoreUtil::sanitize_data();
     * 
     * @param str $key
     * @param mixed $default
     * @return mixes
     */
-    public static function sanitize_input($key = '', $default = '', $flags = 1) {
+    public static function sanitize_data($key = '', $default = '', $flags = 1) {
        // special case, we want to see if it's set or not. We don't care about the value.
        if (is_null($default)) {
            return isset($_REQUEST[$key]);
@@ -2355,7 +2364,7 @@ class Orbisius_CyberStoreUtil {
            $params = is_array($key) ? $key : $_REQUEST;
 
            foreach ($params as $key => $val) {
-               $params[$key] = self::sanitize_input($key, $val, $flags);
+               $params[$key] = self::sanitize_data($key, $val, $flags);
            }
 
            return $params;
