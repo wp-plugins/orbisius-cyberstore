@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.1.0
+  Version: 2.1.1
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -424,7 +424,7 @@ class Orbisius_CyberStore {
      * @see http://www.james-vandyne.com/process-paypal-ipn-requests-through-wordpress/
      */
     public function parse_request() {
-        $params = $_REQUEST;
+        $params = Orbisius_CyberStoreUtil::sanitize_input();
         $allow_local_dl = 0; // used for testing.
 
         // if 2 servers are used e.g. nginx (port 80) and apache (port 8080) the remote addr may be shown as 127.0.0.1
@@ -672,6 +672,23 @@ SHORT_CODE_EOF;
                     name='{$this->plugin_id_str}extra[$key]' value='$val' />\n";
             }
 
+            $state_params = array(
+                'plugin_id' => $this->plugin_id_str,
+                'extra_params' => $extra_params,
+            );
+
+            // Capture any content that needs to go before the download button
+            ob_start();
+            do_action('orb_cyber_store_action_before_buy_now_button', $state_params);
+            $ext_before_buy_button_contents = ob_get_contents();
+            ob_end_clean();
+
+            // Capture any content that needs to go after the download button
+            ob_start();
+            do_action('orb_cyber_store_action_after_buy_now_button', $state_params);
+            $ext_after_buy_button_contents = ob_get_contents();
+            ob_end_clean();
+
             $product_buff .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 <form id="{$this->plugin_id_str}_form_$id" class="{$this->plugin_id_str}_form" action="$post_url_esc" method="post" $form_new_window onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show();">
@@ -682,11 +699,16 @@ SHORT_CODE_EOF;
 
     $extra_params_buff
 
+    $ext_before_buy_button_contents
+
 	<div id="{$this->plugin_id_str}_form_submit_button_container_$id" class="{$this->plugin_id_str}_form_submit_button_container">
 		<input id="{$this->plugin_id_str}_form_submit_button_$id" type="image" class="{$this->plugin_id_str}_form_submit_button" src="$submit_button_img_src"
             border="0" name="submit" alt="Buy Now!" />
         <span class="{$this->plugin_id_str}_loader app_hide" style="display:none;">Please wait...</span>
 	</div>
+
+    $ext_after_buy_button_contents
+
 </form>
 <!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 SHORT_CODE_EOF;
@@ -1275,9 +1297,16 @@ SHORT_CODE_EOF;
                 $custom_params['email'] = $current_user->user_email;
             }
 
+            $state = array(
+                'post_id' => $post_id,
+                'product' => $product_rec,
+                'plugin_id' => $this->plugin_id_str,
+                'data' => $data,
+            );
+
             // Does the user want to inject some more params?
-            $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params); // obs
-            $custom_params = apply_filters('orb_cyber_store_gateway_custom_params', $custom_params); // new
+            $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params, $state); // obs
+            $custom_params = apply_filters('orb_cyber_store_gateway_custom_params', $custom_params, $state); // new
             
             $email = $gateway_params['email'];
             $gateway_url = $gateway_params['url'];
@@ -1383,7 +1412,7 @@ SHORT_CODE_EOF;
 			$order_from_host = apply_filters('orb_cyber_store_order_from_host', "[{$_SERVER['HTTP_HOST']}]");
 			$order_from_name = apply_filters('orb_cyber_store_order_from_name', 'WordPress');
 			$order_from_email = apply_filters('orb_cyber_store_order_from_email', 'wordpress@' . $_SERVER['HTTP_HOST']);
-			
+
             $headers[] = "From: $order_from_host $order_from_name <$order_from_email>\r\n";
 
             if (!empty($data['custom'])) {
@@ -1400,10 +1429,12 @@ SHORT_CODE_EOF;
                 $email_subject = 'Invalid Transaction (missing custom field)';
                 $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
                 $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer);
+                $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
 
-                do_action('orb_cyber_store_ext_before_send_mail'); // html emails?
+                do_action('orb_cyber_store_ext_before_send_mail', $admin_email, $email_subject, $admin_email_buffer, $headers); // html emails?
+
                 $mail_status = wp_mail($admin_email, $email_subject, $admin_email_buffer, $headers);
-                do_action('orb_cyber_store_ext_after_send_mail');
+                do_action('orb_cyber_store_ext_after_send_mail', $admin_email, $email_subject, $admin_email_buffer, $headers); // html emails?
 
                 $this->log('paypal_ipn Invalid Transaction (missing custom field). Adm email.' . $admin_email_buffer);
 
@@ -2280,6 +2311,77 @@ class Orbisius_CyberStoreUtil {
 
     const SANITIZE_NUMERIC = 1;
     const SANITIZE_ALPHA_NUMERIC = 2;
+
+    const CAST_INT = 2;
+
+    /**
+     *
+     * @param str $val
+     * @return str
+     */
+    public static function sanitize_val($val) {
+        if (is_scalar($val)) {
+            $val = wp_kses($val, array());
+            $val = trim($val);
+        } elseif (is_array($val)) {
+            foreach ($val as &$sub_value) { //!pass by ref!
+                $sub_value = self::sanitize_val($sub_value);
+            }
+        } else {
+            trigger_error(__METHOD__ . ' Invalid data passed', E_USER_NOTICE);
+        }
+        
+        return $val;
+    }
+
+    /**
+    * Secure param retrieval or clean up of the whole req params.
+    * Orbisius_CyberStoreUtil::sanitize_input();
+    * 
+    * @param str $key
+    * @param mixed $default
+    * @return mixes
+    */
+    public static function sanitize_input($key = '', $default = '', $flags = 1) {
+       // special case, we want to see if it's set or not. We don't care about the value.
+       if (is_null($default)) {
+           return isset($_REQUEST[$key]);
+       }
+
+       // 2) cases;
+       // 1) empty key -> use wants cleaned req params
+       // 2) the user has an array that needs cleaned
+       if (empty($key) || is_array($key)) {
+           $params = is_array($key) ? $key : $_REQUEST;
+
+           foreach ($params as $key => $val) {
+               $params[$key] = self::sanitize_input($key, $val, $flags);
+           }
+
+           return $params;
+       } elseif (!empty($_REQUEST[$key])) {
+           $val = $_REQUEST[$key];
+       } else {
+           $val = $default;
+       }
+
+       if ($flags) {
+           if (is_scalar($val)) {
+               $val = self::sanitize_val($val);
+
+               if ($flags & self::CAST_INT) {
+                   $val = intval($val);
+               }
+           } elseif (is_array($val)) {
+
+               foreach ($val as $sub_key => $sub_val) {
+                    $val[$sub_key] = self::sanitize_val($sub_val);
+               }
+           }
+       }
+
+       return $val;
+    }
 
     /**
      * Initially this was planned to be a function to clean the IDs. Not it stops when invalid input is found.
