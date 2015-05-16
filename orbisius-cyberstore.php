@@ -575,7 +575,7 @@ SHORT_CODE_EOF;
         $item_name = esc_attr($prev_rec['label']);
         $item_number = $prev_rec['id'];
 
-        $custom = http_build_query(array('id' => $item_number, 'site' => $this->site_url));
+        $old_way_custom = http_build_query(array('id' => $item_number, ) ); // free up some space
 
         $submit_button_img_src = empty($opts['submit_button_img_src']) ? $this->paypal_submit_image_src : $opts['submit_button_img_src'];
         $form_new_window = empty($opts['form_new_window']) ? '' : ' target="_blank" ';
@@ -612,7 +612,7 @@ SHORT_CODE_EOF;
             <input type='hidden' name="notify_url" value="$notify_url" />
             <input type='hidden' name="return" value="$return_page" />
             <input type='hidden' name="cancel_return" value="$cancel_return" />
-            <input type='hidden' name="custom" value="$custom" />
+            <input type='hidden' name="custom" value="$old_way_custom" />
             <input type='image' src='https://www.paypal.com/en_GB/i/btn/btn_buynow_LG.gif' border="0" name="submit" alt="Buy Now! - The safer, easier way to pay online." />
 </form>
 <!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
@@ -675,6 +675,7 @@ SHORT_CODE_EOF;
             $state_params = array(
                 'plugin_id' => $this->plugin_id_str,
                 'extra_params' => $extra_params,
+                'product' => $prev_rec,
             );
 
             // Capture any content that needs to go before the download button
@@ -1253,7 +1254,8 @@ SHORT_CODE_EOF;
             $price = $product_rec['price'];
             $item_name = $product_rec['label'];
             $item_number = $product_rec['id'];
-            $custom_params = array( 'id' => $item_number, 'product_name' => $product_name );
+
+            $custom_params = array( 'id' => $item_number, 'product_name' => $product_name, );
 
             // if this variable is set that means that we have a variable selected option.
             // The selected option can be 0 that's why we don't use !empty()
@@ -1307,7 +1309,13 @@ SHORT_CODE_EOF;
             // Does the user want to inject some more params?
             $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params, $state); // obs
             $custom_params = apply_filters('orb_cyber_store_gateway_custom_params', $custom_params, $state); // new
-            
+            $custom_params_encoded = http_build_query($custom_params);
+
+            // Let's check
+            if ( strlen( $custom_params_encoded ) > 256 ) {
+                $this->log('Encoded Custom Params is exceeding Gateway Limits: ' . $custom_params_encoded);
+            }
+
             $email = $gateway_params['email'];
             $gateway_url = $gateway_params['url'];
 
@@ -1320,7 +1328,7 @@ SHORT_CODE_EOF;
                 'item_name' => $item_name,
                 'item_number' => $item_number,
                 'currency_code' => $opts['currency'],
-                'custom' => http_build_query($custom_params),
+                'custom' => $custom_params_encoded,
                 'notify_url' => $this->payment_notify_url,
                 'return' => $return_page,
                 'cancel_return' => $cancel_return,
