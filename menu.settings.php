@@ -47,7 +47,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 											</td>
 										</tr>
 										<tr valign="top">
-											<th scope="row">PayPal Email / Currency</th>
+											<th scope="row">PayPal Email &amp; Currency</th>
 											<td><input type="text" name="<?php echo $settings_key; ?>[business_email]" 
                                                        placeholder="PayPal Email Address"
                                                        value="<?php echo $opts['business_email']; ?>" class="input_field" />

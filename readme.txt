@@ -145,6 +145,7 @@ n/a
 * Added more robust data filtering
 * Tested with WP 4.2
 * Added action hooks before and after buy now button
+* Added a special case for Sandbox transactions to assume payment status: Pending as verified and OK.
 
 = 2.1.0 =
 * Tested with WP 4.1

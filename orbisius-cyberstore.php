@@ -1543,12 +1543,16 @@ SHORT_CODE_EOF;
                  * filter: orb_cyber_store_ext_filter_email_template_vars
                  * @since 2.0.1
                  */
-                $vars = apply_filters('orb_cyber_store_ext_filter_email_template_vars', $vars);
+                $vars = apply_filters('orb_cyber_store_ext_filter_email_template_vars', $vars, $state);
 
                 $email_subject = str_ireplace(array_keys($vars), array_values($vars), $email_subject);
                 $email_buffer = str_ireplace(array_keys($vars), array_values($vars), $email_buffer);
                 
-                if (strpos($buffer, "VERIFIED") !== false) {
+                if ( (strpos($buffer, "VERIFIED") !== false)
+                        ||  (      ! empty( $data['test_ipn'] ) // special case for sandbox txns
+                                && ! empty( $data['payment_status'] )
+                                && $data['payment_status'] == 'Pending' )
+                    ) {
                     $headers[] = "BCC: $admin_email\r\n";
 
                     $to = apply_filters('orb_cyber_store_ext_filter_email_to', $data['payer_email'], $state);
@@ -1570,13 +1574,17 @@ SHORT_CODE_EOF;
                     $admin_email_buffer .= "\n=================================================================\n\n";
                     $admin_email_buffer .= $email_buffer;
                     $admin_email_buffer .= "\n\n=================================================================\n";
+                    $admin_email_buffer .= "\n================================== PayPal Response ===============================\n\n";
+                    $admin_email_buffer .= $buffer;
+                    $admin_email_buffer .= "\n================================== /PayPal Response ===============================\n\n";
                     $admin_email_buffer .= "\nSubmitted Data: \n\n" . var_export($vars, 1);
                     $admin_email_buffer .= "\nReceived Data: \n\n" .  var_export($data, 1);
 
+                    // No state is passed so extensions are not triggered for this email
                     $email_subject = 'Unsuccessful Transaction';
-                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject, $state);
-                    $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer, $state);
-                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers, $state);
+                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
+                    $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer);
+                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
 
                     do_action('orb_cyber_store_ext_before_send_mail', $state);
                     $mail_status = wp_mail($admin_email, $email_subject, $admin_email_buffer, $headers);
