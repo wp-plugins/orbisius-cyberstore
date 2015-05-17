@@ -424,7 +424,10 @@ class Orbisius_CyberStore {
      * @see http://www.james-vandyne.com/process-paypal-ipn-requests-through-wordpress/
      */
     public function parse_request() {
+        $this->log(__METHOD__ . ' raw params : ' . var_export($_REQUEST, 1));
         $params = Orbisius_CyberStoreUtil::sanitize_data();
+        $this->log(__METHOD__ . ' raw sanitized : ' . var_export($params, 1));
+
         $allow_local_dl = 0; // used for testing.
 
         // if 2 servers are used e.g. nginx (port 80) and apache (port 8080) the remote addr may be shown as 127.0.0.1
@@ -444,6 +447,16 @@ class Orbisius_CyberStore {
 
             elseif (!empty($params[$this->download_key])) {
                 $this->handle_non_ui($params);
+            }
+
+            // log.d547d2f0f4c1ec4059d5a644bf04e6dc.2015-05-17.log,
+            elseif ($params[$this->web_trigger_key] == 'download_log' 
+                    && ! empty( $params[ $this->plugin_id_str . '_file' ] )
+                    && preg_match( '#^log\.\w+\.[\d-]+\.log#si', $params[ $this->plugin_id_str . '_file' ] )
+                    ) {
+
+                $log_file = $this->plugin_data_dir . '/' . $params[ $this->plugin_id_str . '_file' ];
+                Orbisius_CyberStoreUtil::download_file($log_file);
             }
 
             elseif ($params[$this->web_trigger_key] == 'free_download') {
@@ -1375,7 +1388,10 @@ SHORT_CODE_EOF;
                 && $data[$this->web_trigger_key] == 'paypal_ipn'
                 && $data['txn_type'] == 'web_accept') { /* we want this to be triggered only in payments and not in other actions e.g. refunds. */
             // checking if this TXN has been processed. Paypal should always provide a unique TXN ID
+
             $data = Orbisius_CyberStoreUtil::sanitize_data($_POST);
+
+            $this->log( __METHOD__ . ' Got Paypal (_POST) data: ' . var_export($_POST, 1) );
 
             if (!empty($data['txn_id'])) {
                 $cnt = 1;
@@ -1431,6 +1447,7 @@ SHORT_CODE_EOF;
 
             if (!empty($data['custom'])) {
                 $custom = $data['custom'];
+                $custom = Orbisius_CyberStoreUtil::decode_entities($custom);
             } else {
                 $admin_email_buffer = 'Missing data. Got' . "\n";
                 $admin_email_buffer .= "\n\$_REQUEST: \n" . var_export($_REQUEST, 1);
@@ -1456,7 +1473,10 @@ SHORT_CODE_EOF;
             // was encoded let's get that data.
             $paypal_custom_data = array();
             parse_str($custom, $paypal_custom_data);
+            $paypal_custom_data_raw = $paypal_custom_data;
             $paypal_custom_data = Orbisius_CyberStoreUtil::sanitize_data($paypal_custom_data);
+            
+            $this->log("Custom ($custom): parsed & cleaned: " . var_export($paypal_custom_data, 1) . " raw params: " . var_export($paypal_custom_data_raw, 1) );
 
             if (!empty($paypal_custom_data['id'])) {
                 $id = $paypal_custom_data['id'];
@@ -1582,9 +1602,10 @@ SHORT_CODE_EOF;
 
                     // No state is passed so extensions are not triggered for this email
                     $email_subject = 'Unsuccessful Transaction';
-                    $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject);
-                    $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer);
-                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers);
+                    // no need for hooks to be called on a problem.
+                    /*$email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject, $state);
+                    $admin_email_buffer = apply_filters('orb_cyber_store_ext_filter_email_message', $admin_email_buffer, $state);
+                    $headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $headers, $state);*/
 
                     do_action('orb_cyber_store_ext_before_send_mail', $state);
                     $mail_status = wp_mail($admin_email, $email_subject, $admin_email_buffer, $headers);
@@ -2262,6 +2283,20 @@ class Orbisius_CyberStoreUtil {
         $status = preg_match("@^(?:ht|f)tps?://@si", $url);
 
         return $status;
+    }
+
+    /**
+     *  decode_entities();
+     * @param str $text
+     * @return str
+     * @see http://php.net/html_entity_decode by  daniel at brightbyte dot de
+     */
+    public static function decode_entities($text) {
+        $text= html_entity_decode($text,ENT_QUOTES,"ISO-8859-1"); #NOTE: UTF-8 does not work!
+        $text= preg_replace('/&#(\d+);/me',"chr(\\1)",$text); #decimal notation
+        $text= preg_replace('/&#x([a-f0-9]+);/mei',"chr(0x\\1)",$text);  #hex notation
+
+        return $text;
     }
 
     /**

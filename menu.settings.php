@@ -223,6 +223,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 														$files = glob($orbisius_digishop_obj->get('plugin_data_dir') . '/log.*');
 
 														if (!empty($files)) {
+                                                            $buff = '';
 															echo "<div><br/>File(s): " . count($files);
 															echo "<ul>";
 
@@ -230,15 +231,19 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 																$file = basename($full_file);
 																$size = filesize($full_file);
 																$size_fmt = Orbisius_CyberStoreUtil::format_file_size($size);
+                                                                $dl_log_link = $orbisius_digishop_obj->get('site_url') . '?' . http_build_query(array(
+                                                                    $orbisius_digishop_obj->get('plugin_id_str') . '_cmd' => 'download_log',
+                                                                    $orbisius_digishop_obj->get('plugin_id_str') . '_file' => $file,
+                                                                ));
 
-																if ($size > 500 * 1024) {
-																	$buff = $orbisius_digishop_obj->msg("The log file is larger than 500KB. Please use FTP client to download its contents.");
+																if ($size > 100 * 1024) {
+																	$buff = $orbisius_digishop_obj->msg("Only file is smaller than 100KB will be visualized. For larger files do use the download link.");
 																} else {
 																	$buff = file_get_contents($full_file);
 																	$buff = "<br/><textarea class='widefat' readonly='readonly' rows='3'>" . $buff . '</textarea>';
 																}
 
-																echo "\t<li>$file, $size_fmt $buff</li>\n";
+																echo "\t<li>[<a href='$dl_log_link'>Download</a>] $file, $size_fmt $buff</li>\n";
 															}
 
 															echo "</ul>";

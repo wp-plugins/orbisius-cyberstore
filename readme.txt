@@ -146,6 +146,8 @@ n/a
 * Tested with WP 4.2
 * Added action hooks before and after buy now button
 * Added a special case for Sandbox transactions to assume payment status: Pending as verified and OK.
+* Log files can now be downloaded.
+* Previewing only files smaller than 100KB
 
 = 2.1.0 =
 * Tested with WP 4.1
