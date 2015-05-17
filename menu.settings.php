@@ -237,7 +237,7 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
                                                                 ));
 
 																if ($size > 100 * 1024) {
-																	$buff = $orbisius_digishop_obj->msg("Only file is smaller than 100KB will be visualized. For larger files do use the download link.");
+																	$buff = $orbisius_digishop_obj->msg("Only files smaller than 100KB will be visualized. For larger files do use the download link.");
 																} else {
 																	$buff = file_get_contents($full_file);
 																	$buff = "<br/><textarea class='widefat' readonly='readonly' rows='3'>" . $buff . '</textarea>';
