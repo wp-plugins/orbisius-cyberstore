@@ -424,9 +424,7 @@ class Orbisius_CyberStore {
      * @see http://www.james-vandyne.com/process-paypal-ipn-requests-through-wordpress/
      */
     public function parse_request() {
-        $this->log(__METHOD__ . ' raw params : ' . var_export($_REQUEST, 1));
         $params = Orbisius_CyberStoreUtil::sanitize_data();
-        $this->log(__METHOD__ . ' raw sanitized : ' . var_export($params, 1));
 
         $allow_local_dl = 0; // used for testing.
 
