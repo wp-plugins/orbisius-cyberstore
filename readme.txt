@@ -141,6 +141,9 @@ n/a
 
 == Changelog ==
 
+= 2.1.3 =
+* Added an more hooks before and after the buy now form.
+
 = 2.1.2 =
 * Added an additional check before allowing log download e.g. user must be admin.
 

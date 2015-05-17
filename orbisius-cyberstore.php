@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.1.2
+  Version: 2.1.3
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -702,8 +702,22 @@ SHORT_CODE_EOF;
             $ext_after_buy_button_contents = ob_get_contents();
             ob_end_clean();
 
+            // Capture any content that needs to go before the download button
+            ob_start();
+            do_action('orb_cyber_store_action_before_buy_now_form', $state_params);
+            $ext_before_buy_form_contents = ob_get_contents();
+            ob_end_clean();
+
+            // Capture any content that needs to go after the download button
+            ob_start();
+            do_action('orb_cyber_store_action_after_buy_now_form', $state_params);
+            $ext_after_buy_form_contents = ob_get_contents();
+            ob_end_clean();
+
             $product_buff .= <<<SHORT_CODE_EOF
 <!-- $this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
+$ext_before_buy_form_contents
+
 <form id="{$this->plugin_id_str}_form_$id" class="{$this->plugin_id_str}_form" action="$post_url_esc" method="post" $form_new_window onsubmit="jQuery('.{$this->plugin_id_str}_loader', jQuery(this)).show();">
     <input type='hidden' name="$aaa_cmd_key" value="paypal_checkout" />
     <input type='hidden' name="{$this->plugin_id_str}_product_id" value="$id" />
@@ -721,8 +735,9 @@ SHORT_CODE_EOF;
 	</div>
 
     $ext_after_buy_button_contents
-
 </form>
+
+$ext_after_buy_form_contents
 <!-- /$this->plugin_id_str | Plugin URL: {$this->plugin_home_page} | Post URL: $post_url_esc -->
 SHORT_CODE_EOF;
 
