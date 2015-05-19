@@ -141,6 +141,9 @@ n/a
 
 == Changelog ==
 
+= 2.1.4 =
+* added a check for txn_type if exists in the paypal params
+
 = 2.1.3 =
 * Added an more hooks before and after the buy now form.
 

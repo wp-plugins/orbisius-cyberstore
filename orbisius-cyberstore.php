@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.1.3
+  Version: 2.1.4
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -1396,14 +1396,15 @@ SHORT_CODE_EOF;
         
         // IPN called by PayPal: some people reported that they or their clients got lots of emails.
         // we'll create a hash file based on the TXN and not notify if we're called more than once by paypal
-        // see: https://www.paypal.com/ca/cgi-bin/webscr?cmd=p/acc/ipn-subscriptions-outside
-        // see: https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNandPDTVariables/
-        elseif (!empty($data[$this->web_trigger_key])
-                && $data[$this->web_trigger_key] == 'paypal_ipn'
-                && $data['txn_type'] == 'web_accept') { /* we want this to be triggered only in payments and not in other actions e.g. refunds. */
+        // @see: https://www.paypal.com/ca/cgi-bin/webscr?cmd=p/acc/ipn-subscriptions-outside
+        // @see: https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNandPDTVariables/
+        // @see https://www.paypal.com/ca/cgi-bin/webscr?cmd=p/acc/ipn-subscriptions-outside
+        elseif (   !empty( $data[ $this->web_trigger_key ] )
+                && $data[ $this->web_trigger_key ] == 'paypal_ipn'
+                && ( ! empty( $data['txn_type'] ) && in_array( $data['txn_type'], array( 'web_accept', ) ) ) ) { /* we want this to be triggered only in payments and not in other actions e.g. refunds. */
             // checking if this TXN has been processed. Paypal should always provide a unique TXN ID
 
-            $data = Orbisius_CyberStoreUtil::sanitize_data($_POST);
+            $data = Orbisius_CyberStoreUtil::sanitize_data( $_POST );
 
             $this->log( __METHOD__ . ' Got Paypal (_POST) data: ' . var_export($_POST, 1) );
 
@@ -1587,7 +1588,7 @@ SHORT_CODE_EOF;
                                 && ! empty( $data['payment_status'] )
                                 && $data['payment_status'] == 'Pending' )
                     ) {
-                    $headers[] = "BCC: $admin_email\r\n";
+                    $headers[] = "Bcc: $admin_email\r\n";
 
                     $to = apply_filters('orb_cyber_store_ext_filter_email_to', $data['payer_email'], $state);
                     $email_subject = apply_filters('orb_cyber_store_ext_filter_email_subject', $email_subject, $state);
@@ -1608,7 +1609,7 @@ SHORT_CODE_EOF;
                     $admin_email_buffer .= "\n=================================================================\n\n";
                     $admin_email_buffer .= $email_buffer;
                     $admin_email_buffer .= "\n\n=================================================================\n";
-                    $admin_email_buffer .= "\n================================== PayPal Response ===============================\n\n";
+                    $admin_email_buffer .= "\n================================== PayPal Response ===============================\n";
                     $admin_email_buffer .= $buffer;
                     $admin_email_buffer .= "\n================================== /PayPal Response ===============================\n\n";
                     $admin_email_buffer .= "\nSubmitted Data: \n\n" . var_export($vars, 1);
