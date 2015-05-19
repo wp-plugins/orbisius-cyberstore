@@ -82,7 +82,7 @@ class Orbisius_CyberStore {
         'business_email' => '',
         'purchase_subject' => 'Download Link',
         'purchase_content' => "Dear %%FIRST_NAME%%,\n\nThank you for your order.\n\nProduct: %%PRODUCT_NAME%%\nPrice: %%PRODUCT_PRICE%%\nTransaction: %%TXN_ID%%\nDownload Link: %%DOWNLOAD_LINK%%\n\nRegards,\n%%SITE%% Team",
-        'failed_purchase_subject' => "Download Link Withheld (awaiting Admin approval)",
+        'failed_purchase_subject' => "Download Link Withheld (Awaiting Admin Approval)",
         'failed_purchase_content' => "Dear %%FIRST_NAME%%,\n\nThe order didn't validate with Paypal.\nThe Administrator will investigate and send you the download link manually.\n\nProduct: %%PRODUCT_NAME%%\nPrice: %%PRODUCT_PRICE%%\nTransaction: %%TXN_ID%%\n\nRegards,\n%%SITE%% Team",
         'currency' => 'USD',
         'purchase_thanks' => 'Thanks. The payment is being processing now. You should receive an email very soon.',
