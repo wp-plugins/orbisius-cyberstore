@@ -82,6 +82,8 @@ class Orbisius_CyberStore {
         'business_email' => '',
         'purchase_subject' => 'Download Link',
         'purchase_content' => "Dear %%FIRST_NAME%%,\n\nThank you for your order.\n\nProduct: %%PRODUCT_NAME%%\nPrice: %%PRODUCT_PRICE%%\nTransaction: %%TXN_ID%%\nDownload Link: %%DOWNLOAD_LINK%%\n\nRegards,\n%%SITE%% Team",
+        'failed_purchase_subject' => "Download Link Withheld (awaiting Admin approval)",
+        'failed_purchase_content' => "Dear %%FIRST_NAME%%,\n\nThe order didn't validate with Paypal.\nThe Administrator will investigate and send you the download link manually.\n\nProduct: %%PRODUCT_NAME%%\nPrice: %%PRODUCT_PRICE%%\nTransaction: %%TXN_ID%%\n\nRegards,\n%%SITE%% Team",
         'currency' => 'USD',
         'purchase_thanks' => 'Thanks. The payment is being processing now. You should receive an email very soon.',
         'purchase_error' => 'There was a problem with the payment.',
@@ -1604,6 +1606,24 @@ SHORT_CODE_EOF;
                     
                     $this->log("Email: (status: $mail_status) To: " . $data['payer_email'] . "\n" . $email_buffer);
                 } else {
+                    if ( ! empty( $data['payer_email'] ) ) {
+                        $failed_to = apply_filters('orb_cyber_store_ext_filter_email_to', $data['payer_email'], $state);
+                        
+                        $failed_email_subject = $subject_prefix . $opts['failed_purchase_subject'];
+                        $failed_email_subject = str_ireplace(array_keys($vars), array_values($vars), $failed_email_subject);
+
+                        $failed_email_headers = $headers;
+                        $failed_email_headers[] = "Bcc: $admin_email\r\n";
+                        $failed_email_headers = apply_filters('orb_cyber_store_ext_filter_email_headers', $failed_email_headers, $state);
+
+                        $failed_email_buffer = empty($opts['failed_purchase_content']) ? $this->plugin_default_opts['failed_purchase_content'] : $opts['failed_purchase_content'];
+                        $failed_email_buffer = str_ireplace(array_keys($vars), array_values($vars), $failed_email_buffer);
+
+                        do_action('orb_cyber_store_ext_before_send_mail', $state); // html emails?
+                        $mail_status = wp_mail($failed_to, $failed_email_subject, $failed_email_buffer, $failed_email_headers);
+                        do_action('orb_cyber_store_ext_after_send_mail', $state);
+                    }
+
                     $admin_email_buffer = "Dear Admin,\n\nThe following transaction didn't validate with PayPal\n\n";
                     $admin_email_buffer .= "When you resolve the issue forward this email to your client.\n";
                     $admin_email_buffer .= "\n=================================================================\n\n";

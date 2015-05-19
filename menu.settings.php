@@ -99,6 +99,43 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 												</p>
 											</td>
 										</tr>
+
+                                        <tr valign="top">
+											<th scope="row">Subject for failed transaction (download email)</th>
+											<td><input type="text" name="<?php echo $settings_key; ?>[failed_purchase_subject]"
+                                                       placeholder="Your download link to a recent order"
+                                                       value="<?php echo $opts['failed_purchase_subject']; ?>" class="input_field widefat"/></td>
+										</tr>
+										<tr valign="top">
+											<th scope="row">Content for failed transaction</th>
+											<td>
+												<?php if (has_action('orb_cyber_store_render_textarea2richtext')) : ?>
+													<?php do_action('orb_cyber_store_render_textarea2richtext', $opts, $settings_key, 'failed_purchase_content'); ?>
+												<?php else : ?>
+                                                    <textarea name="<?php echo $settings_key; ?>[failed_purchase_content]" class="widefat" rows="8"><?php echo $opts['failed_purchase_content']; ?></textarea>
+												<?php endif; ?>
+
+                                                <br/>Note: The failed subject and text is sent to sent to the buyers when Paypal reports that the transaction is invalid.
+                                                <br/>That way the buyer will that the admin is looking into it.
+                                                <br/>The admin should check if there is a confirmation email from Paypal and send the download link manually.
+												<p>
+													<div>
+														<strong>Supported Variables <a href="javascript:void(0);" onclick="jQuery('.suppored_vars').toggle('slow');return false;">(show/hide)</a></strong>
+														<ul class="suppored_vars app_hide hide-if-js">
+															<li>%%SITE%%</li>
+															<li>%%FIRST_NAME%% - Payer's first name</li>
+															<li>%%LAST_NAME%% - Payer's last name</li>
+															<li>%%EMAIL%% - Payer's email</li>
+															<li>%%TXN_ID%% - Transaction ID (PayPal)</li>
+															<li>%%PRODUCT_NAME%% - Product name</li>
+															<li>%%PRODUCT_PRICE%% - Product price</li>
+															<li>%%DOWNLOAD_LINK%% - Download link</li>
+														</ul>
+													</div>
+												</p>
+											</td>
+										</tr>
+
 										<tr valign="top">
 											<th scope="row">Thank You message (after a successful payment)</th>
 											<!--<td><textarea name="<?php echo $settings_key; ?>[purchase_thanks]"><?php echo $opts['purchase_thanks']; ?></textarea></td>-->
