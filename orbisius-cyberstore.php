@@ -944,11 +944,11 @@ SHORT_CODE_EOF;
             $opts['purchase_content'] = $this->plugin_default_opts['purchase_content'];
         }
 
-        if (isset($opts['sandbox_only_ip'])) {
+        if (!empty($opts['sandbox_only_ip'])) {
             $opts['sandbox_only_ip'] = trim($opts['sandbox_only_ip']);
         }
 
-        if (isset($opts['notification_email'])) {
+        if (empty($opts['notification_email'])) {
             $opts['notification_email'] = get_option('admin_email');
         }
 
@@ -1341,6 +1341,7 @@ SHORT_CODE_EOF;
             $custom_params = apply_filters('orb_cyber_store_paypal_custom_params', $custom_params, $state); // obs
             $custom_params = apply_filters('orb_cyber_store_gateway_custom_params', $custom_params, $state); // new
             $custom_params_encoded = http_build_query($custom_params);
+            $custom_params_encoded = base64_encode($custom_params_encoded);
 
             // Let's check
             if ( strlen( $custom_params_encoded ) > 256 ) {
@@ -1466,7 +1467,8 @@ SHORT_CODE_EOF;
 
             if (!empty($data['custom'])) {
                 $custom = $data['custom'];
-                $custom = Orbisius_CyberStoreUtil::decode_entities($custom);
+                $custom = base64_decode($custom);
+                //$custom = Orbisius_CyberStoreUtil::decode_entities($custom);
             } else {
                 $admin_email_buffer = 'Missing data. Got' . "\n";
                 $admin_email_buffer .= "\n\$_REQUEST: \n" . var_export($_REQUEST, 1);
