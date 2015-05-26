@@ -90,7 +90,8 @@ $plugin_file = dirname(__FILE__) . '/orbisius-cyberstore.php';
 															<li>%%FIRST_NAME%% - Payer's first name</li>
 															<li>%%LAST_NAME%% - Payer's last name</li>
 															<li>%%EMAIL%% - Payer's email</li>
-															<li>%%TXN_ID%% - Transaction ID (PayPal)</li>
+															<li>%%TXN_ID%% - Transaction ID</li>
+															<li>%%INVOICE_ID%% - Invoice ID</li>
 															<li>%%PRODUCT_NAME%% - Product name</li>
 															<li>%%PRODUCT_PRICE%% - Product price</li>
 															<li>%%DOWNLOAD_LINK%% - Download link</li>

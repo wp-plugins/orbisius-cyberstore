@@ -25,52 +25,52 @@
             <url>orbisius-cyberstore.php</url>
             <bookmark id="10">
                 <name/>
-                <line>656</line>
+                <line>658</line>
                 <key/>
             </bookmark>
             <bookmark id="8">
                 <name/>
-                <line>696</line>
+                <line>698</line>
                 <key/>
             </bookmark>
             <bookmark id="22">
                 <name/>
-                <line>697</line>
+                <line>699</line>
                 <key/>
             </bookmark>
             <bookmark id="1">
                 <name/>
-                <line>1118</line>
+                <line>1120</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>1259</line>
+                <line>1261</line>
                 <key/>
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>1265</line>
+                <line>1267</line>
                 <key/>
             </bookmark>
             <bookmark id="21">
                 <name/>
-                <line>1286</line>
+                <line>1288</line>
                 <key/>
             </bookmark>
             <bookmark id="25">
                 <name/>
-                <line>1466</line>
+                <line>1470</line>
                 <key/>
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>1482</line>
+                <line>1486</line>
                 <key/>
             </bookmark>
             <bookmark id="20">
                 <name/>
-                <line>1560</line>
+                <line>1564</line>
                 <key/>
             </bookmark>
         </file>
@@ -103,6 +103,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Club, Updater"/>
-        <group/>
+        <group>
+            <file>file:/C:/Copy/Dropbox/cloud/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/orbisius-cyberstore.php</file>
+            <file>file:/C:/Copy/Dropbox/cloud/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/menu.settings.php</file>
+            <file>file:/C:/Copy/Dropbox/cloud/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/readme.txt</file>
+        </group>
     </open-files>
 </project-private>
