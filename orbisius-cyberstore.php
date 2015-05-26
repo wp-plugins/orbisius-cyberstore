@@ -2543,7 +2543,8 @@ class Orbisius_CyberStoreUtil {
      * @param bool $do_exit - exit after the file has been downloaded.
      */
     public static function download_file($file, $do_exit = 1) {
-        set_time_limit(12 * 3600); // 12 hours
+        // When safe mode is enabled: Warning: set_time_limit(): Cannot set max execution time limit due to system policy in ...
+        @set_time_limit(12 * 3600); // 12 hours
 
         if (ini_get('zlib.output_compression')) {
             @ini_set('zlib.output_compression', 0);

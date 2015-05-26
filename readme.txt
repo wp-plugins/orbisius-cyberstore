@@ -145,6 +145,7 @@ n/a
 * Note: The failed subject and text is sent to sent to the buyers when Paypal reports that the transaction is invalid. That way the buyer will that the admin is looking into it. The admin should check if there is a confirmation email from Paypal and send the download link manually.
 * Added a check for txn_type if exists in the paypal params
 * Added extra underscore in the extra params of cyberstore.
+* Suppressed errors when doing @set_time_limit because when safe mode is enabled it shows an error and breaks the download: Warning: set_time_limit(): Cannot set max execution time limit due to system policy in ...
 
 = 2.1.3 =
 * Added an more hooks before and after the buy now form.
