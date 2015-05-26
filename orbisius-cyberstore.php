@@ -683,7 +683,7 @@ SHORT_CODE_EOF;
                 $key = esc_attr($key);
                 $val = esc_attr($val);
                 $extra_params_buff .= "<input type='hidden' id='{$this->plugin_id_str}_extra_$key'
-                    name='{$this->plugin_id_str}extra[$key]' value='$val' />\n";
+                    name='{$this->plugin_id_str}_extra[$key]' value='$val' />\n";
             }
 
             $state_params = array(

@@ -25,52 +25,52 @@
             <url>orbisius-cyberstore.php</url>
             <bookmark id="10">
                 <name/>
-                <line>654</line>
+                <line>656</line>
                 <key/>
             </bookmark>
             <bookmark id="8">
                 <name/>
-                <line>694</line>
+                <line>696</line>
                 <key/>
             </bookmark>
             <bookmark id="22">
                 <name/>
-                <line>695</line>
+                <line>697</line>
                 <key/>
             </bookmark>
             <bookmark id="1">
                 <name/>
-                <line>1116</line>
+                <line>1118</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>1257</line>
+                <line>1259</line>
                 <key/>
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>1263</line>
+                <line>1265</line>
                 <key/>
             </bookmark>
             <bookmark id="21">
                 <name/>
-                <line>1284</line>
+                <line>1286</line>
                 <key/>
             </bookmark>
             <bookmark id="25">
                 <name/>
-                <line>1463</line>
+                <line>1466</line>
                 <key/>
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>1479</line>
+                <line>1482</line>
                 <key/>
             </bookmark>
             <bookmark id="20">
                 <name/>
-                <line>1557</line>
+                <line>1560</line>
                 <key/>
             </bookmark>
         </file>
@@ -78,7 +78,7 @@
             <url>menu.settings.php</url>
             <bookmark id="26">
                 <name/>
-                <line>231</line>
+                <line>268</line>
                 <key/>
             </bookmark>
         </file>
@@ -103,8 +103,6 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Club, Updater"/>
-        <group>
-            <file>file:/C:/Copy/Dropbox/cloud/projects/default/htdocs/wordpress313/wp-content/plugins/orbisius-cyberstore/readme.txt</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
