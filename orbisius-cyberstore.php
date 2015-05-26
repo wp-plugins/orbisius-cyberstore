@@ -3,7 +3,7 @@
   Plugin Name: Orbisius CyberStore
   Plugin URI: http://club.orbisius.com/products/wordpress-plugins/orbisius-cyberstore/
   Description: Start selling digital products such as e-books, plugins, themes, reports in less than 3 minutes.
-  Version: 2.1.4
+  Version: 2.1.5
   Author: Svetoslav Marinov (Slavi)
   Author URI: http://orbisius.com
   License: GPL v2
@@ -160,8 +160,10 @@ class Orbisius_CyberStore {
             // the log file be: log.1dd9091e045b9374dfb6b042990d65cc.2012-01-05.log
 			if ($inst->log_enabled) {
 				$inst->log_file = $inst->plugin_data_dir . '/log.'
-                        . md5($site_url . $inst->plugin_dir_name)
-                        . '.' . date('Y-m-d') . '.log';
+                        . date('Y-m-d')
+                        . '_'
+                        . sha1( $site_url . date( 'Y-m-d' ) . "Be the best!!! if you're seeing and understanding this email help at oribsius.com with subject: WP Developer :)" )
+                        . '.log';
 			}
 
 			add_action('plugins_loaded', array($inst, 'init'), 100);
@@ -452,7 +454,7 @@ class Orbisius_CyberStore {
             // log.d547d2f0f4c1ec4059d5a644bf04e6dc.2015-05-17.log,
             elseif ($params[$this->web_trigger_key] == 'download_log' 
                     && ! empty( $params[ $this->plugin_id_str . '_file' ] )
-                    && preg_match( '#^log\.\w+\.[\d-]+\.log#si', $params[ $this->plugin_id_str . '_file' ] )
+                    && preg_match( '#^log\.[\w-\.]+\.log$#si', $params[ $this->plugin_id_str . '_file' ] )
                     && is_user_logged_in()
                     && current_user_can( 'manage_options' ) // admin
                     ) {

@@ -141,6 +141,9 @@ n/a
 
 == Changelog ==
 
+= 2.1.5 =
+* Changed how the log hash was generated.
+
 = 2.1.4 =
 * Note: The failed subject and text is sent to sent to the buyers when Paypal reports that the transaction is invalid. That way the buyer will that the admin is looking into it. The admin should check if there is a confirmation email from Paypal and send the download link manually.
 * Added a check for txn_type if exists in the paypal params
