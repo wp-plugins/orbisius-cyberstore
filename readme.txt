@@ -143,6 +143,7 @@ n/a
 
 = 2.1.6 =
 * Added invoice ID as a variable that can be replaced and added to the welcome email.
+* Extra params receives state params.
 
 = 2.1.5 =
 * Encoding 'custom' fields using base64 ... as other ways caused valid transactions to fail.

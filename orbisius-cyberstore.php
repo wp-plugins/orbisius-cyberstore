@@ -639,8 +639,6 @@ SHORT_CODE_EOF;
 
             // Do we need to pass any extra data to the payment form?
             $price_buff = '';
-            $extra_params = array();
-            $extra_params = apply_filters('orb_cyber_store_ext_filter_extra_params', $extra_params);
             $extra_params_buff = '';
          
 			if ($this->is_variable($prev_rec)) {
@@ -681,6 +679,13 @@ SHORT_CODE_EOF;
                 $product_buff .= "<div id='{$this->plugin_id_str}_product_price_{$prev_rec['id']}' class='{$this->plugin_id_str}_product_price'>$price_buff</div>\n";
             }
 
+            $state_params = array(
+                'plugin_id' => $this->plugin_id_str,
+                'product' => $prev_rec,
+            );
+
+            $extra_params = apply_filters('orb_cyber_store_ext_filter_extra_params', array(), $state_params);
+
             foreach ($extra_params as $key => $val) {
                 $key = esc_attr($key);
                 $val = esc_attr($val);
@@ -688,11 +693,7 @@ SHORT_CODE_EOF;
                     name='{$this->plugin_id_str}_extra[$key]' value='$val' />\n";
             }
 
-            $state_params = array(
-                'plugin_id' => $this->plugin_id_str,
-                'extra_params' => $extra_params,
-                'product' => $prev_rec,
-            );
+            $state_params['extra_params'] = $extra_params;
 
             // Capture any content that needs to go before the download button
             ob_start();
